@@ -1,12 +1,12 @@
-Analyze the following company information using Qualitative Systems Dynamics framework.
+Analyze the following Target System using the Qualitative Systems Dynamics framework.
 
-COMPANY INFORMATION:
+PROBLEM CONTEXT MATERIAL:
 {context}
 
 Provide your analysis in the following JSON format:
 
 {
-  "SystemOverview": "1-2 paragraph narrative describing how the business system operates",
+  "SystemOverview": "1-2 paragraph narrative describing how the target system operates and its structure",
   "KeyComponents": ["component 1", "component 2", "component 3"],
   "FeedbackLoops": {
     "Reinforcing": ["loop 1", "loop 2"],
@@ -19,4 +19,10 @@ Provide your analysis in the following JSON format:
 }
 
 CRITICAL: Output ONLY valid JSON. No markdown, no bold text, no explanations outside the JSON.
-Remember: Focus on understanding system structure, feedback loops, and fragility. Do not make recommendations.
+
+REMEMBER:
+- Focus ONLY on understanding system structure, feedback loops, and fragility
+- Do NOT make decisions, recommendations, or optimization advice
+- Framework disagreement is a valid outcome
+- Explicitly state all assumptions and unknowns
+- This is a reasoning surface, not an oracle

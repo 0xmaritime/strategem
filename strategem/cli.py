@@ -1,4 +1,4 @@
-"""Strategem Core - Command Line Interface"""
+"""Strategem Core - Command Line Interface (V1 Compliant)"""
 
 import sys
 import click
@@ -12,17 +12,37 @@ from strategem.persistence import PersistenceLayer
 
 @click.group()
 def cli():
-    """Strategem Core - Decision Support System for Business Analysis"""
+    """
+    Strategem Core - Decision Support System
+
+    A reasoning scaffold for analyzing target systems and operating environments.
+
+    ⚠️  This system does NOT:
+    - Output decisions
+    - Rank options
+    - Optimize objectives
+    - Make recommendations
+
+    The Decision Owner retains full responsibility for all judgments.
+    """
     pass
 
 
 @cli.command()
-@click.option("--text", "-t", help="Company information as text string")
+@click.option("--text", "-t", help="Problem Context Material as text string")
 @click.option(
     "--file",
     "-f",
     type=click.Path(exists=True),
-    help="Path to file containing company information",
+    help="Path to file containing Problem Context Material",
+)
+@click.option(
+    "--title",
+    help="Title or identifier for this problem context",
+)
+@click.option(
+    "--problem-statement",
+    help="Clear statement of the problem being analyzed",
 )
 @click.option(
     "--output",
@@ -30,8 +50,13 @@ def cli():
     type=click.Path(),
     help="Output path for report (default: auto-generated)",
 )
-def analyze(text, file, output):
-    """Run strategic analysis on company information"""
+def analyze(text, file, title, problem_statement, output):
+    """
+    Run analytical frameworks on Problem Context Materials.
+
+    This produces a reasoned artifact, not a recommendation.
+    Framework disagreement is a valid and expected outcome.
+    """
 
     # Validate input
     if not text and not file:
@@ -46,43 +71,53 @@ def analyze(text, file, output):
     ingestion = ContextIngestionModule()
     try:
         if text:
-            click.echo("📄 Ingesting text input...")
-            context = ingestion.ingest_text(text)
+            click.echo("📄 Ingesting Problem Context Material (text)...")
+            context = ingestion.ingest_text(
+                text=text,
+                title=title or "Untitled Analysis",
+                problem_statement=problem_statement
+                or "Problem context provided for analysis",
+            )
         else:
-            click.echo(f"📄 Ingesting file: {file}")
-            context = ingestion.ingest_file(file)
+            click.echo(f"📄 Ingesting Problem Context Material (file): {file}")
+            context = ingestion.ingest_file(
+                file_path=file, title=title, problem_statement=problem_statement
+            )
 
         # Structure content
         context = ingestion.structure_content(context)
-        click.echo("✓ Context ingested successfully")
+        click.echo("✓ Problem Context ingested successfully")
 
     except ContextIngestionError as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
 
     # Run analysis
-    click.echo("\n🔍 Running Porter's Five Forces analysis...")
+    click.echo("\n🔍 Running analytical frameworks...")
+    click.echo("   - Operating Environment Structure (Porter's Five Forces)")
+    click.echo("   - Target System Dynamics (Systems Dynamics)")
+    click.echo()
+
     orchestrator = AnalysisOrchestrator()
 
     try:
         result = orchestrator.run_full_analysis(context)
 
-        if result.porter_analysis:
-            click.echo("✓ Porter analysis complete")
-        else:
-            click.echo(f"⚠ Porter analysis failed: {result.porter_error}")
-
-        if result.systems_analysis:
-            click.echo("✓ Systems Dynamics analysis complete")
-        else:
-            click.echo(f"⚠ Systems Dynamics analysis failed: {result.systems_error}")
+        # Report framework results
+        for fw_result in result.framework_results:
+            if fw_result.success:
+                click.echo(f"✓ {fw_result.framework_name} analysis complete")
+            else:
+                click.echo(
+                    f"⚠ {fw_result.framework_name} analysis failed: {fw_result.error_message}"
+                )
 
     except Exception as e:
         click.echo(f"Error during analysis: {e}", err=True)
         sys.exit(1)
 
     # Generate report
-    click.echo("\n📝 Generating report...")
+    click.echo("\n📝 Generating reasoned artifact...")
     report_generator = ReportGenerator()
     report = report_generator.generate_report(result)
 
@@ -98,15 +133,40 @@ def analyze(text, file, output):
     # Summary
     click.echo(f"\n📊 Analysis Summary:")
     click.echo(f"   ID: {result.id}")
+    click.echo(f"   Title: {result.problem_context.title}")
+
+    # Framework status
+    for fw_result in result.framework_results:
+        status = "✓ Complete" if fw_result.success else "✗ Failed"
+        click.echo(f"   {fw_result.framework_name}: {status}")
+
+    # Key metrics from new report structure
+    click.echo(f"\n📋 Report Contents:")
+    click.echo(f"   - Context Summary")
     click.echo(
-        f"   Porter Analysis: {'✓ Complete' if result.porter_analysis else '✗ Failed'}"
+        f"   - Key Analytical Claims: {len(report.key_analytical_claims)} extracted"
     )
+    click.echo(f"   - Structural Pressures (Operating Environment)")
+    click.echo(f"   - Systemic Risks (Target System)")
     click.echo(
-        f"   Systems Analysis: {'✓ Complete' if result.systems_analysis else '✗ Failed'}"
+        f"   - Unknowns & Sensitivities: {len(report.unknowns_and_sensitivities)} identified"
     )
+    click.echo(f"   - Decision Surface")
+    click.echo(f"   - Framework Agreement & Tension")
+    click.echo(f"   - System Limitations")
+
     click.echo(f"\n📁 Output Files:")
     click.echo(f"   Report: {report_path}")
     click.echo(f"   Data: {analysis_path}")
+
+    click.echo("\n" + "=" * 60)
+    click.echo("⚠️  IMPORTANT DISCLAIMER")
+    click.echo("=" * 60)
+    click.echo("This is a reasoned artifact, NOT a recommendation.")
+    click.echo("This system does NOT output decisions, rank options,")
+    click.echo("optimize objectives, or make recommendations.")
+    click.echo("The Decision Owner retains full responsibility.")
+    click.echo("=" * 60)
 
 
 @cli.command()
@@ -121,7 +181,14 @@ def list():
 
     click.echo(f"Found {len(analyses)} analysis(es):\n")
     for analysis_id in analyses:
-        click.echo(f"  - {analysis_id}")
+        result = persistence.load_analysis(analysis_id)
+        if result:
+            title = (
+                result.problem_context.title
+                if result.problem_context.title
+                else analysis_id[:8]
+            )
+            click.echo(f"  - {analysis_id} | {title}")
 
 
 @cli.command()
@@ -137,9 +204,45 @@ def show(analysis_id):
 
     click.echo(f"Analysis ID: {result.id}")
     click.echo(f"Created: {result.created_at}")
-    click.echo(f"Source: {result.problem_context.source_type}")
-    click.echo(f"\nPorter Analysis: {'✓' if result.porter_analysis else '✗'}")
-    click.echo(f"Systems Analysis: {'✓' if result.systems_analysis else '✗'}")
+    click.echo(f"Title: {result.problem_context.title}")
+    click.echo(f"Problem Statement: {result.problem_context.problem_statement}")
+
+    click.echo(f"\nFramework Results:")
+    for fw_result in result.framework_results:
+        status = "✓" if fw_result.success else "✗"
+        click.echo(f"   {status} {fw_result.framework_name}")
+
+    click.echo(
+        f"\nProblem Context Materials: {len(result.problem_context.provided_materials)} provided"
+    )
+
+    if result.porter_analysis:
+        click.echo(f"\nOperating Environment Analysis (Porter):")
+        click.echo(
+            f"   Overall: {result.porter_analysis.overall_observations[:100]}..."
+        )
+
+    if result.systems_analysis:
+        click.echo(f"\nTarget System Analysis (Systems Dynamics):")
+        click.echo(
+            f"   System Overview: {result.systems_analysis.system_overview[:100]}..."
+        )
+
+
+@cli.command()
+def frameworks():
+    """List available analytical frameworks"""
+    orchestrator = AnalysisOrchestrator()
+    frameworks = orchestrator.list_available_frameworks()
+
+    click.echo("Available Analytical Frameworks:\n")
+    for fw in frameworks:
+        click.echo(f"  📐 {fw.name}")
+        click.echo(f"     Analytical Lens: {fw.analytical_lens}")
+        click.echo(f"     Description: {fw.description}")
+        if fw.input_requirements:
+            click.echo(f"     Input Requirements: {', '.join(fw.input_requirements)}")
+        click.echo()
 
 
 def main():

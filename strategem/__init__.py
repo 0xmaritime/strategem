@@ -1,4 +1,4 @@
-"""Strategem Core - Main Package"""
+"""Strategem Core - Main Package (V1 Compliant)"""
 
 __version__ = "1.0.0"
 __author__ = "Strategem Team"
@@ -9,6 +9,15 @@ from .models import (
     PorterAnalysis,
     SystemsDynamicsAnalysis,
     AnalysisReport,
+    AnalyticalClaim,
+    AnalysisFramework,
+    ProvidedMaterial,
+    FrameworkResult,
+    DecisionSurface,
+    ClaimSource,
+    ConfidenceLevel,
+    PORTER_FRAMEWORK,
+    SYSTEMS_DYNAMICS_FRAMEWORK,
 )
 from .context_ingestion import ContextIngestionModule
 from .orchestrator import AnalysisOrchestrator
@@ -21,6 +30,15 @@ __all__ = [
     "PorterAnalysis",
     "SystemsDynamicsAnalysis",
     "AnalysisReport",
+    "AnalyticalClaim",
+    "AnalysisFramework",
+    "ProvidedMaterial",
+    "FrameworkResult",
+    "DecisionSurface",
+    "ClaimSource",
+    "ConfidenceLevel",
+    "PORTER_FRAMEWORK",
+    "SYSTEMS_DYNAMICS_FRAMEWORK",
     "ContextIngestionModule",
     "AnalysisOrchestrator",
     "ReportGenerator",

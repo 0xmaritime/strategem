@@ -17,6 +17,17 @@
         }
         .status-success { background: #ffffff; color: #000000; }
         .status-error { background: #000000; color: #ffffff; }
+        .disclaimer-banner {
+            background: #000000;
+            color: #ffffff;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid #000000;
+        }
+        .disclaimer-banner p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
         .report-content {
             background: #ffffff;
             border: 2px solid #000000;
@@ -68,44 +79,69 @@
         .level-low { background: #ffffff; color: #000000; }
         .level-medium { background: #eeeeee; color: #000000; }
         .level-high { background: #000000; color: #ffffff; }
+        .problem-context-summary {
+            background: #f5f5f5;
+            padding: 1rem;
+            border: 2px solid #000000;
+            margin-bottom: 1.5rem;
+        }
+        .framework-status {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Strategem Core</h1>
-            <p class="subtitle">Decision Support System for Business Analysis</p>
+            <p class="subtitle">Decision Support System for Target System Analysis</p>
             <nav>
                 <a href="/">New Analysis</a>
-                <a href="/analyses" class="active">View All Analyses</a>
+                <a href="/analyses">View All Analyses</a>
             </nav>
         </header>
 
         <main>
             <div class="page-header">
-                <h2>Analysis Results</h2>
+                <h2>Reasoned Artifact</h2>
                 <div class="actions">
                     <a href="/report/{{ result.id }}/download" class="btn btn-secondary">Download Report</a>
                     <a href="/" class="btn btn-outline">New Analysis</a>
                 </div>
             </div>
 
+            <div class="disclaimer-banner">
+                <p><strong>⚠️ This is a reasoned artifact, NOT a recommendation.</strong> This system does NOT output decisions, rank options, optimize objectives, or make recommendations. The Decision Owner retains full responsibility. Framework disagreement is a valid outcome.</p>
+            </div>
+
+            <div class="problem-context-summary">
+                <p><strong>Title:</strong> {{ result.problem_context.title }}</p>
+                <p><strong>Problem Statement:</strong> {{ result.problem_context.problem_statement }}</p>
+                {% if result.problem_context.objectives %}
+                <p><strong>Objectives:</strong> {{ result.problem_context.objectives | join(', ') }}</p>
+                {% endif %}
+                {% if result.problem_context.constraints %}
+                <p><strong>Constraints:</strong> {{ result.problem_context.constraints | join(', ') }}</p>
+                {% endif %}
+            </div>
+
             <div class="meta-info">
                 <p><strong>Analysis ID:</strong> {{ result.id }}</p>
                 <p><strong>Created:</strong> {{ result.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-                <p><strong>Source:</strong> {{ result.problem_context.source_type }}</p>
+                <p><strong>Problem Context Materials:</strong> {{ result.problem_context.provided_materials | length }} provided</p>
                 <p>
-                    <strong>Status:</strong>
-                    {% if has_porter %}
-                        <span class="status-indicator status-success">✓ Porter Analysis Complete</span>
-                    {% else %}
-                        <span class="status-indicator status-error">✗ Porter Analysis Failed</span>
-                    {% endif %}
-                    {% if has_systems %}
-                        <span class="status-indicator status-success">✓ Systems Analysis Complete</span>
-                    {% else %}
-                        <span class="status-indicator status-error">✗ Systems Analysis Failed</span>
-                    {% endif %}
+                    <strong>Framework Results:</strong>
+                    <span class="framework-status">
+                    {% for fw in result.framework_results %}
+                        {% if fw.success %}
+                        <span class="status-indicator status-success">✓ {{ fw.framework_name }}</span>
+                        {% else %}
+                        <span class="status-indicator status-error">✗ {{ fw.framework_name }}</span>
+                        {% endif %}
+                    {% endfor %}
+                    </span>
                 </p>
             </div>
 
@@ -119,11 +155,12 @@
 
             {% if has_porter and result.porter_analysis %}
             <div class="analysis-detail">
-                <h3>Porter's Five Forces - Detailed View</h3>
+                <h3>Operating Environment Structure - Detailed View</h3>
+                <p><em>Analysis of structural pressures in the target system's operating environment</em></p>
                 
                 <div class="force-card">
                     <div class="force-header">
-                        <h4>Threat of New Entrants</h4>
+                        <h4>Pressure: New Entrant Threat</h4>
                         <span class="force-level level-{{ result.porter_analysis.threat_of_new_entrants.level.lower() }}">{{ result.porter_analysis.threat_of_new_entrants.level }}</span>
                     </div>
                     <p><strong>Rationale:</strong> {{ result.porter_analysis.threat_of_new_entrants.rationale }}</p>
@@ -134,7 +171,7 @@
 
                 <div class="force-card">
                     <div class="force-header">
-                        <h4>Bargaining Power of Suppliers</h4>
+                        <h4>Pressure: Supplier Power</h4>
                         <span class="force-level level-{{ result.porter_analysis.supplier_power.level.lower() }}">{{ result.porter_analysis.supplier_power.level }}</span>
                     </div>
                     <p><strong>Rationale:</strong> {{ result.porter_analysis.supplier_power.rationale }}</p>
@@ -142,7 +179,7 @@
 
                 <div class="force-card">
                     <div class="force-header">
-                        <h4>Bargaining Power of Buyers</h4>
+                        <h4>Pressure: Buyer Power</h4>
                         <span class="force-level level-{{ result.porter_analysis.buyer_power.level.lower() }}">{{ result.porter_analysis.buyer_power.level }}</span>
                     </div>
                     <p><strong>Rationale:</strong> {{ result.porter_analysis.buyer_power.rationale }}</p>
@@ -150,7 +187,7 @@
 
                 <div class="force-card">
                     <div class="force-header">
-                        <h4>Threat of Substitutes</h4>
+                        <h4>Pressure: Substitution Threat</h4>
                         <span class="force-level level-{{ result.porter_analysis.substitutes.level.lower() }}">{{ result.porter_analysis.substitutes.level }}</span>
                     </div>
                     <p><strong>Rationale:</strong> {{ result.porter_analysis.substitutes.rationale }}</p>
@@ -158,17 +195,38 @@
 
                 <div class="force-card">
                     <div class="force-header">
-                        <h4>Competitive Rivalry</h4>
+                        <h4>Pressure: Competitive Intensity</h4>
                         <span class="force-level level-{{ result.porter_analysis.rivalry.level.lower() }}">{{ result.porter_analysis.rivalry.level }}</span>
                     </div>
                     <p><strong>Rationale:</strong> {{ result.porter_analysis.rivalry.rationale }}</p>
                 </div>
             </div>
             {% endif %}
+
+            {% if has_systems and result.systems_analysis %}
+            <div class="analysis-detail">
+                <h3>Target System Dynamics - Overview</h3>
+                <p><em>Analysis of the target system's internal structure and dynamics</em></p>
+                
+                <div class="force-card">
+                    <h4>System Overview</h4>
+                    <p>{{ result.systems_analysis.system_overview }}</p>
+                </div>
+
+                {% if result.systems_analysis.fragilities %}
+                <div class="force-card">
+                    <h4>System Fragilities</h4>
+                    {% for fragility in result.systems_analysis.fragilities %}
+                    <p>- {{ fragility }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
         </main>
 
         <footer>
-            <p>Strategem Core v1.0.0 - No investment recommendations. For analytical support only.</p>
+            <p>Strategem Core v1.0.0 - A reasoning scaffold, not an oracle. Framework disagreement is a valid outcome.</p>
         </footer>
     </div>
 </body>

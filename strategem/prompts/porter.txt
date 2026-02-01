@@ -1,6 +1,6 @@
-Analyze the following company information using Porter's Five Forces framework.
+Analyze the following Target System using the Operating Environment Structure framework (Porter's Five Forces analytical lens).
 
-COMPANY INFORMATION:
+PROBLEM CONTEXT MATERIAL:
 {context}
 
 Provide your analysis in the following JSON format:
@@ -36,10 +36,15 @@ Provide your analysis in the following JSON format:
     "Assumptions": ["assumption 1", "assumption 2"],
     "Unknowns": ["unknown 1", "unknown 2"]
   },
-  "OverallObservations": "2-3 sentences on overall structural attractiveness",
+  "OverallObservations": "2-3 sentences on overall structural characteristics of the operating environment",
   "KeyRisks": ["risk 1", "risk 2", "risk 3"],
   "KeyStrengths": ["strength 1", "strength 2", "strength 3"]
 }
 
 CRITICAL: Output ONLY valid JSON. No markdown, no bold text, no explanations outside the JSON.
-Remember: Do not make investment recommendations. Focus on structural analysis only.
+
+REMEMBER:
+- Do NOT make decisions, recommendations, or investment advice
+- Focus ONLY on structural analysis of the operating environment
+- Framework disagreement is a valid outcome
+- Explicitly state all assumptions and unknowns

@@ -1,0 +1,49 @@
+Remote-First Team Structure - Problem Context
+
+PROBLEM STATEMENT:
+Evaluate the robustness and sustainability of transitioning to a fully remote-first team structure for a mid-sized software engineering department (50 engineers, distributed across 3 time zones).
+
+TARGET SYSTEM:
+The engineering department currently operates on a hybrid model (2 days office, 3 days remote). The organization is considering a full remote-first transition to improve talent retention and access global talent pools.
+
+OBJECTIVES:
+- Maintain or improve engineering productivity metrics
+- Sustain team cohesion and collaboration quality
+- Retain existing high-performing engineers
+- Enable effective hiring from global talent pool
+- Reduce office-related operational costs by 40%
+
+CONSTRAINTS:
+- Must maintain existing product delivery commitments
+- Limited budget for remote work infrastructure ($50K)
+- Existing lease obligations for 18 months
+- Regulatory requirements for data security in remote settings
+- Some team members prefer office environment
+
+OPERATING ENVIRONMENT:
+- Competitive talent market for software engineers
+- Industry trend toward remote work adoption
+- Existing collaboration tools (Slack, Zoom, GitHub)
+- Established agile development processes
+- Strong documentation culture exists
+
+SYSTEM STRUCTURE:
+- 5 cross-functional teams (8-12 members each)
+- Team leads responsible for daily coordination
+- Bi-weekly sprint cycles with remote ceremonies
+- Async-first communication patterns emerging
+- Quarterly in-person team gatherings budgeted
+
+PROVIDED MATERIALS:
+- Current productivity metrics (velocity, cycle time, bug rates)
+- Employee satisfaction survey results
+- Remote work policy draft
+- Infrastructure assessment (VPN, security, equipment)
+- Benchmark data from fully remote companies
+- Exit interview summaries from recent departures
+
+DECLARED ASSUMPTIONS:
+- Productivity can be maintained with proper async practices
+- Video calls can effectively replace in-person collaboration
+- Time zone differences can be managed through overlap hours
+- Team culture will adapt to remote norms

@@ -50,13 +50,21 @@
             padding: 3rem;
             color: #6c757d;
         }
+        .disclaimer-banner {
+            background: #000000;
+            color: #ffffff;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid #000000;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Strategem Core</h1>
-            <p class="subtitle">Decision Support System for Business Analysis</p>
+            <p class="subtitle">Decision Support System for Target System Analysis</p>
             <nav>
                 <a href="/">New Analysis</a>
                 <a href="/analyses" class="active">View All Analyses</a>
@@ -64,8 +72,12 @@
         </header>
 
         <main>
+            <div class="disclaimer-banner">
+                <p><strong>⚠️ This system does NOT output decisions, rank options, optimize objectives, or make recommendations.</strong></p>
+            </div>
+
             <div class="page-header">
-                <h2>All Analyses</h2>
+                <h2>All Reasoned Artifacts</h2>
                 <a href="/" class="btn btn-primary">New Analysis</a>
             </div>
 
@@ -74,23 +86,20 @@
                     {% for analysis in analyses %}
                     <li class="analysis-item">
                         <div class="analysis-info">
-                            <h3>Analysis {{ analysis.id[:8] }}...</h3>
+                            <h3>{{ analysis.title if analysis.title else "Analysis " + analysis.id[:8] + "..." }}</h3>
                             <p>
                                 {{ analysis.created_at.strftime('%Y-%m-%d %H:%M') }} | 
-                                Source: {{ analysis.source_type }}
+                                {{ analysis.problem_context.provided_materials | length }} Problem Context Material(s)
                             </p>
                         </div>
                         <div class="analysis-status">
-                            {% if analysis.has_porter %}
-                                <span class="badge badge-success">Porter ✓</span>
-                            {% else %}
-                                <span class="badge badge-error">Porter ✗</span>
-                            {% endif %}
-                            {% if analysis.has_systems %}
-                                <span class="badge badge-success">Systems ✓</span>
-                            {% else %}
-                                <span class="badge badge-error">Systems ✗</span>
-                            {% endif %}
+                            {% for fw in analysis.framework_results %}
+                                {% if fw.success %}
+                                <span class="badge badge-success">{{ fw.framework_name[:8] }} ✓</span>
+                                {% else %}
+                                <span class="badge badge-error">{{ fw.framework_name[:8] }} ✗</span>
+                                {% endif %}
+                            {% endfor %}
                             <a href="/analysis/{{ analysis.id }}" class="btn btn-sm">View</a>
                         </div>
                     </li>
@@ -99,13 +108,13 @@
             {% else %}
                 <div class="empty-state">
                     <p>No analyses found.</p>
-                    <a href="/" class="btn btn-primary" style="margin-top: 1rem;">Run Your First Analysis</a>
+                    <a href="/" class="btn btn-primary" style="margin-top: 1rem;">Create Your First Reasoned Artifact</a>
                 </div>
             {% endif %}
         </main>
 
         <footer>
-            <p>Strategem Core v1.0.0 - No investment recommendations. For analytical support only.</p>
+            <p>Strategem Core v1.0.0 - A reasoning scaffold, not an oracle. Framework disagreement is a valid outcome.</p>
         </footer>
     </div>
 </body>

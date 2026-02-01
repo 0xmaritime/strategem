@@ -156,10 +156,10 @@ async def list_analyses(request: Request):
             analyses.append(
                 {
                     "id": result.id,
+                    "title": result.problem_context.title,
                     "created_at": result.created_at,
-                    "source_type": result.problem_context.source_type,
-                    "has_porter": result.porter_analysis is not None,
-                    "has_systems": result.systems_analysis is not None,
+                    "problem_context": result.problem_context,
+                    "framework_results": result.framework_results,
                 }
             )
 
