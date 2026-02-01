@@ -58,6 +58,7 @@ class AnalyticalClaim(BaseModel):
 
     This is the backbone of explainability and auditability.
     Each claim must be traceable to its source and have explicit confidence.
+    In V1, each claim must also reference which decision option(s) it affects.
     """
 
     statement: str = Field(..., description="The claim statement")
@@ -69,6 +70,10 @@ class AnalyticalClaim(BaseModel):
     )
     framework: Optional[str] = Field(
         None, description="Which framework produced this claim"
+    )
+    affected_options: List[str] = Field(
+        default_factory=list,
+        description="Which decision option(s) this claim affects. Use 'comparative' for cross-option claims, or specific option names like 'Option A', 'Option B'",
     )
 
 
