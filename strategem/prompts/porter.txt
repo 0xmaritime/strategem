@@ -158,3 +158,5 @@ Before outputting, verify:
 CRITICAL: Output ONLY valid JSON. No markdown, no bold text, no explanations outside the JSON.
 
 Remember: Lack of clarity or inconclusive results are valid outcomes. This is V1-correct.
+
+Remember: You must populate the affected_options field in every AnalyticalClaim. Use "comparative" for claims comparing multiple options, or specific option names like "Option A", "Option B".
