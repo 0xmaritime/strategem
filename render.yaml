@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: strategem-core
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn strategem.web.app:app --host 0.0.0.0 --port 10000
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        value: openai/gpt-4o-mini
+      - key: LLM_TEMPERATURE
+        value: 0.2
+      - key: LLM_MAX_TOKENS
+        value: 4000
+    disk:
+      name: strategem-storage
+      mountPath: /opt/render/project/src/strategem/storage
+      sizeGB: 1
