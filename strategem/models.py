@@ -22,6 +22,36 @@ class ClaimSource(str, Enum):
     INFERENCE = "inference"
 
 
+class DecisionType(str, Enum):
+    """Type of decision being analyzed"""
+
+    EXPLORE = "explore"
+    COMPARE = "compare"
+    STRESS_TEST = "stress_test"
+
+
+class DecisionFocus(BaseModel):
+    """
+    Decision Focus - MANDATORY for decision-bound frameworks.
+
+    Defines what decision is being analyzed and which options are under consideration.
+    Without DecisionFocus, frameworks must refuse execution or return low-confidence artifacts.
+    """
+
+    decision_question: str = Field(
+        ..., description="The specific decision question being asked"
+    )
+    decision_type: DecisionType = Field(
+        ..., description="Type of decision: explore, compare, or stress_test"
+    )
+    options: List[str] = Field(
+        ..., description="Array of options under consideration (minimum 1)"
+    )
+
+    class Config:
+        populate_by_name = True
+
+
 class AnalyticalClaim(BaseModel):
     """
     An explicit analytical claim produced by a framework.
@@ -90,6 +120,12 @@ class ProblemContext(BaseModel):
         description="Assumptions explicitly declared by the decision owner",
     )
 
+    # Decision Focus (required for decision-bound frameworks like Porter)
+    decision_focus: Optional[DecisionFocus] = Field(
+        default=None,
+        description="Decision context - required for decision-bound frameworks. Without this, frameworks must refuse execution or return low-confidence artifacts.",
+    )
+
     # Legacy fields (maintained for backward compatibility during migration)
     raw_content: Optional[str] = Field(None, description="[Legacy] Raw input content")
     structured_content: Optional[str] = Field(
@@ -129,41 +165,113 @@ class AnalysisFramework(BaseModel):
         default_factory=dict, description="JSON schema for expected output"
     )
     description: Optional[str] = Field(None, description="Human-readable description")
+    requires_decision_focus: bool = Field(
+        default=False,
+        description="If True, this framework requires DecisionFocus to execute. Without it, the framework must refuse execution or return low-confidence artifacts.",
+    )
+
+
+class ForceEffect(BaseModel):
+    """Effect of a force on a specific decision option"""
+
+    option_name: str = Field(..., description="Name of the option being analyzed")
+    description: str = Field(..., description="How this force affects this option")
+    key_assumptions: List[str] = Field(default_factory=list)
+    key_unknowns: List[str] = Field(default_factory=list)
 
 
 class ForceAnalysis(BaseModel):
-    """Single force/pressure analysis result within an operating environment"""
+    """
+    Single force/pressure analysis result - DECISION-BOUND VERSION.
 
-    level: str = Field(..., pattern="^(Low|Medium|High)$")
-    rationale: str
-    assumptions: List[str] = Field(default_factory=list)
-    unknowns: List[str] = Field(default_factory=list)
+    In V1, forces must be analyzed in the context of specific decision options.
+    Generic analysis without option-specific effects is invalid.
+    """
+
+    name: str = Field(..., description="Name of the force (e.g., ThreatOfNewEntrants)")
+    relevance_to_decision: str = Field(
+        ...,
+        pattern="^(high|medium|low)$",
+        description="How relevant this force is to the decision",
+    )
+    relevance_rationale: str = Field(
+        ..., description="Why this force is or isn't relevant to the decision"
+    )
+    effect_by_option: List[ForceEffect] = Field(
+        ..., description="How this force affects each decision option"
+    )
+    shared_assumptions: List[str] = Field(
+        default_factory=list, description="Assumptions that apply to all options"
+    )
+    shared_unknowns: List[str] = Field(
+        default_factory=list, description="Unknowns that apply to all options"
+    )
     claims: List[AnalyticalClaim] = Field(
         default_factory=list, description="Explicit claims derived from this analysis"
     )
 
 
+class StructuralAsymmetry(BaseModel):
+    """
+    Identifies how a force disproportionately affects one option vs another.
+    This is where decision value emerges.
+    """
+
+    force_name: str = Field(..., description="Which Porter force shows asymmetry")
+    description: str = Field(
+        ..., description="How this force affects options differently"
+    )
+    stronger_impact_on: str = Field(..., description="Which option is more affected")
+    rationale: str = Field(..., description="Why the impact differs")
+    key_assumption: str = Field(
+        ..., description="Key assumption underlying this asymmetry"
+    )
+
+
 class PorterAnalysis(BaseModel):
     """
-    Operating Environment Structure analysis (Porter's Five Forces framework).
+    DECISION-BOUND Operating Environment Structure analysis.
 
-    Assesses structural attractiveness of the target system's operating environment.
+    Analyzes structural pressures acting on each option under consideration.
+    Generic industry analysis is INVALID - must be decision-scoped.
 
-    Note: Framework disagreement is a valid and expected system outcome.
-    Lack of consensus between frameworks does not indicate failure.
+    V1 Requirements:
+    - Each force must show relevance to the decision
+    - Each force must describe effect_by_option for all options
+    - Must include Structural Asymmetries section
+    - All claims must be option-aware
     """
 
+    # Decision context (embedded for clarity)
+    decision_question: str = Field(
+        ..., description="The decision question this analysis addresses"
+    )
+    options_analyzed: List[str] = Field(..., description="Options under consideration")
+
+    # Five Forces - each decision-bound
     threat_of_new_entrants: ForceAnalysis = Field(alias="ThreatOfNewEntrants")
     supplier_power: ForceAnalysis = Field(alias="SupplierPower")
     buyer_power: ForceAnalysis = Field(alias="BuyerPower")
     substitutes: ForceAnalysis = Field(alias="Substitutes")
     rivalry: ForceAnalysis = Field(alias="Rivalry")
-    overall_observations: str = Field(alias="OverallObservations")
-    key_risks: List[str] = Field(alias="KeyRisks", default_factory=list)
-    key_strengths: List[str] = Field(alias="KeyStrengths", default_factory=list)
-    claims: List[AnalyticalClaim] = Field(
-        default_factory=list, description="Key analytical claims from this framework"
+
+    # Cross-option analysis (REQUIRED)
+    structural_asymmetries: List[StructuralAsymmetry] = Field(
+        ..., description="Forces that disproportionately affect different options"
     )
+
+    # Option-aware claims (REQUIRED)
+    option_aware_claims: List[AnalyticalClaim] = Field(
+        ..., description="Claims that reference specific options or comparisons"
+    )
+
+    # Shared observations only if they affect all options equally
+    shared_observations: Optional[str] = Field(
+        None, description="Observations that apply equally to all options (rare)"
+    )
+
+    class Config:
+        populate_by_name = True
 
 
 class SystemsDynamicsAnalysis(BaseModel):
@@ -337,6 +445,7 @@ PORTER_FRAMEWORK = AnalysisFramework(
         },
     },
     description="Assesses structural attractiveness of the target system's operating environment",
+    requires_decision_focus=True,
 )
 
 SYSTEMS_DYNAMICS_FRAMEWORK = AnalysisFramework(

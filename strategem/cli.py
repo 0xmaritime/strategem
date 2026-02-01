@@ -8,6 +8,7 @@ from strategem.context_ingestion import ContextIngestionModule, ContextIngestion
 from strategem.orchestrator import AnalysisOrchestrator
 from strategem.report_generator import ReportGenerator
 from strategem.persistence import PersistenceLayer
+from strategem.models import DecisionFocus, DecisionType
 
 
 @click.group()
@@ -50,7 +51,29 @@ def cli():
     type=click.Path(),
     help="Output path for report (default: auto-generated)",
 )
-def analyze(text, file, title, problem_statement, output):
+@click.option(
+    "--decision-question",
+    help="The specific decision question being analyzed (required for decision-bound frameworks)",
+)
+@click.option(
+    "--decision-type",
+    type=click.Choice(["explore", "compare", "stress_test"]),
+    help="Type of decision: explore, compare, or stress_test",
+)
+@click.option(
+    "--options",
+    help="Comma-separated list of options under consideration (e.g., 'Option A,Option B,Option C')",
+)
+def analyze(
+    text,
+    file,
+    title,
+    problem_statement,
+    output,
+    decision_question,
+    decision_type,
+    options,
+):
     """
     Run analytical frameworks on Problem Context Materials.
 
@@ -67,6 +90,31 @@ def analyze(text, file, title, problem_statement, output):
         click.echo("Error: Cannot use both --text and --file", err=True)
         sys.exit(1)
 
+    # Build DecisionFocus if provided
+    decision_focus = None
+    if decision_question or decision_type or options:
+        if not decision_question:
+            click.echo(
+                "Error: --decision-question is required when using decision-bound options",
+                err=True,
+            )
+            sys.exit(1)
+        if not options:
+            click.echo(
+                "Error: --options is required when using decision-bound options",
+                err=True,
+            )
+            sys.exit(1)
+
+        options_list = [opt.strip() for opt in options.split(",")]
+        decision_focus = DecisionFocus(
+            decision_question=decision_question,
+            decision_type=DecisionType(decision_type or "explore"),
+            options=options_list,
+        )
+        click.echo(f"🎯 Decision Focus: {decision_question}")
+        click.echo(f"   Options: {', '.join(options_list)}")
+
     # Ingest context
     ingestion = ContextIngestionModule()
     try:
@@ -77,11 +125,15 @@ def analyze(text, file, title, problem_statement, output):
                 title=title or "Untitled Analysis",
                 problem_statement=problem_statement
                 or "Problem context provided for analysis",
+                decision_focus=decision_focus,
             )
         else:
             click.echo(f"📄 Ingesting Problem Context Material (file): {file}")
             context = ingestion.ingest_file(
-                file_path=file, title=title, problem_statement=problem_statement
+                file_path=file,
+                title=title,
+                problem_statement=problem_statement,
+                decision_focus=decision_focus,
             )
 
         # Structure content

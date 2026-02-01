@@ -8,6 +8,7 @@ import yaml
 from pydantic import BaseModel
 
 from .config import config
+from .models import DecisionFocus
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -38,11 +39,36 @@ class LLMInferenceLayer:
         system_prompt_path = config.PROMPTS_DIR / "system.txt"
         return system_prompt_path.read_text()
 
-    def _load_user_prompt(self, prompt_name: str, context: str) -> str:
-        """Load and format a user prompt template"""
+    def _load_user_prompt(
+        self,
+        prompt_name: str,
+        context: str,
+        decision_focus: Optional[DecisionFocus] = None,
+    ) -> str:
+        """Load and format a user prompt template with DecisionFocus variables"""
         prompt_path = config.PROMPTS_DIR / f"{prompt_name}.txt"
         template = prompt_path.read_text()
-        return template.replace("{context}", context)
+
+        # Replace the context placeholder
+        formatted = template.replace("{context}", context)
+
+        # Replace DecisionFocus placeholders if decision_focus is provided
+        if decision_focus:
+            # These placeholders are expected in decision-bound prompts like porter.txt
+            formatted = formatted.replace(
+                "{decision_question}", decision_focus.decision_question
+            )
+            formatted = formatted.replace(
+                "{decision_type}", decision_focus.decision_type.value
+            )
+            formatted = formatted.replace(
+                "{options}", ", ".join(decision_focus.options)
+            )
+            # Extract target system title from first line of context or use default
+            target_title = context.split("\n")[0][:50] if context else "Target System"
+            formatted = formatted.replace("{target_system_title}", target_title)
+
+        return formatted
 
     def _make_request(self, system_prompt: str, user_prompt: str) -> str:
         """Make request to OpenRouter API"""
@@ -304,6 +330,7 @@ class LLMInferenceLayer:
         context: str,
         response_model: Type[T],
         max_retries: int = 1,
+        decision_focus: Optional[DecisionFocus] = None,
     ) -> T:
         """
         Run an analysis using the specified prompt template.
@@ -313,12 +340,13 @@ class LLMInferenceLayer:
             context: The problem context to analyze
             response_model: Pydantic model for parsing response
             max_retries: Number of retries on failure
+            decision_focus: Optional DecisionFocus for decision-bound frameworks
 
         Returns:
             Parsed response as the specified model type
         """
         system_prompt = self._load_system_prompt()
-        user_prompt = self._load_user_prompt(prompt_name, context)
+        user_prompt = self._load_user_prompt(prompt_name, context, decision_focus)
 
         last_error = None
         for attempt in range(max_retries + 1):

@@ -17,7 +17,7 @@ from strategem.context_ingestion import ContextIngestionModule, ContextIngestion
 from strategem.orchestrator import AnalysisOrchestrator
 from strategem.report_generator import ReportGenerator
 from strategem.persistence import PersistenceLayer
-from strategem.models import AnalysisResult
+from strategem.models import AnalysisResult, DecisionFocus, DecisionType
 
 
 app = FastAPI(
@@ -48,11 +48,27 @@ async def index(request: Request):
 
 
 @app.post("/analyze/text")
-async def analyze_text(request: Request, text: str = Form(...)):
-    """Analyze text input"""
+async def analyze_text(
+    request: Request,
+    text: str = Form(...),
+    decision_question: Optional[str] = Form(None),
+    decision_type: Optional[str] = Form(None),
+    options: Optional[str] = Form(None),
+):
+    """Analyze text input with optional DecisionFocus"""
     try:
+        # Build DecisionFocus if provided
+        decision_focus = None
+        if decision_question and options:
+            options_list = [opt.strip() for opt in options.split(",")]
+            decision_focus = DecisionFocus(
+                decision_question=decision_question,
+                decision_type=DecisionType(decision_type or "explore"),
+                options=options_list,
+            )
+
         # Ingest and structure content
-        context = context_ingestion.ingest_text(text)
+        context = context_ingestion.ingest_text(text, decision_focus=decision_focus)
         context = context_ingestion.structure_content(context)
 
         # Run analysis
@@ -78,8 +94,14 @@ async def analyze_text(request: Request, text: str = Form(...)):
 
 
 @app.post("/analyze/file")
-async def analyze_file(request: Request, file: UploadFile = File(...)):
-    """Analyze uploaded file"""
+async def analyze_file(
+    request: Request,
+    file: UploadFile = File(...),
+    decision_question: Optional[str] = Form(None),
+    decision_type: Optional[str] = Form(None),
+    options: Optional[str] = Form(None),
+):
+    """Analyze uploaded file with optional DecisionFocus"""
     try:
         # Save uploaded file temporarily
         temp_path = config.STORAGE_DIR / f"temp_{uuid.uuid4()}_{file.filename}"
@@ -87,8 +109,20 @@ async def analyze_file(request: Request, file: UploadFile = File(...)):
         temp_path.write_bytes(content)
 
         try:
+            # Build DecisionFocus if provided
+            decision_focus = None
+            if decision_question and options:
+                options_list = [opt.strip() for opt in options.split(",")]
+                decision_focus = DecisionFocus(
+                    decision_question=decision_question,
+                    decision_type=DecisionType(decision_type or "explore"),
+                    options=options_list,
+                )
+
             # Ingest and structure content
-            context = context_ingestion.ingest_file(temp_path)
+            context = context_ingestion.ingest_file(
+                temp_path, decision_focus=decision_focus
+            )
             context = context_ingestion.structure_content(context)
 
             # Run analysis

@@ -1,50 +1,160 @@
-Analyze the following Target System using the Operating Environment Structure framework (Porter's Five Forces analytical lens).
+You are applying the Porter Five Forces framework within Strategem Core V1.
 
-PROBLEM CONTEXT MATERIAL:
+⸻
+
+SCOPE RULE (CRITICAL - MUST FOLLOW)
+
+Apply the analytical lens ONLY insofar as it helps illuminate the stated Decision Focus.
+Do NOT describe the operating environment in general terms unless it materially affects the decision.
+
+⸻
+
+DECISION CONTEXT
+
+Target System: {target_system_title}
+Decision Question: {decision_question}
+Decision Type: {decision_type}
+Options Under Consideration: {options}
+
+⸻
+
+PROBLEM CONTEXT
+
 {context}
+
+⸻
+
+YOUR TASK
+
+Analyze how structural pressures in the operating environment affect EACH OPTION differently.
+
+For each of the five forces:
+1. Assess its relevance to this specific decision (high/medium/low)
+2. Describe how it affects each option differently
+3. Identify which options are more or less vulnerable to this pressure
+4. State assumptions and unknowns explicitly
+
+⸻
+
+REQUIRED OUTPUT STRUCTURE
 
 Provide your analysis in the following JSON format:
 
 {
+  "DecisionQuestion": "The decision question being analyzed",
+  "OptionsAnalyzed": ["Option A", "Option B", ...],
+  
   "ThreatOfNewEntrants": {
-    "Level": "Low | Medium | High",
-    "Rationale": "2-3 sentences explaining the assessment",
-    "Assumptions": ["assumption 1", "assumption 2"],
-    "Unknowns": ["unknown 1", "unknown 2"]
+    "Name": "Threat of New Entrants",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "Why this force matters or doesn't matter to the decision",
+    "EffectByOption": [
+      {
+        "OptionName": "Option A",
+        "Description": "How new entrant threats affect this specific option",
+        "KeyAssumptions": ["assumption 1", "assumption 2"],
+        "KeyUnknowns": ["unknown 1", "unknown 2"]
+      },
+      {
+        "OptionName": "Option B",
+        "Description": "How new entrant threats affect this specific option",
+        "KeyAssumptions": ["assumption 1"],
+        "KeyUnknowns": ["unknown 1"]
+      }
+    ],
+    "SharedAssumptions": ["assumptions applying to all options"],
+    "SharedUnknowns": ["unknowns applying to all options"]
   },
+  
   "SupplierPower": {
-    "Level": "Low | Medium | High",
-    "Rationale": "2-3 sentences explaining the assessment",
-    "Assumptions": ["assumption 1", "assumption 2"],
-    "Unknowns": ["unknown 1", "unknown 2"]
+    "Name": "Supplier Power",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [...],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
   },
+  
   "BuyerPower": {
-    "Level": "Low | Medium | High",
-    "Rationale": "2-3 sentences explaining the assessment",
-    "Assumptions": ["assumption 1", "assumption 2"],
-    "Unknowns": ["unknown 1", "unknown 2"]
+    "Name": "Buyer Power",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [...],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
   },
+  
   "Substitutes": {
-    "Level": "Low | Medium | High",
-    "Rationale": "2-3 sentences explaining the assessment",
-    "Assumptions": ["assumption 1", "assumption 2"],
-    "Unknowns": ["unknown 1", "unknown 2"]
+    "Name": "Threat of Substitutes",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [...],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
   },
+  
   "Rivalry": {
-    "Level": "Low | Medium | High",
-    "Rationale": "2-3 sentences explaining the assessment",
-    "Assumptions": ["assumption 1", "assumption 2"],
-    "Unknowns": ["unknown 1", "unknown 2"]
+    "Name": "Competitive Rivalry",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [...],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
   },
-  "OverallObservations": "2-3 sentences on overall structural characteristics of the operating environment",
-  "KeyRisks": ["risk 1", "risk 2", "risk 3"],
-  "KeyStrengths": ["strength 1", "strength 2", "strength 3"]
+  
+  "StructuralAsymmetries": [
+    {
+      "ForceName": "ThreatOfNewEntrants",
+      "Description": "New entrants pose a significantly higher threat to Option A than Option B because...",
+      "StrongerImpactOn": "Option A",
+      "Rationale": "Detailed explanation of why impact differs",
+      "KeyAssumption": "The assumption underlying this asymmetry"
+    }
+  ],
+  
+  "OptionAwareClaims": [
+    {
+      "Statement": "Option A is more vulnerable to supplier power consolidation than Option B",
+      "AffectedOption": "comparative",
+      "Source": "inference",
+      "Confidence": "medium",
+      "Framework": "porter_five_forces"
+    }
+  ],
+  
+  "SharedObservations": "Optional: Only if observations apply equally to all options (rare)"
 }
+
+⸻
+
+CRITICAL RULES
+
+1. Decision-Bound Only: If a force doesn't differentiate options, mark RelevanceToDecision as "low" and explain why.
+
+2. No Generic Analysis: Do NOT provide industry overview. Focus only on decision-relevant pressures.
+
+3. Option-Specific Effects: Every force must describe how it affects EACH option differently.
+
+4. Structural Asymmetries REQUIRED: Identify at least 2-3 forces that disproportionately affect different options.
+
+5. Explicit Non-Goals: Do not recommend, rank, or select an option. Surface structural differences and pressures only.
+
+6. Inconclusive is Valid: If the analysis doesn't clearly favor one option, state this explicitly.
+
+⸻
+
+VALIDATION CHECKLIST
+
+Before outputting, verify:
+- [ ] Each force has RelevanceToDecision rated (high/medium/low)
+- [ ] Each force has EffectByOption for ALL options
+- [ ] StructuralAsymmetries section has at least 2 entries
+- [ ] All claims reference specific options or comparisons
+- [ ] No recommendation or ranking of options is present
+- [ ] Output is valid JSON only
+
+⸻
 
 CRITICAL: Output ONLY valid JSON. No markdown, no bold text, no explanations outside the JSON.
 
-REMEMBER:
-- Do NOT make decisions, recommendations, or investment advice
-- Focus ONLY on structural analysis of the operating environment
-- Framework disagreement is a valid outcome
-- Explicitly state all assumptions and unknowns
+Remember: Lack of clarity or inconclusive results are valid outcomes. This is V1-correct.

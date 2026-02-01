@@ -77,12 +77,22 @@ class AnalysisOrchestrator:
         framework = self._frameworks[framework_name]
         response_model = self._framework_models[framework_name]
 
+        # V1 Compliance: Check if DecisionFocus is required but missing
+        if framework.requires_decision_focus and not context.decision_focus:
+            return FrameworkResult(
+                framework_name=framework_name,
+                success=False,
+                error_message=f"Framework '{framework_name}' requires DecisionFocus but none was provided. "
+                f"Please specify: decision_question, decision_type, and options.",
+            )
+
         try:
             result = self.llm.run_analysis(
                 prompt_name=framework.prompt_template.replace(".txt", ""),
                 context=context.structured_content or context.raw_content,
                 response_model=response_model,
                 max_retries=config.MAX_RETRIES,
+                decision_focus=context.decision_focus,
             )
             return FrameworkResult(
                 framework_name=framework_name, success=True, result=result

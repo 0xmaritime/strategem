@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from typing import Union, Optional, List
-from .models import ProblemContext, ProvidedMaterial
+from .models import ProblemContext, ProvidedMaterial, DecisionFocus
 
 
 class ContextIngestionError(Exception):
@@ -26,6 +26,7 @@ class ContextIngestionModule:
         objectives: Optional[List[str]] = None,
         constraints: Optional[List[str]] = None,
         declared_assumptions: Optional[List[str]] = None,
+        decision_focus: Optional[DecisionFocus] = None,
     ) -> ProblemContext:
         """
         Ingest raw text content as Problem Context Material.
@@ -37,6 +38,7 @@ class ContextIngestionModule:
             objectives: What the decision owner is trying to achieve
             constraints: Known limitations or boundaries
             declared_assumptions: Assumptions explicitly declared by the decision owner
+            decision_focus: Optional DecisionFocus for decision-bound frameworks
         """
         material = ProvidedMaterial(
             material_type="text", content=text, source="direct_input"
@@ -50,6 +52,7 @@ class ContextIngestionModule:
             constraints=constraints or [],
             provided_materials=[material],
             declared_assumptions=declared_assumptions or [],
+            decision_focus=decision_focus,
             # Legacy fields for backward compatibility
             raw_content=text,
             source_type="text",
@@ -63,6 +66,7 @@ class ContextIngestionModule:
         objectives: Optional[List[str]] = None,
         constraints: Optional[List[str]] = None,
         declared_assumptions: Optional[List[str]] = None,
+        decision_focus: Optional[DecisionFocus] = None,
     ) -> ProblemContext:
         """
         Ingest content from a file as Problem Context Material.
@@ -74,6 +78,7 @@ class ContextIngestionModule:
             objectives: What the decision owner is trying to achieve
             constraints: Known limitations or boundaries
             declared_assumptions: Assumptions explicitly declared by the decision owner
+            decision_focus: Optional DecisionFocus for decision-bound frameworks
         """
         file_path = Path(file_path)
 
@@ -101,6 +106,7 @@ class ContextIngestionModule:
             constraints=constraints or [],
             provided_materials=[material],
             declared_assumptions=declared_assumptions or [],
+            decision_focus=decision_focus,
             # Legacy fields for backward compatibility
             raw_content=content,
             source_type="document",
@@ -155,6 +161,7 @@ class ContextIngestionModule:
         objectives: Optional[List[str]] = None,
         constraints: Optional[List[str]] = None,
         declared_assumptions: Optional[List[str]] = None,
+        decision_focus: Optional[DecisionFocus] = None,
     ) -> ProblemContext:
         """
         Create a formal ProblemContext from multiple materials.
@@ -168,6 +175,7 @@ class ContextIngestionModule:
             objectives: What the decision owner is trying to achieve
             constraints: Known limitations or boundaries
             declared_assumptions: Assumptions explicitly declared by the decision owner
+            decision_focus: Optional DecisionFocus for decision-bound frameworks
         """
         provided_materials = []
         raw_contents = []
@@ -203,6 +211,7 @@ class ContextIngestionModule:
             constraints=constraints or [],
             provided_materials=provided_materials,
             declared_assumptions=declared_assumptions or [],
+            decision_focus=decision_focus,
             # Legacy fields
             raw_content="\n\n".join(raw_contents),
             source_type="composite",

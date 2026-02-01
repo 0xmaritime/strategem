@@ -36,22 +36,34 @@ class ReportGenerator:
         """Format a single force/pressure analysis"""
         lines = [
             f"### {name}",
-            f"**Level:** {force.level}",
+            f"**Relevance to Decision:** {force.relevance_to_decision}",
             "",
-            f"**Rationale:** {force.rationale}",
+            f"**Relevance Rationale:** {force.relevance_rationale}",
             "",
         ]
 
-        if force.assumptions:
-            lines.append("**Assumptions:**")
-            for assumption in force.assumptions:
+        if force.shared_assumptions:
+            lines.append("**Shared Assumptions:**")
+            for assumption in force.shared_assumptions:
                 lines.append(f"- {assumption}")
             lines.append("")
 
-        if force.unknowns:
-            lines.append("**Unknowns:**")
-            for unknown in force.unknowns:
+        if force.shared_unknowns:
+            lines.append("**Shared Unknowns:**")
+            for unknown in force.shared_unknowns:
                 lines.append(f"- {unknown}")
+            lines.append("")
+
+        if force.effect_by_option:
+            lines.append("**Effect by Option:**")
+            for effect in force.effect_by_option:
+                lines.append(f"- **{effect.option_name}**: {effect.description}")
+                if effect.key_assumptions:
+                    lines.append(
+                        f"  - Key Assumptions: {', '.join(effect.key_assumptions)}"
+                    )
+                if effect.key_unknowns:
+                    lines.append(f"  - Key Unknowns: {', '.join(effect.key_unknowns)}")
             lines.append("")
 
         return "\n".join(lines)
@@ -72,20 +84,32 @@ class ReportGenerator:
             # Main claim for each force
             claims.append(
                 AnalyticalClaim(
-                    statement=f"{force_name}: {force.level} pressure",
+                    statement=f"{force_name}: {force.relevance_to_decision} relevance to decision",
                     source=ClaimSource.INFERENCE,
                     confidence=ConfidenceLevel.MEDIUM,  # Porter analysis is inferential
                     framework="porter_five_forces",
                 )
             )
 
-            # Claims from assumptions
-            for assumption in force.assumptions:
+            # Claims from shared assumptions
+            for assumption in force.shared_assumptions:
                 claims.append(
                     AnalyticalClaim(
                         statement=assumption,
                         source=ClaimSource.ASSUMPTION,
                         confidence=ConfidenceLevel.LOW,
+                        framework="porter_five_forces",
+                    )
+                )
+
+        # Extract claims from option-aware claims if available
+        if hasattr(porter, "option_aware_claims") and porter.option_aware_claims:
+            for claim in porter.option_aware_claims:
+                claims.append(
+                    AnalyticalClaim(
+                        statement=claim.statement,
+                        source=claim.source,
+                        confidence=claim.confidence,
                         framework="porter_five_forces",
                     )
                 )
@@ -213,6 +237,17 @@ class ReportGenerator:
         )
         lines.append("")
 
+        # Display decision question and options being analyzed
+        if hasattr(porter, "decision_question") and porter.decision_question:
+            lines.append(f"**Decision Question:** {porter.decision_question}")
+            lines.append("")
+
+        if hasattr(porter, "options_analyzed") and porter.options_analyzed:
+            lines.append("**Options Analyzed:**")
+            for option in porter.options_analyzed:
+                lines.append(f"- {option}")
+            lines.append("")
+
         lines.append(
             self._format_force(
                 "Pressure: New Entrant Threat", porter.threat_of_new_entrants
@@ -244,6 +279,29 @@ class ReportGenerator:
             lines.append("### Key Structural Strengths")
             for strength in porter.key_strengths:
                 lines.append(f"- {strength}")
+            lines.append("")
+
+        # Add Structural Asymmetries section
+        if hasattr(porter, "structural_asymmetries") and porter.structural_asymmetries:
+            lines.append("### Structural Asymmetries")
+            for asymmetry in porter.structural_asymmetries:
+                lines.append(f"**{asymmetry.force_name}**")
+                lines.append(f"- Description: {asymmetry.description}")
+                lines.append(f"- Stronger Impact On: {asymmetry.stronger_impact_on}")
+                lines.append(f"- Rationale: {asymmetry.rationale}")
+                if hasattr(asymmetry, "key_assumption") and asymmetry.key_assumption:
+                    lines.append(f"- Key Assumption: {asymmetry.key_assumption}")
+                lines.append("")
+
+        # Add Option-Aware Claims section
+        if hasattr(porter, "option_aware_claims") and porter.option_aware_claims:
+            lines.append("### Option-Aware Claims")
+            for claim in porter.option_aware_claims:
+                lines.append(f"- **{claim.statement}**")
+                if hasattr(claim, "source") and claim.source:
+                    lines.append(f"  - Source: {claim.source}")
+                if hasattr(claim, "confidence") and claim.confidence:
+                    lines.append(f"  - Confidence: {claim.confidence}")
             lines.append("")
 
         claims = self._extract_claims_from_porter(porter)
@@ -332,9 +390,9 @@ class ReportGenerator:
                 result.porter_analysis.substitutes,
                 result.porter_analysis.rivalry,
             ]:
-                if force.unknowns:
+                if hasattr(force, "shared_unknowns") and force.shared_unknowns:
                     unknowns.extend(
-                        [f"[Operating Environment] {u}" for u in force.unknowns]
+                        [f"[Operating Environment] {u}" for u in force.shared_unknowns]
                     )
 
         # Collect unknowns from Systems Dynamics
@@ -368,8 +426,8 @@ class ReportGenerator:
 
         # From Porter analysis
         if result.porter_analysis:
-            # High-pressure forces could change with market shifts
-            high_pressure_forces = []
+            # High-relevance forces could change with market shifts
+            high_relevance_forces = []
             for force_name, force in [
                 ("New Entrant Threat", result.porter_analysis.threat_of_new_entrants),
                 ("Supplier Power", result.porter_analysis.supplier_power),
@@ -377,17 +435,20 @@ class ReportGenerator:
                 ("Substitution Threat", result.porter_analysis.substitutes),
                 ("Competitive Intensity", result.porter_analysis.rivalry),
             ]:
-                if force.level == "High":
-                    high_pressure_forces.append(force_name)
+                if (
+                    hasattr(force, "relevance_to_decision")
+                    and force.relevance_to_decision == "High"
+                ):
+                    high_relevance_forces.append(force_name)
                     judgment_required_areas.append(
-                        f"How to navigate {force_name} pressure"
+                        f"How to navigate {force_name} relevance"
                     )
-                if force.unknowns:
-                    dominant_unknowns.extend(force.unknowns)
+                if hasattr(force, "shared_unknowns") and force.shared_unknowns:
+                    dominant_unknowns.extend(force.shared_unknowns)
 
-            if high_pressure_forces:
+            if high_relevance_forces:
                 assessment_change_conditions.append(
-                    f"Operating environment pressures would change if: {', '.join(high_pressure_forces)} dynamics shift"
+                    f"Operating environment relevance would change if: {', '.join(high_relevance_forces)} dynamics shift"
                 )
 
         # From Systems Dynamics

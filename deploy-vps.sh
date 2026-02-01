@@ -15,7 +15,18 @@ fi
 
 echo "[1/6] Installing dependencies..."
 apt-get update
-apt-get install -y python3 python3-pip python3-venv git nginx
+apt-get install -y python3 python3-pip python3-venv git
+
+# Optional: Add swap for 1GB RAM systems
+echo "Checking memory..."
+if [ $(free -m | awk 'NR==2{print $2}') -lt 2048 ]; then
+    echo "Low memory detected. Adding 1GB swap..."
+    fallocate -l 1G /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+    echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
 
 echo "[2/6] Setting up application directory..."
 if [ -d "$APP_DIR" ]; then

@@ -55,6 +55,31 @@
                             rows="15"
                             required
                         ></textarea>
+                        
+                        <div class="decision-focus-section" style="margin: 1.5rem 0; padding: 1rem; border: 2px solid #000000; background: #f5f5f5;">
+                            <h4 style="margin-bottom: 1rem;">🎯 Decision Focus (Optional)</h4>
+                            <p style="font-size: 0.9rem; margin-bottom: 1rem;">Required for decision-bound frameworks like Porter Five Forces</p>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Question</label>
+                                <input type="text" name="decision_question" placeholder="e.g., Should we enter the European market?" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                            </div>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Type</label>
+                                <select name="decision_type" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                                    <option value="explore">Explore</option>
+                                    <option value="compare">Compare</option>
+                                    <option value="stress_test">Stress Test</option>
+                                </select>
+                            </div>
+                            
+                            <div style="margin-bottom: 0.5rem;">
+                                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Options (comma-separated)</label>
+                                <input type="text" name="options" placeholder="e.g., Enter European market, Focus on domestic growth, Partner with local firm" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                            </div>
+                        </div>
+                        
                         <button type="submit" class="btn btn-primary">Analyze</button>
                     </form>
                 </div>
@@ -78,6 +103,31 @@
                             </label>
                         </div>
                         <p class="file-types">Accepted: .txt, .md (Problem Context Materials)</p>
+                        
+                        <div class="decision-focus-section" style="margin: 1.5rem 0; padding: 1rem; border: 2px solid #000000; background: #f5f5f5;">
+                            <h4 style="margin-bottom: 1rem;">🎯 Decision Focus (Optional)</h4>
+                            <p style="font-size: 0.9rem; margin-bottom: 1rem;">Required for decision-bound frameworks like Porter Five Forces</p>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Question</label>
+                                <input type="text" name="decision_question" placeholder="e.g., Should we enter the European market?" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                            </div>
+                            
+                            <div style="margin-bottom: 1rem;">
+                                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Type</label>
+                                <select name="decision_type" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                                    <option value="explore">Explore</option>
+                                    <option value="compare">Compare</option>
+                                    <option value="stress_test">Stress Test</option>
+                                </select>
+                            </div>
+                            
+                            <div style="margin-bottom: 0.5rem;">
+                                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Options (comma-separated)</label>
+                                <input type="text" name="options" placeholder="e.g., Enter European market, Focus on domestic growth, Partner with local firm" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                            </div>
+                        </div>
+                        
                         <button type="submit" class="btn btn-primary">Analyze</button>
                     </form>
                 </div>

@@ -44,7 +44,7 @@ class PersistenceLayer:
 
     def _problem_context_to_dict(self, context: ProblemContext) -> dict:
         """Convert ProblemContext to dict with V1 fields"""
-        return {
+        result = {
             # V1 formal schema fields
             "title": context.title,
             "problem_statement": context.problem_statement,
@@ -59,11 +59,20 @@ class PersistenceLayer:
                 for m in context.provided_materials
             ],
             "declared_assumptions": context.declared_assumptions,
+            # Decision Focus (V1 Decision-Bound)
+            "decision_focus": {
+                "decision_question": context.decision_focus.decision_question,
+                "decision_type": context.decision_focus.decision_type.value,
+                "options": context.decision_focus.options,
+            }
+            if context.decision_focus
+            else None,
             # Legacy fields (maintained for backward compatibility)
             "raw_content": context.raw_content,
             "structured_content": context.structured_content,
             "source_type": context.source_type,
         }
+        return result
 
     def _framework_results_to_dict(self, results: List[FrameworkResult]) -> list:
         """Convert FrameworkResult list to dict"""
@@ -77,41 +86,72 @@ class PersistenceLayer:
         ]
 
     def _porter_to_dict(self, porter) -> dict:
-        """Convert Porter analysis to dict"""
+        """Convert Porter analysis to dict (V1 Decision-Bound structure)"""
+
+        def force_to_dict(force):
+            """Convert a single ForceAnalysis to dict"""
+            return {
+                "name": force.name,
+                "relevance_to_decision": force.relevance_to_decision,
+                "relevance_rationale": force.relevance_rationale,
+                "shared_assumptions": force.shared_assumptions,
+                "shared_unknowns": force.shared_unknowns,
+                "effect_by_option": [
+                    {
+                        "option_name": e.option_name,
+                        "description": e.description,
+                        "key_assumptions": e.key_assumptions,
+                        "key_unknowns": e.key_unknowns,
+                    }
+                    for e in force.effect_by_option
+                ],
+                "claims": [
+                    {
+                        "statement": c.statement,
+                        "source": c.source.value,
+                        "confidence": c.confidence.value,
+                        "framework": c.framework,
+                    }
+                    for c in force.claims
+                ]
+                if hasattr(force, "claims")
+                else [],
+            }
+
         return {
-            "ThreatOfNewEntrants": {
-                "level": porter.threat_of_new_entrants.level,
-                "rationale": porter.threat_of_new_entrants.rationale,
-                "assumptions": porter.threat_of_new_entrants.assumptions,
-                "unknowns": porter.threat_of_new_entrants.unknowns,
-            },
-            "SupplierPower": {
-                "level": porter.supplier_power.level,
-                "rationale": porter.supplier_power.rationale,
-                "assumptions": porter.supplier_power.assumptions,
-                "unknowns": porter.supplier_power.unknowns,
-            },
-            "BuyerPower": {
-                "level": porter.buyer_power.level,
-                "rationale": porter.buyer_power.rationale,
-                "assumptions": porter.buyer_power.assumptions,
-                "unknowns": porter.buyer_power.unknowns,
-            },
-            "Substitutes": {
-                "level": porter.substitutes.level,
-                "rationale": porter.substitutes.rationale,
-                "assumptions": porter.substitutes.assumptions,
-                "unknowns": porter.substitutes.unknowns,
-            },
-            "Rivalry": {
-                "level": porter.rivalry.level,
-                "rationale": porter.rivalry.rationale,
-                "assumptions": porter.rivalry.assumptions,
-                "unknowns": porter.rivalry.unknowns,
-            },
-            "OverallObservations": porter.overall_observations,
-            "KeyRisks": porter.key_risks,
-            "KeyStrengths": porter.key_strengths,
+            "decision_question": porter.decision_question,
+            "options_analyzed": porter.options_analyzed,
+            "ThreatOfNewEntrants": force_to_dict(porter.threat_of_new_entrants),
+            "SupplierPower": force_to_dict(porter.supplier_power),
+            "BuyerPower": force_to_dict(porter.buyer_power),
+            "Substitutes": force_to_dict(porter.substitutes),
+            "Rivalry": force_to_dict(porter.rivalry),
+            "structural_asymmetries": [
+                {
+                    "force_name": sa.force_name,
+                    "description": sa.description,
+                    "stronger_impact_on": sa.stronger_impact_on,
+                    "rationale": sa.rationale,
+                    "key_assumption": sa.key_assumption,
+                }
+                for sa in porter.structural_asymmetries
+            ]
+            if porter.structural_asymmetries
+            else [],
+            "option_aware_claims": [
+                {
+                    "statement": c.statement,
+                    "source": c.source.value,
+                    "confidence": c.confidence.value,
+                    "framework": c.framework,
+                }
+                for c in porter.option_aware_claims
+            ]
+            if hasattr(porter, "option_aware_claims") and porter.option_aware_claims
+            else [],
+            "shared_observations": porter.shared_observations
+            if hasattr(porter, "shared_observations")
+            else None,
         }
 
     def _systems_to_dict(self, systems) -> dict:
@@ -150,6 +190,19 @@ class PersistenceLayer:
 
         # Load ProblemContext with V1 fields (backward compatible)
         pc_data = data["problem_context"]
+
+        # Load decision_focus if present
+        decision_focus = None
+        if pc_data.get("decision_focus"):
+            df_data = pc_data["decision_focus"]
+            from .models import DecisionFocus, DecisionType
+
+            decision_focus = DecisionFocus(
+                decision_question=df_data["decision_question"],
+                decision_type=DecisionType(df_data["decision_type"]),
+                options=df_data["options"],
+            )
+
         problem_context = ProblemContext(
             # V1 fields (with defaults for backward compatibility)
             title=pc_data.get("title", "Untitled Analysis"),
@@ -169,6 +222,8 @@ class PersistenceLayer:
             if pc_data.get("provided_materials")
             else [],
             declared_assumptions=pc_data.get("declared_assumptions", []),
+            # Decision Focus (V1 Decision-Bound)
+            decision_focus=decision_focus,
             # Legacy fields
             raw_content=pc_data.get("raw_content"),
             structured_content=pc_data.get("structured_content"),
@@ -178,15 +233,86 @@ class PersistenceLayer:
         porter_analysis = None
         if data.get("porter_analysis"):
             pa = data["porter_analysis"]
+            from .models import (
+                ForceEffect,
+                AnalyticalClaim,
+                ClaimSource,
+                ConfidenceLevel,
+                StructuralAsymmetry,
+            )
+
+            def dict_to_force(force_data):
+                """Convert dict to ForceAnalysis"""
+                effects = [
+                    ForceEffect(
+                        option_name=e["option_name"],
+                        description=e["description"],
+                        key_assumptions=e.get("key_assumptions", []),
+                        key_unknowns=e.get("key_unknowns", []),
+                    )
+                    for e in force_data.get("effect_by_option", [])
+                ]
+
+                claims = [
+                    AnalyticalClaim(
+                        statement=c["statement"],
+                        source=ClaimSource(c["source"]),
+                        confidence=ConfidenceLevel(c["confidence"]),
+                        framework=c.get("framework"),
+                    )
+                    for c in force_data.get("claims", [])
+                ]
+
+                return ForceAnalysis(
+                    name=force_data.get("name", "UnknownForce"),
+                    relevance_to_decision=force_data.get(
+                        "relevance_to_decision", "medium"
+                    ),
+                    relevance_rationale=force_data.get("relevance_rationale", ""),
+                    effect_by_option=effects,
+                    shared_assumptions=force_data.get("shared_assumptions", []),
+                    shared_unknowns=force_data.get("shared_unknowns", []),
+                    claims=claims,
+                )
+
+            # Handle structural asymmetries
+            structural_asymmetries = []
+            if pa.get("structural_asymmetries"):
+                structural_asymmetries = [
+                    StructuralAsymmetry(
+                        force_name=sa["force_name"],
+                        description=sa["description"],
+                        stronger_impact_on=sa["stronger_impact_on"],
+                        rationale=sa["rationale"],
+                        key_assumption=sa["key_assumption"],
+                    )
+                    for sa in pa["structural_asymmetries"]
+                ]
+
+            # Handle option-aware claims
+            option_aware_claims = []
+            if pa.get("option_aware_claims"):
+                option_aware_claims = [
+                    AnalyticalClaim(
+                        statement=c["statement"],
+                        source=ClaimSource(c["source"]),
+                        confidence=ConfidenceLevel(c["confidence"]),
+                        framework=c.get("framework"),
+                    )
+                    for c in pa["option_aware_claims"]
+                ]
+
             porter_analysis = PorterAnalysis(
-                ThreatOfNewEntrants=ForceAnalysis(**pa["ThreatOfNewEntrants"]),
-                SupplierPower=ForceAnalysis(**pa["SupplierPower"]),
-                BuyerPower=ForceAnalysis(**pa["BuyerPower"]),
-                Substitutes=ForceAnalysis(**pa["Substitutes"]),
-                Rivalry=ForceAnalysis(**pa["Rivalry"]),
-                OverallObservations=pa["OverallObservations"],
-                KeyRisks=pa.get("KeyRisks", []),
-                KeyStrengths=pa.get("KeyStrengths", []),
+                decision_question=pa.get("decision_question", ""),
+                options_analyzed=pa.get("options_analyzed", []),
+                ThreatOfNewEntrants=dict_to_force(pa.get("ThreatOfNewEntrants", {})),
+                SupplierPower=dict_to_force(pa.get("SupplierPower", {})),
+                BuyerPower=dict_to_force(pa.get("BuyerPower", {})),
+                Substitutes=dict_to_force(pa.get("Substitutes", {})),
+                Rivalry=dict_to_force(pa.get("Rivalry", {})),
+                structural_asymmetries=structural_asymmetries,
+                option_aware_claims=option_aware_claims,
+                shared_observations=pa.get("shared_observations"),
             )
 
         systems_analysis = None
