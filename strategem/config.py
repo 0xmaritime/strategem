@@ -11,10 +11,7 @@ class Config:
     """Application configuration"""
 
     # API Configuration
-    OPENROUTER_API_KEY = os.getenv(
-        "OPENROUTER_API_KEY",
-        "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",
-    )
+    OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
     OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
     LLM_MODEL = os.getenv("LLM_MODEL", "openai/gpt-4o-mini")
     LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.2"))
