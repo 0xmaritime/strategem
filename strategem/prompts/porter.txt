@@ -1,0 +1,45 @@
+Analyze the following company information using Porter's Five Forces framework.
+
+COMPANY INFORMATION:
+{context}
+
+Provide your analysis in the following JSON format:
+
+{
+  "ThreatOfNewEntrants": {
+    "Level": "Low | Medium | High",
+    "Rationale": "2-3 sentences explaining the assessment",
+    "Assumptions": ["assumption 1", "assumption 2"],
+    "Unknowns": ["unknown 1", "unknown 2"]
+  },
+  "SupplierPower": {
+    "Level": "Low | Medium | High",
+    "Rationale": "2-3 sentences explaining the assessment",
+    "Assumptions": ["assumption 1", "assumption 2"],
+    "Unknowns": ["unknown 1", "unknown 2"]
+  },
+  "BuyerPower": {
+    "Level": "Low | Medium | High",
+    "Rationale": "2-3 sentences explaining the assessment",
+    "Assumptions": ["assumption 1", "assumption 2"],
+    "Unknowns": ["unknown 1", "unknown 2"]
+  },
+  "Substitutes": {
+    "Level": "Low | Medium | High",
+    "Rationale": "2-3 sentences explaining the assessment",
+    "Assumptions": ["assumption 1", "assumption 2"],
+    "Unknowns": ["unknown 1", "unknown 2"]
+  },
+  "Rivalry": {
+    "Level": "Low | Medium | High",
+    "Rationale": "2-3 sentences explaining the assessment",
+    "Assumptions": ["assumption 1", "assumption 2"],
+    "Unknowns": ["unknown 1", "unknown 2"]
+  },
+  "OverallObservations": "2-3 sentences on overall structural attractiveness",
+  "KeyRisks": ["risk 1", "risk 2", "risk 3"],
+  "KeyStrengths": ["strength 1", "strength 2", "strength 3"]
+}
+
+CRITICAL: Output ONLY valid JSON. No markdown, no bold text, no explanations outside the JSON.
+Remember: Do not make investment recommendations. Focus on structural analysis only.

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - Strategem Core</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 2px solid #000000;
+        }
+        .status-success { background: #ffffff; color: #000000; }
+        .status-error { background: #000000; color: #ffffff; }
+        .report-content {
+            background: #ffffff;
+            border: 2px solid #000000;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            white-space: pre-wrap;
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+        .meta-info {
+            background: #ffffff;
+            padding: 1rem;
+            border: 2px solid #000000;
+            margin-bottom: 1.5rem;
+        }
+        .meta-info p {
+            margin: 0.25rem 0;
+            font-size: 0.9rem;
+        }
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .analysis-detail {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid #000000;
+        }
+        .force-card {
+            background: white;
+            border: 2px solid #000000;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .force-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .force-level {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: 2px solid #000000;
+        }
+        .level-low { background: #ffffff; color: #000000; }
+        .level-medium { background: #eeeeee; color: #000000; }
+        .level-high { background: #000000; color: #ffffff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Strategem Core</h1>
+            <p class="subtitle">Decision Support System for Business Analysis</p>
+            <nav>
+                <a href="/">New Analysis</a>
+                <a href="/analyses" class="active">View All Analyses</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="page-header">
+                <h2>Analysis Results</h2>
+                <div class="actions">
+                    <a href="/report/{{ result.id }}/download" class="btn btn-secondary">Download Report</a>
+                    <a href="/" class="btn btn-outline">New Analysis</a>
+                </div>
+            </div>
+
+            <div class="meta-info">
+                <p><strong>Analysis ID:</strong> {{ result.id }}</p>
+                <p><strong>Created:</strong> {{ result.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <p><strong>Source:</strong> {{ result.problem_context.source_type }}</p>
+                <p>
+                    <strong>Status:</strong>
+                    {% if has_porter %}
+                        <span class="status-indicator status-success">✓ Porter Analysis Complete</span>
+                    {% else %}
+                        <span class="status-indicator status-error">✗ Porter Analysis Failed</span>
+                    {% endif %}
+                    {% if has_systems %}
+                        <span class="status-indicator status-success">✓ Systems Analysis Complete</span>
+                    {% else %}
+                        <span class="status-indicator status-error">✗ Systems Analysis Failed</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            {% if report_content %}
+                <div class="report-content">{{ report_content }}</div>
+            {% else %}
+                <div class="alert alert-error">
+                    <p>Report not available. The analysis may have failed.</p>
+                </div>
+            {% endif %}
+
+            {% if has_porter and result.porter_analysis %}
+            <div class="analysis-detail">
+                <h3>Porter's Five Forces - Detailed View</h3>
+                
+                <div class="force-card">
+                    <div class="force-header">
+                        <h4>Threat of New Entrants</h4>
+                        <span class="force-level level-{{ result.porter_analysis.threat_of_new_entrants.level.lower() }}">{{ result.porter_analysis.threat_of_new_entrants.level }}</span>
+                    </div>
+                    <p><strong>Rationale:</strong> {{ result.porter_analysis.threat_of_new_entrants.rationale }}</p>
+                    {% if result.porter_analysis.threat_of_new_entrants.unknowns %}
+                    <p><strong>Unknowns:</strong> {{ result.porter_analysis.threat_of_new_entrants.unknowns | join(', ') }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="force-card">
+                    <div class="force-header">
+                        <h4>Bargaining Power of Suppliers</h4>
+                        <span class="force-level level-{{ result.porter_analysis.supplier_power.level.lower() }}">{{ result.porter_analysis.supplier_power.level }}</span>
+                    </div>
+                    <p><strong>Rationale:</strong> {{ result.porter_analysis.supplier_power.rationale }}</p>
+                </div>
+
+                <div class="force-card">
+                    <div class="force-header">
+                        <h4>Bargaining Power of Buyers</h4>
+                        <span class="force-level level-{{ result.porter_analysis.buyer_power.level.lower() }}">{{ result.porter_analysis.buyer_power.level }}</span>
+                    </div>
+                    <p><strong>Rationale:</strong> {{ result.porter_analysis.buyer_power.rationale }}</p>
+                </div>
+
+                <div class="force-card">
+                    <div class="force-header">
+                        <h4>Threat of Substitutes</h4>
+                        <span class="force-level level-{{ result.porter_analysis.substitutes.level.lower() }}">{{ result.porter_analysis.substitutes.level }}</span>
+                    </div>
+                    <p><strong>Rationale:</strong> {{ result.porter_analysis.substitutes.rationale }}</p>
+                </div>
+
+                <div class="force-card">
+                    <div class="force-header">
+                        <h4>Competitive Rivalry</h4>
+                        <span class="force-level level-{{ result.porter_analysis.rivalry.level.lower() }}">{{ result.porter_analysis.rivalry.level }}</span>
+                    </div>
+                    <p><strong>Rationale:</strong> {{ result.porter_analysis.rivalry.rationale }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </main>
+
+        <footer>
+            <p>Strategem Core v1.0.0 - No investment recommendations. For analytical support only.</p>
+        </footer>
+    </div>
+</body>
+</html>

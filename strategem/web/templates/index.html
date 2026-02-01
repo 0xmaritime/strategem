@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategem Core - Decision Support System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Strategem Core</h1>
+            <p class="subtitle">Decision Support System for Business Analysis</p>
+            <nav>
+                <a href="/" class="active">New Analysis</a>
+                <a href="/analyses">View All Analyses</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="intro">
+                <h2>Analyze a Company</h2>
+                <p>Upload company information to run Porter's Five Forces and Systems Dynamics analyses. The system will generate a structured report highlighting structural attractiveness, system fragility, and uncertainties.</p>
+            </section>
+
+            <div class="upload-options">
+                <div class="upload-section">
+                    <h3>Option 1: Paste Text</h3>
+                    <form action="/analyze/text" method="post">
+                        <textarea 
+                            name="text" 
+                            placeholder="Paste company description, pitch deck content, or business overview here..."
+                            rows="15"
+                            required
+                        ></textarea>
+                        <button type="submit" class="btn btn-primary">Analyze Text</button>
+                    </form>
+                </div>
+
+                <div class="divider">OR</div>
+
+                <div class="upload-section">
+                    <h3>Option 2: Upload File</h3>
+                    <form action="/analyze/file" method="post" enctype="multipart/form-data">
+                        <div class="file-input-wrapper">
+                            <input 
+                                type="file" 
+                                name="file" 
+                                id="file" 
+                                accept=".txt,.md,.doc,.docx"
+                                required
+                            >
+                            <label for="file" class="file-label">
+                                <span class="file-icon">📄</span>
+                                <span class="file-text">Choose a file...</span>
+                            </label>
+                        </div>
+                        <p class="file-types">Accepted: .txt, .md</p>
+                        <button type="submit" class="btn btn-primary">Analyze File</button>
+                    </form>
+                </div>
+            </div>
+
+            <section class="info">
+                <h3>What to Expect</h3>
+                <div class="features">
+                    <div class="feature">
+                        <h4>📊 Porter's Five Forces</h4>
+                        <p>Assess structural industry attractiveness across five dimensions: new entrants, supplier power, buyer power, substitutes, and competitive rivalry.</p>
+                    </div>
+                    <div class="feature">
+                        <h4>🔄 Systems Dynamics</h4>
+                        <p>Understand feedback loops, growth drivers, bottlenecks, and system fragilities that affect business sustainability.</p>
+                    </div>
+                    <div class="feature">
+                        <h4>⚠️ Uncertainty Surfacing</h4>
+                        <p>Explicit identification of risks, assumptions, unknowns, and missing information to support informed decision-making.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Strategem Core v1.0.0 - No investment recommendations. For analytical support only.</p>
+        </footer>
+    </div>
+
+    <script>
+        // File input handling
+        document.getElementById('file').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'Choose a file...';
+            document.querySelector('.file-text').textContent = fileName;
+        });
+    </script>
+</body>
+</html>

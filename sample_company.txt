@@ -1,0 +1,25 @@
+TechFlow Solutions - Company Overview
+
+Founded in 2018, TechFlow Solutions is a B2B SaaS company providing workflow automation software for mid-sized manufacturing companies. The company has 150 employees and is headquartered in Austin, Texas.
+
+Product: TechFlow offers a cloud-based platform that integrates with existing ERP systems to automate inventory management, supply chain tracking, and production scheduling. The platform uses AI to predict demand fluctuations and optimize resource allocation.
+
+Market Position: The company serves 250+ manufacturing clients with an average contract value of $85,000 annually. Primary competitors include traditional ERP providers (SAP, Oracle) and newer vertical SaaS companies like FactorySense and ProdOps.
+
+Business Model: TechFlow operates on a subscription model with implementation fees. Gross margins are 72%, with 95% annual retention rate. Customer acquisition is primarily through industry trade shows, LinkedIn outreach, and partnerships with systems integrators.
+
+Growth: Revenue grew 45% YoY to $21M ARR. The company is expanding into adjacent markets including food & beverage processing and is exploring international expansion into Mexico and Canada.
+
+Team: CEO previously led product at a major supply chain software company. CTO has 15 years experience in manufacturing systems. Recent hires include a VP of Sales from a competitor and a Head of Customer Success.
+
+Funding: Raised $12M Series B in 2023, led by Manufacturing Ventures. Total funding to date is $18M. Company is planning to raise Series C in 2025 to fund international expansion.
+
+Key Metrics:
+- 250 customers
+- $85K ACV
+- 95% retention
+- 45% YoY growth
+- 72% gross margins
+- 18 months runway
+
+Challenges: The company is experiencing longer sales cycles (4-6 months vs 2-3 months previously) as economic uncertainty causes manufacturers to delay software purchases. Integration complexity with legacy systems remains a friction point.

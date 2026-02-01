@@ -1,0 +1,22 @@
+Analyze the following company information using Qualitative Systems Dynamics framework.
+
+COMPANY INFORMATION:
+{context}
+
+Provide your analysis in the following JSON format:
+
+{
+  "SystemOverview": "1-2 paragraph narrative describing how the business system operates",
+  "KeyComponents": ["component 1", "component 2", "component 3"],
+  "FeedbackLoops": {
+    "Reinforcing": ["loop 1", "loop 2"],
+    "Balancing": ["loop 1", "loop 2"]
+  },
+  "Bottlenecks": ["bottleneck 1", "bottleneck 2"],
+  "Fragilities": ["fragility 1", "fragility 2"],
+  "Assumptions": ["assumption 1", "assumption 2"],
+  "Unknowns": ["unknown 1", "unknown 2"]
+}
+
+CRITICAL: Output ONLY valid JSON. No markdown, no bold text, no explanations outside the JSON.
+Remember: Focus on understanding system structure, feedback loops, and fragility. Do not make recommendations.

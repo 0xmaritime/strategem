@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Strategem Core</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 3rem;
+        }
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .error-message {
+            background: #ffffff;
+            color: #000000;
+            padding: 1.5rem;
+            border: 2px solid #000000;
+            margin: 1.5rem 0;
+            text-align: left;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Strategem Core</h1>
+            <p class="subtitle">Decision Support System for Business Analysis</p>
+            <nav>
+                <a href="/">New Analysis</a>
+                <a href="/analyses">View All Analyses</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="error-container">
+                <div class="error-icon">⚠️</div>
+                <h2>Analysis Failed</h2>
+                <p>Something went wrong while processing your request.</p>
+                
+                <div class="error-message">{{ error }}</div>
+                
+                <div class="actions">
+                    <a href="/" class="btn btn-primary">Try Again</a>
+                    <a href="/analyses" class="btn btn-outline">View Past Analyses</a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Strategem Core v1.0.0 - No investment recommendations. For analytical support only.</p>
+        </footer>
+    </div>
+</body>
+</html>
