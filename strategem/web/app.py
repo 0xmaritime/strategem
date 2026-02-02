@@ -20,6 +20,26 @@ from strategem.persistence import PersistenceLayer
 from strategem.models import AnalysisResult, DecisionFocus, DecisionType
 
 
+def _build_decision_focus_from_form(
+    decision_question: Optional[str],
+    decision_type: Optional[str],
+    options: Optional[str],
+) -> Optional[DecisionFocus]:
+    """
+    Build DecisionFocus from form inputs (optional hint, not requirement).
+
+    V1: Forms are optional hints, never epistemic authorities.
+    """
+    if decision_question and options:
+        options_list = [opt.strip() for opt in options.split(",")]
+        return DecisionFocus(
+            decision_question=decision_question,
+            decision_type=DecisionType(decision_type or "explore"),
+            options=options_list,
+        )
+    return None
+
+
 app = FastAPI(
     title="Strategem Core",
     description="Decision Support System for Business Analysis",
@@ -58,14 +78,9 @@ async def analyze_text(
     """Analyze text input with optional DecisionFocus (V1: forms are optional hints)"""
     try:
         # Build DecisionFocus if provided (optional hint, not requirement)
-        decision_focus = None
-        if decision_question and options:
-            options_list = [opt.strip() for opt in options.split(",")]
-            decision_focus = DecisionFocus(
-                decision_question=decision_question,
-                decision_type=DecisionType(decision_type or "explore"),
-                options=options_list,
-            )
+        decision_focus = _build_decision_focus_from_form(
+            decision_question, decision_type, options
+        )
 
         # Ingest and structure content
         context = context_ingestion.ingest_text(text, decision_focus=decision_focus)
@@ -110,14 +125,9 @@ async def analyze_file(
 
         try:
             # Build DecisionFocus if provided (optional hint, not requirement)
-            decision_focus = None
-            if decision_question and options:
-                options_list = [opt.strip() for opt in options.split(",")]
-                decision_focus = DecisionFocus(
-                    decision_question=decision_question,
-                    decision_type=DecisionType(decision_type or "explore"),
-                    options=options_list,
-                )
+            decision_focus = _build_decision_focus_from_form(
+                decision_question, decision_type, options
+            )
 
             # Ingest and structure content
             context = context_ingestion.ingest_file(

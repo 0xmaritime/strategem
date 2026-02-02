@@ -30,14 +30,6 @@ class DecisionType(str, Enum):
     STRESS_TEST = "stress_test"
 
 
-class DecisionFocusStatus(str, Enum):
-    """Status of decision focus in the problem context (Legacy - V1 uses DecisionBindingStatus)"""
-
-    EXPLICIT = "explicit"
-    DERIVED = "derived"
-    INSUFFICIENT = "insufficient"
-
-
 class ClaimType(str, Enum):
     """Type of analytical claim"""
 

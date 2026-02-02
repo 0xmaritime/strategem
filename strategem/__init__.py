@@ -20,7 +20,6 @@ from .models import (
     DecisionType,
     ForceEffect,
     StructuralAsymmetry,
-    DecisionFocusStatus,
     ClaimType,
     FrameworkExecutionStatus,
     DecisionBindingStatus,
