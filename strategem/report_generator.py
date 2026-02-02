@@ -250,11 +250,14 @@ class ReportGenerator:
         Generate Structural Pressures section (Operating Environment analysis).
 
         Uses Porter's Five Forces framework to assess the target system's operating environment.
+
+        V1: Frameworks always run and adapt to context. Missing decision focus reduces depth
+        but never invalidates the artifact.
         """
         if not result.porter_analysis:
             return ReportSection(
-                title="Structural Pressures",
-                content="## Structural Pressures (Operating Environment)\n\n*Analysis incomplete - no assessment of operating environment structure available*",
+                title="Structural Pressures (Operating Environment)",
+                content="## Structural Pressures (Operating Environment)\n\n*No claims surfaced under current inputs.*",
             )
 
         porter = result.porter_analysis
@@ -343,11 +346,14 @@ class ReportGenerator:
         Generate Systemic Risks section (Target System analysis).
 
         Uses Systems Dynamics framework to understand target system fragility.
+
+        V1: Frameworks always run and adapt to context. Missing decision focus reduces depth
+        but never invalidates the artifact.
         """
         if not result.systems_analysis:
             return ReportSection(
                 title="Systemic Risks (Target System)",
-                content="## Systemic Risks (Target System)\n\n*Analysis incomplete - no assessment of target system dynamics available*",
+                content="## Systemic Risks (Target System)\n\n*No claims surfaced under current inputs.*",
             )
 
         systems = result.systems_analysis
@@ -512,14 +518,6 @@ class ReportGenerator:
                 assessment_change_conditions.append(
                     "System performance would change if bottlenecks are resolved"
                 )
-
-        # V1: Add blocked judgments from framework insufficiency
-        if result.framework_results:
-            for fw_result in result.framework_results:
-                if fw_result.execution_reason:
-                    blocked_judgments.append(
-                        f"{fw_result.framework_name}: {fw_result.execution_reason}"
-                    )
 
         # Default if no specific insights
         if not judgment_required_areas:
@@ -728,21 +726,10 @@ class ReportGenerator:
             key_claims = self._generate_key_claims_section(result)
             pre_decision_observations = None
 
-        # V1: Run frameworks unless genuinely ambiguous
-        if is_exploratory:
-            structural_pressures = ReportSection(
-                title="Structural Pressures (Operating Environment)",
-                content="## Structural Pressures (Operating Environment)\n\n*Exploratory mode - input was descriptive rather than decision-focused*",
-                claims=[],
-            )
-            systemic_risks = ReportSection(
-                title="Systemic Risks (Target System)",
-                content="## Systemic Risks (Target System)\n\n*Exploratory mode - input was descriptive rather than decision-focused*",
-                claims=[],
-            )
-        else:
-            structural_pressures = self._generate_structural_pressures_section(result)
-            systemic_risks = self._generate_systemic_risks_section(result)
+        # V1: Frameworks always run, decision focus is optional
+        # They adapt to context, not the other way around
+        structural_pressures = self._generate_structural_pressures_section(result)
+        systemic_risks = self._generate_systemic_risks_section(result)
 
         unknowns = self._generate_unknowns_and_sensitivities(result)
         decision_surface = self._generate_decision_surface(result)

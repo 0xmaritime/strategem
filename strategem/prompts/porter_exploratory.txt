@@ -1,0 +1,151 @@
+You are applying Porter Five Forces framework within Strategem Core V1.
+
+SCOPE RULE (CRITICAL - MUST FOLLOW)
+
+Apply analytical lens to illuminate the target system's operating environment.
+This analysis focuses on structural pressures and attractiveness, NOT on specific decision options.
+
+DECISION CONTEXT
+
+Target System: {target_system_title}
+Analysis Mode: Exploratory (general structural analysis)
+
+PROBLEM CONTEXT
+
+{context}
+
+YOUR TASK
+
+Analyze the structural pressures in the target system's operating environment.
+
+For each of the five forces:
+1. Assess its relevance to the target system (high/medium/low)
+2. Describe how it affects the system
+3. Identify key assumptions and unknowns
+4. Note structural strengths or vulnerabilities
+
+REQUIRED OUTPUT STRUCTURE
+
+Provide your analysis in the following JSON format:
+
+{
+  "DecisionQuestion": "Exploratory analysis of operating environment structure",
+  "OptionsAnalyzed": ["general"],
+
+  "ThreatOfNewEntrants": {
+    "Name": "Threat of New Entrants",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "Why this force matters to this target system",
+    "EffectByOption": [
+      {
+        "OptionName": "general",
+        "Description": "General assessment of new entrant threats to this system",
+        "KeyAssumptions": ["assumption 1", "assumption 2"],
+        "KeyUnknowns": ["unknown 1", "unknown 2"]
+      }
+    ],
+    "SharedAssumptions": ["assumptions about this force"],
+    "SharedUnknowns": ["unknowns about this force"]
+  },
+
+  "SupplierPower": {
+    "Name": "Supplier Power",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [
+      {
+        "OptionName": "general",
+        "Description": "General assessment of supplier power in this system",
+        "KeyAssumptions": ["assumption 1"],
+        "KeyUnknowns": ["unknown 1"]
+      }
+    ],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
+  },
+
+  "BuyerPower": {
+    "Name": "Buyer Power",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [
+      {
+        "OptionName": "general",
+        "Description": "General assessment of buyer power in this system",
+        "KeyAssumptions": ["assumption 1"],
+        "KeyUnknowns": ["unknown 1"]
+      }
+    ],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
+  },
+
+  "Substitutes": {
+    "Name": "Threat of Substitutes",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [
+      {
+        "OptionName": "general",
+        "Description": "General assessment of substitution threats to this system",
+        "KeyAssumptions": ["assumption 1"],
+        "KeyUnknowns": ["unknown 1"]
+      }
+    ],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
+  },
+
+  "Rivalry": {
+    "Name": "Competitive Rivalry",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [
+      {
+        "OptionName": "general",
+        "Description": "General assessment of competitive intensity in this system",
+        "KeyAssumptions": ["assumption 1"],
+        "KeyUnknowns": ["unknown 1"]
+      }
+    ],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
+  },
+
+  "StructuralAsymmetries": [],
+
+  "OptionAwareClaims": [
+    {
+      "Statement": "System-level observation about operating environment",
+      "AffectedOption": "all",
+      "Source": "inference",
+      "Confidence": "medium",
+      "Framework": "porter_five_forces"
+    }
+  ],
+
+  "SharedObservations": "General observations about the operating environment"
+}
+
+CRITICAL RULES
+
+1. General Structural Analysis: Focus on the target system's operating environment structure, not on specific options.
+2. No Generic Analysis: Do NOT provide industry overview. Focus on this specific target system.
+3. System-Level Observations: All claims should be system-level observations.
+4. Explicit Non-Goals: Do not recommend, rank, or select anything. Surface structural pressures only.
+5. Inconclusive is Valid: If analysis is unclear or limited, state this explicitly.
+
+VALIDATION CHECKLIST
+
+Before outputting, verify:
+- [ ] Each force has RelevanceToDecision rated (high/medium/low)
+- [ ] Each force has general assessment in EffectByOption
+- [ ] All claims are system-level (referencing "all" or "general")
+- [ ] No recommendation or ranking is present
+- [ ] Output is valid JSON only
+
+CRITICAL: Output ONLY valid JSON. No markdown, no bold text, no explanations outside JSON.
+
+Remember: Lack of clarity or inconclusive results are valid outcomes. This is V1-correct.
+
+Remember: Use "all" or "general" for affected_options field in all AnalyticalClaims since this is exploratory mode.

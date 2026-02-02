@@ -45,7 +45,15 @@ class LLMInferenceLayer:
         context: str,
         decision_focus: Optional[DecisionFocus] = None,
     ) -> str:
-        """Load and format a user prompt template with DecisionFocus variables"""
+        """Load and format a user prompt template with DecisionFocus variables
+
+        V1: Frameworks adapt to context, not the other way around.
+        If decision_focus is None, use exploratory prompts where available.
+        """
+        # For decision-bound frameworks without decision focus, use exploratory version
+        if not decision_focus and prompt_name == "porter":
+            prompt_name = "porter_exploratory"
+
         prompt_path = config.PROMPTS_DIR / f"{prompt_name}.txt"
         template = prompt_path.read_text()
 
@@ -65,6 +73,10 @@ class LLMInferenceLayer:
                 "{options}", ", ".join(decision_focus.options)
             )
             # Extract target system title from first line of context or use default
+            target_title = context.split("\n")[0][:50] if context else "Target System"
+            formatted = formatted.replace("{target_system_title}", target_title)
+        else:
+            # Replace placeholders with default values for exploratory mode
             target_title = context.split("\n")[0][:50] if context else "Target System"
             formatted = formatted.replace("{target_system_title}", target_title)
 
