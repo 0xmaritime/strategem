@@ -67,6 +67,7 @@ class CoverageStatus(str, Enum):
 
     COMPLETE = "complete"
     PARTIAL = "partial"
+    NOT_APPLICABLE = "not_applicable"
 
 
 class AnalysisSufficiencyStatus(str, Enum):

@@ -195,26 +195,31 @@ class AnalysisOrchestrator:
             decision_binding = DecisionBindingStatus.EXPLICIT
 
         # Option coverage
-        option_coverage = CoverageStatus.COMPLETE
+        option_coverage = CoverageStatus.NOT_APPLICABLE
         if result.problem_context.decision_focus:
             options = result.problem_context.decision_focus.options
-            # Check if each option has at least one claim
-            option_claim_map = {opt: False for opt in options}
+            if not options or len(options) == 0:
+                option_coverage = CoverageStatus.NOT_APPLICABLE
+            else:
+                # Check if each option has at least one claim
+                option_claim_map = {opt: False for opt in options}
 
-            all_claims = []
-            for fw_result in result.framework_results:
-                all_claims.extend(fw_result.claims)
+                all_claims = []
+                for fw_result in result.framework_results:
+                    all_claims.extend(fw_result.claims)
 
-            for claim in all_claims:
-                for opt in claim.applicable_options:
-                    if opt in option_claim_map:
-                        option_claim_map[opt] = True
+                for claim in all_claims:
+                    for opt in claim.applicable_options:
+                        if opt in option_claim_map:
+                            option_claim_map[opt] = True
 
-            uncovered_options = [
-                opt for opt, covered in option_claim_map.items() if not covered
-            ]
-            if uncovered_options:
-                option_coverage = CoverageStatus.PARTIAL
+                uncovered_options = [
+                    opt for opt, covered in option_claim_map.items() if not covered
+                ]
+                if uncovered_options:
+                    option_coverage = CoverageStatus.PARTIAL
+                else:
+                    option_coverage = CoverageStatus.COMPLETE
 
         # Framework coverage
         framework_coverage = CoverageStatus.COMPLETE

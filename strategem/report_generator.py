@@ -1,7 +1,7 @@
 """Strategem Core - Report Generator (V1 Compliant)"""
 
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from .models import (
     AnalysisResult,
     AnalysisReport,
@@ -625,6 +625,49 @@ class ReportGenerator:
 
         return "\n".join(lines)
 
+    def _generate_pre_decision_observations(self, result: AnalysisResult) -> List[str]:
+        """
+        Generate Pre-Decision Observations (Non-Analytical).
+
+        V1 Requirement: When Decision Binding is insufficient, system MUST NOT emit
+        Key Analytical Claims. Instead, emit pre-decision observations that are
+        explicitly labeled non-claims and excluded from framework attribution.
+
+        These observations should NOT include:
+        - Framework attribution
+        - Confidence scoring
+        - Option-specific assertions
+
+        They should capture:
+        - Material characteristics
+        - Domain considerations
+        - Pre-decision factors to investigate
+        """
+        observations = []
+
+        # Extract material-based observations from context
+        if result.problem_context.provided_materials:
+            observations.append("Problem context materials were provided and reviewed")
+
+        # Extract potential fragilities from systems analysis WITHOUT attribution
+        if result.systems_analysis and result.systems_analysis.fragilities:
+            observations.append(
+                "System materials suggest potential fragilities warranting further investigation"
+            )
+
+        # Extract considerations from assumptions WITHOUT attribution
+        if result.systems_analysis and result.systems_analysis.assumptions:
+            observations.append(
+                "Context materials contain assumptions that may require validation"
+            )
+
+        # Add explicit pre-decision guidance
+        observations.append(
+            "To proceed with analysis, a decision question with at least 2 options must be specified"
+        )
+
+        return observations
+
     def _generate_analysis_sufficiency_summary(
         self, result: AnalysisResult
     ) -> Optional[AnalysisSufficiencySummary]:
@@ -633,7 +676,7 @@ class ReportGenerator:
 
         V1 Requirement: Descriptive summary of completeness without evaluation.
 
-        This is extracted from the analysis result computed by the orchestrator.
+        This is extracted from analysis result computed by orchestrator.
         """
         return result.analysis_sufficiency
 
@@ -654,11 +697,40 @@ class ReportGenerator:
 
         This is a reasoned artifact, not a recommendation.
         """
+        # V1 Hard Gate: Check if decision binding is insufficient
+        is_insufficient = (
+            result.analysis_sufficiency
+            and result.analysis_sufficiency.decision_binding
+            == DecisionBindingStatus.INSUFFICIENT
+        )
+
         # Generate all sections
         context_summary = self._generate_context_summary(result)
-        key_claims = self._generate_key_claims_section(result)
-        structural_pressures = self._generate_structural_pressures_section(result)
-        systemic_risks = self._generate_systemic_risks_section(result)
+
+        # V1: No analytical claims when decision binding is insufficient
+        if is_insufficient:
+            key_claims = []
+            pre_decision_observations = self._generate_pre_decision_observations(result)
+        else:
+            key_claims = self._generate_key_claims_section(result)
+            pre_decision_observations = None
+
+        # V1: Collapse structural pressures when decision binding is insufficient
+        if is_insufficient:
+            structural_pressures = ReportSection(
+                title="Structural Pressures (Operating Environment)",
+                content="## Structural Pressures (Operating Environment)\n\n*Analysis not performed - decision focus insufficient*",
+                claims=[],
+            )
+            systemic_risks = ReportSection(
+                title="Systemic Risks (Target System)",
+                content="## Systemic Risks (Target System)\n\n*Analysis not performed - decision focus insufficient*",
+                claims=[],
+            )
+        else:
+            structural_pressures = self._generate_structural_pressures_section(result)
+            systemic_risks = self._generate_systemic_risks_section(result)
+
         unknowns = self._generate_unknowns_and_sensitivities(result)
         decision_surface = self._generate_decision_surface(result)
         framework_agreement = self._generate_framework_agreement_tension(result)
@@ -688,22 +760,34 @@ class ReportGenerator:
         )
 
         # Generate full markdown report
-        full_report = self._generate_full_markdown(report)
+        full_report = self._generate_full_markdown(report, pre_decision_observations)
         report.generated_report = full_report
 
         return report
 
-    def _generate_full_markdown(self, report: AnalysisReport) -> str:
+    def _generate_full_markdown(
+        self,
+        report: AnalysisReport,
+        pre_decision_observations: Optional[List[str]] = None,
+    ) -> str:
         """Generate the complete markdown report"""
 
-        # Key claims formatted
-        claims_section = "## Key Analytical Claims\n\n"
-        if report.key_analytical_claims:
-            for claim in report.key_analytical_claims[:10]:  # Top 10 claims
-                claims_section += f"- **{claim.statement}**\n"
-                claims_section += f"  - Source: {claim.source.value} | Confidence: {claim.confidence.value} | Framework: {claim.framework}\n"
+        # Key claims formatted - or pre-decision observations if applicable
+        if pre_decision_observations is not None:
+            # V1: Pre-decision mode - no analytical claims
+            claims_section = "## Pre-Decision Observations (Non-Analytical)\n\n"
+            claims_section += "*The following are pre-decision considerations, NOT analytical claims*\n\n"
+            for obs in pre_decision_observations:
+                claims_section += f"- {obs}\n"
         else:
-            claims_section += "No explicit claims extracted from analysis.\n"
+            # Normal analysis mode
+            claims_section = "## Key Analytical Claims\n\n"
+            if report.key_analytical_claims:
+                for claim in report.key_analytical_claims[:10]:  # Top 10 claims
+                    claims_section += f"- **{claim.statement}**\n"
+                    claims_section += f"  - Source: {claim.source.value} | Confidence: {claim.confidence.value} | Framework: {claim.framework}\n"
+            else:
+                claims_section += "No explicit claims extracted from analysis.\n"
 
         # Unknowns formatted
         unknowns_section = "## Unknowns & Sensitivities\n\n"
