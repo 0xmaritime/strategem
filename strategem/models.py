@@ -30,6 +30,53 @@ class DecisionType(str, Enum):
     STRESS_TEST = "stress_test"
 
 
+class DecisionFocusStatus(str, Enum):
+    """Status of decision focus in the problem context"""
+
+    EXPLICIT = "explicit"
+    DERIVED = "derived"
+    INSUFFICIENT = "insufficient"
+
+
+class ClaimType(str, Enum):
+    """Type of analytical claim"""
+
+    OPTION_SPECIFIC = "option_specific"
+    COMPARATIVE = "comparative"
+    SYSTEM_LEVEL = "system_level"
+
+
+class FrameworkExecutionStatus(str, Enum):
+    """Status of framework execution"""
+
+    SUCCESSFUL = "successful"
+    INSUFFICIENT = "insufficient"
+    FAILED = "failed"
+
+
+class DecisionBindingStatus(str, Enum):
+    """Status of decision binding in analysis"""
+
+    EXPLICIT = "explicit"
+    DERIVED = "derived"
+    INSUFFICIENT = "insufficient"
+
+
+class CoverageStatus(str, Enum):
+    """Status of coverage (options or frameworks)"""
+
+    COMPLETE = "complete"
+    PARTIAL = "partial"
+
+
+class AnalysisSufficiencyStatus(str, Enum):
+    """Overall sufficiency status of the analysis"""
+
+    SUFFICIENT = "sufficient"
+    CONSTRAINED = "constrained"
+    EXPLORATORY_ONLY = "exploratory_only"
+
+
 class DecisionFocus(BaseModel):
     """
     Decision Focus - MANDATORY for decision-bound frameworks.
@@ -71,9 +118,16 @@ class AnalyticalClaim(BaseModel):
     framework: Optional[str] = Field(
         None, description="Which framework produced this claim"
     )
+    claim_type: ClaimType = Field(
+        ..., description="Type of claim: option_specific, comparative, or system_level"
+    )
+    applicable_options: List[str] = Field(
+        default_factory=list,
+        description="Which decision option(s) this claim affects. For option_specific: exactly 1 option. For comparative: >=2 options. For system_level: use ['all']",
+    )
     affected_options: List[str] = Field(
         default_factory=list,
-        description="Which decision option(s) this claim affects. Use 'comparative' for cross-option claims, or specific option names like 'Option A', 'Option B'",
+        description="[Legacy] Which decision option(s) this claim affects. Use applicable_options in V1.",
     )
 
 
@@ -314,6 +368,36 @@ class FrameworkResult(BaseModel):
     result: Optional[Any] = None
     error_message: Optional[str] = None
     claims: List[AnalyticalClaim] = Field(default_factory=list)
+    execution_status: FrameworkExecutionStatus = Field(
+        ..., description="Execution status: successful, insufficient, or failed"
+    )
+    execution_reason: Optional[str] = Field(
+        None, description="Reason for execution status if not successful"
+    )
+
+
+class AnalysisSufficiencySummary(BaseModel):
+    """
+    Analysis Sufficiency Summary - V1 completeness indicator.
+
+    This section is descriptive only, not evaluative. It describes
+    the completeness of the analysis without making judgments.
+    """
+
+    decision_binding: DecisionBindingStatus = Field(
+        ...,
+        description="Status of decision focus binding: explicit, derived, or insufficient",
+    )
+    option_coverage: CoverageStatus = Field(
+        ..., description="Coverage of decision options: complete or partial"
+    )
+    framework_coverage: CoverageStatus = Field(
+        ..., description="Coverage of frameworks: complete or partial"
+    )
+    overall_status: AnalysisSufficiencyStatus = Field(
+        ...,
+        description="Overall sufficiency: sufficient, constrained, or exploratory_only",
+    )
 
 
 class AnalysisResult(BaseModel):
@@ -336,6 +420,11 @@ class AnalysisResult(BaseModel):
     # Generic framework results (V1 compliant)
     framework_results: List[FrameworkResult] = Field(
         default_factory=list, description="Results from all applied frameworks"
+    )
+
+    # V1 completeness hardening
+    analysis_sufficiency: Optional[AnalysisSufficiencySummary] = Field(
+        None, description="Summary of analysis completeness and binding"
     )
 
     created_at: datetime = Field(default_factory=datetime.now)
@@ -373,6 +462,21 @@ class DecisionSurface(BaseModel):
         default_factory=list, description="Where is judgment explicitly required"
     )
 
+    decision_question: Optional[str] = Field(
+        None, description="The decision question being addressed"
+    )
+    options: List[str] = Field(
+        default_factory=list, description="The options under consideration"
+    )
+    tradeoff_axes: List[str] = Field(
+        default_factory=list,
+        description="Trade-off axes identified (e.g., 'Transparency vs Flexibility')",
+    )
+    blocked_judgments: List[str] = Field(
+        default_factory=list,
+        description="Judgments that are blocked due to insufficiency",
+    )
+
 
 class AnalysisReport(BaseModel):
     """
@@ -385,6 +489,7 @@ class AnalysisReport(BaseModel):
     - Systemic Risks: Target system fragilities
     - Unknowns & Sensitivities: Explicit uncertainty
     - Decision Surface: Where judgment is required
+    - Analysis Sufficiency Summary: V1 completeness indicator
 
     This system does NOT:
     - Output decisions
@@ -406,6 +511,11 @@ class AnalysisReport(BaseModel):
     # Framework agreement/disagreement (explicitly acknowledged)
     framework_agreement_tension: str = Field(
         ..., description="Points of agreement and tension between frameworks"
+    )
+
+    # Analysis Sufficiency Summary (V1 new section)
+    analysis_sufficiency: Optional[AnalysisSufficiencySummary] = Field(
+        None, description="Summary of analysis completeness and binding"
     )
 
     # Legacy fields (maintained during migration)

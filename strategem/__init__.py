@@ -20,6 +20,13 @@ from .models import (
     DecisionType,
     ForceEffect,
     StructuralAsymmetry,
+    DecisionFocusStatus,
+    ClaimType,
+    FrameworkExecutionStatus,
+    DecisionBindingStatus,
+    CoverageStatus,
+    AnalysisSufficiencyStatus,
+    AnalysisSufficiencySummary,
     PORTER_FRAMEWORK,
     SYSTEMS_DYNAMICS_FRAMEWORK,
 )
@@ -27,6 +34,7 @@ from .context_ingestion import ContextIngestionModule
 from .orchestrator import AnalysisOrchestrator
 from .report_generator import ReportGenerator
 from .persistence import PersistenceLayer
+from .decision_focus_extractor import DecisionFocusExtractor
 
 __all__ = [
     "ProblemContext",
@@ -45,10 +53,18 @@ __all__ = [
     "DecisionType",
     "ForceEffect",
     "StructuralAsymmetry",
+    "DecisionFocusStatus",
+    "ClaimType",
+    "FrameworkExecutionStatus",
+    "DecisionBindingStatus",
+    "CoverageStatus",
+    "AnalysisSufficiencyStatus",
+    "AnalysisSufficiencySummary",
     "PORTER_FRAMEWORK",
     "SYSTEMS_DYNAMICS_FRAMEWORK",
     "ContextIngestionModule",
     "AnalysisOrchestrator",
     "ReportGenerator",
     "PersistenceLayer",
+    "DecisionFocusExtractor",
 ]

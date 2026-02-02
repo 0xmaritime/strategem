@@ -10,6 +10,11 @@ from .models import (
     DecisionSurface,
     ClaimSource,
     ConfidenceLevel,
+    ClaimType,
+    AnalysisSufficiencySummary,
+    DecisionBindingStatus,
+    CoverageStatus,
+    AnalysisSufficiencyStatus,
 )
 
 
@@ -81,17 +86,19 @@ class ReportGenerator:
         ]
 
         for force_name, force in forces:
-            # Main claim for each force
+            # Main claim for each force - system level
             claims.append(
                 AnalyticalClaim(
                     statement=f"{force_name}: {force.relevance_to_decision} relevance to decision",
                     source=ClaimSource.INFERENCE,
                     confidence=ConfidenceLevel.MEDIUM,  # Porter analysis is inferential
                     framework="porter_five_forces",
+                    claim_type=ClaimType.SYSTEM_LEVEL,
+                    applicable_options=["all"],
                 )
             )
 
-            # Claims from shared assumptions
+            # Claims from shared assumptions - system level
             for assumption in force.shared_assumptions:
                 claims.append(
                     AnalyticalClaim(
@@ -99,18 +106,34 @@ class ReportGenerator:
                         source=ClaimSource.ASSUMPTION,
                         confidence=ConfidenceLevel.LOW,
                         framework="porter_five_forces",
+                        claim_type=ClaimType.SYSTEM_LEVEL,
+                        applicable_options=["all"],
                     )
                 )
 
         # Extract claims from option-aware claims if available
         if hasattr(porter, "option_aware_claims") and porter.option_aware_claims:
             for claim in porter.option_aware_claims:
+                # Determine claim type based on affected options
+                claim_type = ClaimType.COMPARATIVE
+                applicable_options = (
+                    claim.affected_options if claim.affected_options else []
+                )
+
+                if len(applicable_options) == 1:
+                    claim_type = ClaimType.OPTION_SPECIFIC
+                elif not applicable_options:
+                    claim_type = ClaimType.SYSTEM_LEVEL
+                    applicable_options = ["all"]
+
                 claims.append(
                     AnalyticalClaim(
                         statement=claim.statement,
                         source=claim.source,
                         confidence=claim.confidence,
                         framework="porter_five_forces",
+                        claim_type=claim_type,
+                        applicable_options=applicable_options,
                     )
                 )
 
@@ -120,7 +143,7 @@ class ReportGenerator:
         """Extract explicit analytical claims from Systems Dynamics analysis"""
         claims = []
 
-        # Claims from fragilities
+        # Claims from fragilities - system level
         for fragility in systems.fragilities:
             claims.append(
                 AnalyticalClaim(
@@ -128,10 +151,12 @@ class ReportGenerator:
                     source=ClaimSource.INFERENCE,
                     confidence=ConfidenceLevel.MEDIUM,
                     framework="systems_dynamics",
+                    claim_type=ClaimType.SYSTEM_LEVEL,
+                    applicable_options=["all"],
                 )
             )
 
-        # Claims from assumptions
+        # Claims from assumptions - system level
         for assumption in systems.assumptions:
             claims.append(
                 AnalyticalClaim(
@@ -139,6 +164,8 @@ class ReportGenerator:
                     source=ClaimSource.ASSUMPTION,
                     confidence=ConfidenceLevel.LOW,
                     framework="systems_dynamics",
+                    claim_type=ClaimType.SYSTEM_LEVEL,
+                    applicable_options=["all"],
                 )
             )
 
@@ -419,10 +446,24 @@ class ReportGenerator:
         - What would need to be true for this assessment to change?
         - Which unknowns dominate outcome variance?
         - Where is judgment explicitly required?
+
+        V1 Addition:
+        - decision_question and options from context
+        - tradeoff_axes identified from framework tension
+        - blocked_judgments from framework insufficiency
         """
         assessment_change_conditions = []
         dominant_unknowns = []
         judgment_required_areas = []
+        tradeoff_axes = []
+        blocked_judgments = []
+
+        decision_question = None
+        options = []
+
+        if result.problem_context.decision_focus:
+            decision_question = result.problem_context.decision_focus.decision_question
+            options = result.problem_context.decision_focus.options
 
         # From Porter analysis
         if result.porter_analysis:
@@ -451,6 +492,11 @@ class ReportGenerator:
                     f"Operating environment relevance would change if: {', '.join(high_relevance_forces)} dynamics shift"
                 )
 
+            # Extract tradeoff axes from structural asymmetries
+            if hasattr(result.porter_analysis, "structural_asymmetries"):
+                for asymmetry in result.porter_analysis.structural_asymmetries:
+                    tradeoff_axes.append(f"{asymmetry.force_name} impact asymmetry")
+
         # From Systems Dynamics
         if result.systems_analysis:
             if result.systems_analysis.fragilities:
@@ -467,6 +513,14 @@ class ReportGenerator:
                     "System performance would change if bottlenecks are resolved"
                 )
 
+        # V1: Add blocked judgments from framework insufficiency
+        if result.framework_results:
+            for fw_result in result.framework_results:
+                if fw_result.execution_reason:
+                    blocked_judgments.append(
+                        f"{fw_result.framework_name}: {fw_result.execution_reason}"
+                    )
+
         # Default if no specific insights
         if not judgment_required_areas:
             judgment_required_areas.append(
@@ -481,6 +535,10 @@ class ReportGenerator:
                 "New information about target system or operating environment"
             )
 
+        if not tradeoff_axes:
+            tradeoff_axes.append("Information completeness vs analysis timeliness")
+            tradeoff_axes.append("Systemic risks vs operational constraints")
+
         # Deduplicate dominant unknowns
         seen = set()
         unique_unknowns = []
@@ -493,6 +551,10 @@ class ReportGenerator:
             assessment_change_conditions=assessment_change_conditions,
             dominant_unknowns=unique_unknowns[:5],  # Top 5 most critical
             judgment_required_areas=judgment_required_areas,
+            decision_question=decision_question,
+            options=options,
+            tradeoff_axes=tradeoff_axes,
+            blocked_judgments=blocked_judgments,
         )
 
     def _generate_framework_agreement_tension(self, result: AnalysisResult) -> str:
@@ -563,13 +625,25 @@ class ReportGenerator:
 
         return "\n".join(lines)
 
+    def _generate_analysis_sufficiency_summary(
+        self, result: AnalysisResult
+    ) -> Optional[AnalysisSufficiencySummary]:
+        """
+        Generate Analysis Sufficiency Summary section.
+
+        V1 Requirement: Descriptive summary of completeness without evaluation.
+
+        This is extracted from the analysis result computed by the orchestrator.
+        """
+        return result.analysis_sufficiency
+
     def _generate_limitations(self) -> List[str]:
         """Generate explicit limitations documentation"""
         return [
             "No external validation: Analysis is based solely on provided Problem Context Materials",
             "No learning: This analysis does not improve from past outcomes",
             "No ground truth: Framework outputs are not validated against external reality",
-            "No domain authority: The system claims no special expertise beyond the provided materials",
+            "No domain authority: The system claims no special expertise beyond provided materials",
             "Framework disagreement: Different frameworks may produce conflicting assessments",
             "Assumption-dependent: All inferences rest on explicitly stated and unstated assumptions",
         ]
@@ -588,6 +662,7 @@ class ReportGenerator:
         unknowns = self._generate_unknowns_and_sensitivities(result)
         decision_surface = self._generate_decision_surface(result)
         framework_agreement = self._generate_framework_agreement_tension(result)
+        analysis_sufficiency = self._generate_analysis_sufficiency_summary(result)
         limitations = self._generate_limitations()
 
         # Legacy sections (for backward compatibility)
@@ -603,6 +678,7 @@ class ReportGenerator:
             unknowns_and_sensitivities=unknowns,
             decision_surface=decision_surface,
             framework_agreement_tension=framework_agreement,
+            analysis_sufficiency=analysis_sufficiency,
             limitations=limitations,
             # Legacy fields
             porter_section=porter_section,
@@ -656,6 +732,43 @@ class ReportGenerator:
         for area in report.decision_surface.judgment_required_areas:
             decision_surface_section += f"- {area}\n"
 
+        if report.decision_surface.tradeoff_axes:
+            decision_surface_section += "\n### Trade-off Axes\n"
+            for axis in report.decision_surface.tradeoff_axes:
+                decision_surface_section += f"- {axis}\n"
+
+        if report.decision_surface.blocked_judgments:
+            decision_surface_section += "\n### Blocked Judgments\n"
+            for blocked in report.decision_surface.blocked_judgments:
+                decision_surface_section += f"- {blocked}\n"
+
+        # Analysis Sufficiency formatted
+        analysis_sufficiency_section = ""
+        if report.analysis_sufficiency:
+            analysis_sufficiency_section = "## Analysis Sufficiency Summary\n\n"
+            analysis_sufficiency_section += (
+                "*Descriptive summary of analysis completeness*\n\n"
+            )
+
+            analysis_sufficiency_section += f"**Decision Binding:** {report.analysis_sufficiency.decision_binding.value}\n"
+            if report.decision_surface.decision_question:
+                analysis_sufficiency_section += f"  - Decision Question: {report.decision_surface.decision_question}\n"
+            if report.decision_surface.options:
+                analysis_sufficiency_section += (
+                    f"  - Options: {', '.join(report.decision_surface.options)}\n"
+                )
+            analysis_sufficiency_section += "\n"
+
+            analysis_sufficiency_section += f"**Option Coverage:** {report.analysis_sufficiency.option_coverage.value}\n"
+            analysis_sufficiency_section += f"**Framework Coverage:** {report.analysis_sufficiency.framework_coverage.value}\n"
+            analysis_sufficiency_section += f"**Overall Status:** {report.analysis_sufficiency.overall_status.value}\n\n"
+
+            if (
+                report.analysis_sufficiency.overall_status
+                != AnalysisSufficiencyStatus.SUFFICIENT
+            ):
+                analysis_sufficiency_section += "*Note: This analysis is marked as incomplete or constrained. See Decision Surface for blocked judgments and limitations.*\n"
+
         # Limitations formatted
         limitations_section = "## System Limitations\n\n"
         limitations_section += (
@@ -666,59 +779,63 @@ class ReportGenerator:
 
         full_report = f"""# Analytical Report: Reasoned Artifact
 
-**Analysis ID:** {report.id}  
-**Generated:** {report.generated_at.strftime("%Y-%m-%d %H:%M:%S")}
+ **Analysis ID:** {report.id}
+ **Generated:** {report.generated_at.strftime("%Y-%m-%d %H:%M:%S")}
 
----
+ ---
 
-**⚠️ CRITICAL DISCLAIMER ⚠️**
+ **⚠️ CRITICAL DISCLAIMER ⚠️**
 
-This is a **reasoned artifact**, not a recommendation. This system does NOT:
-- Output decisions
-- Rank options  
-- Optimize objectives
-- Make recommendations
+ This is a **reasoned artifact**, not a recommendation. This system does NOT:
+ - Output decisions
+ - Rank options
+ - Optimize objectives
+ - Make recommendations
 
-The Decision Owner retains full responsibility for all judgments and decisions.
+ The Decision Owner retains full responsibility for all judgments and decisions.
 
----
+ ---
 
-{report.context_summary}
+ {report.context_summary}
 
----
+ ---
 
-{claims_section}
+ {claims_section}
 
----
+ ---
 
-{report.structural_pressures.content}
+ {report.structural_pressures.content}
 
----
+ ---
 
-{report.systemic_risks.content}
+ {report.systemic_risks.content}
 
----
+ ---
 
-{unknowns_section}
+ {unknowns_section}
 
----
+ ---
 
-{report.framework_agreement_tension}
+ {report.framework_agreement_tension}
 
----
+ ---
 
-{decision_surface_section}
+ {decision_surface_section}
 
----
+ ---
 
-{limitations_section}
+ {analysis_sufficiency_section}
 
----
+ ---
 
-*This report was generated by Strategem Core v1.0.0*
+ {limitations_section}
 
-*This system is a reasoning scaffold, not an oracle. Framework disagreement is a valid and expected outcome.*
-"""
+ ---
+
+ *This report was generated by Strategem Core v1.0.0*
+
+ *This system is a reasoning scaffold, not an oracle. Framework disagreement is a valid and expected outcome.*
+ """
 
         return full_report
 
