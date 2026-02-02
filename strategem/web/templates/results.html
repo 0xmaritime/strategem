@@ -33,10 +33,97 @@
             border: 2px solid #000000;
             padding: 2rem;
             margin-top: 1.5rem;
-            white-space: pre-wrap;
             font-family: 'Georgia', serif;
             line-height: 1.8;
             font-size: 1rem;
+        }
+        .report-content h1 {
+            border-bottom: 3px solid #000000;
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .report-content h2 {
+            border-bottom: 2px solid #000000;
+            padding-bottom: 0.3rem;
+            margin-top: 1.8rem;
+            margin-bottom: 0.8rem;
+        }
+        .report-content h3 {
+            margin-top: 1.5rem;
+            margin-bottom: 0.6rem;
+        }
+        .report-content p {
+            margin-bottom: 1rem;
+        }
+        .report-content ul, .report-content ol {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+        .report-content li {
+            margin-bottom: 0.5rem;
+        }
+        .report-content blockquote {
+            border-left: 4px solid #000000;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: #666;
+            font-style: italic;
+        }
+        .report-content code {
+            background: #f5f5f5;
+            padding: 0.2rem 0.4rem;
+            border: 1px solid #ddd;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .report-content pre {
+            background: #f5f5f5;
+            border: 2px solid #000000;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        .report-content pre code {
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .report-content strong {
+            font-weight: 700;
+        }
+        .report-content em {
+            font-style: italic;
+        }
+        .report-content hr {
+            border: none;
+            border-top: 2px solid #000000;
+            margin: 2rem 0;
+        }
+        .report-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        .report-content th, .report-content td {
+            border: 2px solid #000000;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .report-content th {
+            background: #000000;
+            color: #ffffff;
+        }
+        .report-source {
+            font-size: 0.75rem;
+            color: #999;
+            font-style: italic;
+        }
+        .claim-block {
+            background: #f9f9f9;
+            border-left: 4px solid #000000;
+            padding: 1rem 1rem 1rem 1.5rem;
+            margin: 1rem 0;
         }
         .meta-info {
             background: #ffffff;
@@ -229,5 +316,14 @@
             <p>Strategem Core v1.0.0 - A reasoning scaffold, not an oracle. Framework disagreement is a valid outcome.</p>
         </footer>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        const reportContentElement = document.querySelector('.report-content');
+        if (reportContentElement && reportContentElement.textContent.trim()) {
+            const markdownText = reportContentElement.textContent;
+            const htmlContent = marked.parse(markdownText);
+            reportContentElement.innerHTML = htmlContent;
+        }
+    </script>
 </body>
 </html>
