@@ -74,38 +74,31 @@ class DecisionFocusExtractor:
             r"(?:as\s+)?(?:the\s+)?(?:ceo|director|manager|lead)\s+(?:of|for)",
         ]
 
-    def extract(
-        self, context: ProblemContext
-    ) -> Tuple[DecisionFocusStatus, Optional[DecisionFocus]]:
+    def extract(self, context: ProblemContext) -> Optional[DecisionFocus]:
         """
         Extract decision focus from problem context.
 
-        V1 Decision Inference Gate:
-        DecisionFocus = bound if ALL of following are true:
-        1. A choice is implied (verbs like choose, decide, select, recommend, defend)
-        2. Multiple alternatives are materially described (≥2 distinct approaches with trade-offs)
-        3. A decision owner or role exists ("You are X", "the committee must", etc.)
+        V1: Decision Focus is inferred, not required.
+        Forms are optional hints, never epistemic authorities.
+
+        Returns None if decision context cannot be inferred.
+        Caller determines mode (analytical vs exploratory).
 
         Args:
             context: The problem context to analyze
 
         Returns:
-            Tuple of (status, decision_focus)
-            - status: EXPLICIT, DERIVED, or INSUFFICIENT
-            - decision_focus: DecisionFocus object if EXPLICIT or DERIVED, None if INSUFFICIENT
+            DecisionFocus if inferable, None otherwise
         """
-        # Check if decision_focus is already explicit
+        # Check if decision_focus is explicitly provided (optional hint)
         if context.decision_focus:
-            self._validate_explicit_decision_focus(context.decision_focus)
-            return DecisionFocusStatus.EXPLICIT, context.decision_focus
+            # V1: Don't validate - forms are optional hints
+            return context.decision_focus
 
         # Apply Decision Inference Gate
         decision_focus = self._apply_decision_inference_gate(context)
 
-        if decision_focus:
-            return DecisionFocusStatus.DERIVED, decision_focus
-        else:
-            return DecisionFocusStatus.INSUFFICIENT, None
+        return decision_focus
 
     def _apply_decision_inference_gate(
         self, context: ProblemContext

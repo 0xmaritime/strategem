@@ -90,22 +90,11 @@ def analyze(
         click.echo("Error: Cannot use both --text and --file", err=True)
         sys.exit(1)
 
-    # Build DecisionFocus if provided
+    # Build DecisionFocus if provided (V1: Optional hint, not requirement)
     decision_focus = None
-    if decision_question or decision_type or options:
-        if not decision_question:
-            click.echo(
-                "Error: --decision-question is required when using decision-bound options",
-                err=True,
-            )
-            sys.exit(1)
-        if not options:
-            click.echo(
-                "Error: --options is required when using decision-bound options",
-                err=True,
-            )
-            sys.exit(1)
-
+    if decision_question and options:
+        # V1: Decision focus forms are optional hints
+        # System will infer from context if not provided
         options_list = [opt.strip() for opt in options.split(",")]
         decision_focus = DecisionFocus(
             decision_question=decision_question,
@@ -114,6 +103,15 @@ def analyze(
         )
         click.echo(f"🎯 Decision Focus: {decision_question}")
         click.echo(f"   Options: {', '.join(options_list)}")
+    elif decision_question or options:
+        # V1: If only one part provided, warn but don't block
+        click.echo(
+            "⚠️  Note: Decision focus requires both --decision-question and --options",
+            err=True,
+        )
+        click.echo(
+            "   If not provided, the system will attempt to infer from your input."
+        )
 
     # Ingest context
     ingestion = ContextIngestionModule()

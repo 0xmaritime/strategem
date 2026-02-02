@@ -31,7 +31,7 @@ class DecisionType(str, Enum):
 
 
 class DecisionFocusStatus(str, Enum):
-    """Status of decision focus in the problem context"""
+    """Status of decision focus in the problem context (Legacy - V1 uses DecisionBindingStatus)"""
 
     EXPLICIT = "explicit"
     DERIVED = "derived"
@@ -55,11 +55,10 @@ class FrameworkExecutionStatus(str, Enum):
 
 
 class DecisionBindingStatus(str, Enum):
-    """Status of decision binding in analysis"""
+    """Status of decision binding in analysis (V1)"""
 
-    EXPLICIT = "explicit"
-    DERIVED = "derived"
-    INSUFFICIENT = "insufficient"
+    DECISION_CONTEXT_PRESENT = "decision_context_present"
+    GENUINELY_AMBIGUOUS = "genuinely_ambiguous"
 
 
 class CoverageStatus(str, Enum):
@@ -71,11 +70,11 @@ class CoverageStatus(str, Enum):
 
 
 class AnalysisSufficiencyStatus(str, Enum):
-    """Overall sufficiency status of the analysis"""
+    """Overall sufficiency status of the analysis (V1)"""
 
-    SUFFICIENT = "sufficient"
-    CONSTRAINED = "constrained"
-    EXPLORATORY_ONLY = "exploratory_only"
+    DECISION_RELEVANT_REASONING_PRODUCED = "decision_relevant_reasoning_produced"
+    DECISION_RELEVANT_BUT_CONSTRAINED = "decision_relevant_but_constrained"
+    EXPLORATORY_PRE_DECISION = "exploratory_pre_decision"
 
 
 class DecisionFocus(BaseModel):

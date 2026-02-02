@@ -13,7 +13,6 @@ from .models import (
     PORTER_FRAMEWORK,
     SYSTEMS_DYNAMICS_FRAMEWORK,
     DecisionFocus,
-    DecisionFocusStatus,
     AnalyticalClaim,
     ClaimType,
     FrameworkExecutionStatus,
@@ -49,26 +48,38 @@ class AnalysisOrchestrator:
             "systems_dynamics": SystemsDynamicsAnalysis,
         }
 
-    def validate_decision_focus(
+    def infer_decision_binding(
         self, context: ProblemContext
-    ) -> Tuple[DecisionFocusStatus, Optional[DecisionFocus]]:
+    ) -> Tuple[DecisionBindingStatus, Optional[DecisionFocus]]:
         """
-        Validate or extract decision focus from problem context.
+        Infer decision binding status from problem context.
 
-        V1 Requirement: Every analysis run must have a decision focus with:
-        - a decision_question
-        - >=2 options
-        - a bounded decision_scope
+        V1: Decision Focus is inferred, not required.
+        Structured decision-focus forms are optional hints, never epistemic authorities.
+
+        Decision Context = PRESENT if ALL of following are true:
+        1. Choice Intent is Present (verbs: choose, decide, defend, compare)
+        2. Multiple Alternatives Exist (≥2 materially distinct options)
+        3. Decision Ownership Exists (role, committee, or actor)
+
+        Only when choice intent is genuinely unclear may we enter exploratory mode.
 
         Args:
-            context: The problem context to validate
+            context: The problem context to analyze
 
         Returns:
             Tuple of (status, decision_focus)
-            - status: EXPLICIT, DERIVED, or INSUFFICIENT
-            - decision_focus: DecisionFocus object if EXPLICIT or DERIVED, None if INSUFFICIENT
+            - status: DECISION_CONTEXT_PRESENT or GENUINELY_AMBIGUOUS
+            - decision_focus: DecisionFocus object if inferred/present, None if ambiguous
         """
-        return self.decision_focus_extractor.extract(context)
+        # V1: Use the extractor directly
+        decision_focus = self.decision_focus_extractor.extract(context)
+
+        # Determine binding status
+        if decision_focus:
+            return DecisionBindingStatus.DECISION_CONTEXT_PRESENT, decision_focus
+        else:
+            return DecisionBindingStatus.GENUINELY_AMBIGUOUS, None
 
     def validate_claims_option_binding(
         self, claims: List[AnalyticalClaim], options: List[str]
@@ -179,9 +190,12 @@ class AnalysisOrchestrator:
         self, result: AnalysisResult
     ) -> AnalysisSufficiencySummary:
         """
-        Compute analysis sufficiency summary.
+        Compute analysis sufficiency summary (V1).
 
-        V1 Requirement: Descriptive summary of completeness without evaluation.
+        Allowed status values:
+        - decision_relevant_reasoning_produced: Decision context present, analysis produced
+        - decision_relevant_but_constrained: Decision context present but partial
+        - exploratory_pre_decision: No decision context, exploratory only
 
         Args:
             result: The analysis result to evaluate
@@ -189,10 +203,11 @@ class AnalysisOrchestrator:
         Returns:
             AnalysisSufficiencySummary describing completeness
         """
-        # Decision binding status
-        decision_binding = DecisionBindingStatus.INSUFFICIENT
-        if result.problem_context.decision_focus:
-            decision_binding = DecisionBindingStatus.EXPLICIT
+        # Decision binding status (V1: use new enum values)
+        decision_binding = DecisionBindingStatus.DECISION_CONTEXT_PRESENT
+        if not result.problem_context.decision_focus:
+            # No decision focus - exploratory mode
+            decision_binding = DecisionBindingStatus.GENUINELY_AMBIGUOUS
 
         # Option coverage
         option_coverage = CoverageStatus.NOT_APPLICABLE
@@ -234,16 +249,18 @@ class AnalysisOrchestrator:
             if successful_frameworks < total_frameworks:
                 framework_coverage = CoverageStatus.PARTIAL
 
-        # Overall status
-        if decision_binding == DecisionBindingStatus.INSUFFICIENT:
-            overall_status = AnalysisSufficiencyStatus.EXPLORATORY_ONLY
+        # Overall status (V1: use new status values)
+        if decision_binding == DecisionBindingStatus.GENUINELY_AMBIGUOUS:
+            overall_status = AnalysisSufficiencyStatus.EXPLORATORY_PRE_DECISION
         elif (
             option_coverage == CoverageStatus.PARTIAL
             or framework_coverage == CoverageStatus.PARTIAL
         ):
-            overall_status = AnalysisSufficiencyStatus.CONSTRAINED
+            overall_status = AnalysisSufficiencyStatus.DECISION_RELEVANT_BUT_CONSTRAINED
         else:
-            overall_status = AnalysisSufficiencyStatus.SUFFICIENT
+            overall_status = (
+                AnalysisSufficiencyStatus.DECISION_RELEVANT_REASONING_PRODUCED
+            )
 
         return AnalysisSufficiencySummary(
             decision_binding=decision_binding,
@@ -274,6 +291,14 @@ class AnalysisOrchestrator:
         """
         Run a single analytical framework.
 
+        V1: Frameworks MUST NOT block analysis due to missing forms.
+        Decision Focus is inferred, not required.
+
+        If a framework cannot meaningfully contribute:
+        - It is marked as "non-contributory"
+        - This is surfaced in limitations
+        - Analysis does NOT halt
+
         Args:
             framework_name: Name of the framework to run
             context: The problem context to analyze
@@ -293,17 +318,9 @@ class AnalysisOrchestrator:
         framework = self._frameworks[framework_name]
         response_model = self._framework_models[framework_name]
 
-        # V1 Compliance: Check if DecisionFocus is required but missing
-        if framework.requires_decision_focus and not context.decision_focus:
-            return FrameworkResult(
-                framework_name=framework_name,
-                success=False,
-                execution_status=FrameworkExecutionStatus.FAILED,
-                execution_reason=f"Framework '{framework_name}' requires DecisionFocus but none was provided. "
-                f"Please specify: decision_question, decision_type, and options.",
-                error_message=f"Framework '{framework_name}' requires DecisionFocus but none was provided. "
-                f"Please specify: decision_question, decision_type, and options.",
-            )
+        # V1: Do NOT block frameworks for missing decision focus
+        # Decision Focus is an optional hint, not a requirement
+        # Frameworks may run with or without it, depending on context
 
         try:
             result = self.llm.run_analysis(
@@ -346,8 +363,10 @@ class AnalysisOrchestrator:
         """
         Run analysis with specified frameworks.
 
-        This is the primary V1 method - frameworks are explicitly specified
+        V1: This is the primary V1 method - frameworks are explicitly specified
         and can be swapped without code changes.
+
+        Decision Focus is inferred, not required. Analysis runs unless genuinely ambiguous.
 
         Args:
             context: The problem context to analyze
@@ -358,16 +377,18 @@ class AnalysisOrchestrator:
         """
         analysis_id = str(uuid.uuid4())
 
-        # V1: Validate decision focus
-        decision_status, decision_focus = self.validate_decision_focus(context)
+        # V1: Infer decision binding (not validate)
+        decision_binding, decision_focus = self.infer_decision_binding(context)
 
-        # If decision focus insufficient, add it to context or abort
-        if decision_status == DecisionFocusStatus.INSUFFICIENT:
-            # V1 requirement: abort or downgrade to exploratory_predecision
-            # For now, we'll downgrade
-            context.decision_focus = None
+        # V1: Add inferred decision focus to context if available
+        # This is an optional enhancement, not a requirement
+        if decision_focus and not context.decision_focus:
+            context.decision_focus = decision_focus
+        else:
+            decision_binding = DecisionBindingStatus.GENUINELY_AMBIGUOUS
 
-        # Run all specified frameworks independently
+        # V1: Run all specified frameworks independently
+        # Do NOT block analysis due to missing forms or informal phrasing
         framework_results = []
         porter_result = None
         systems_result = None

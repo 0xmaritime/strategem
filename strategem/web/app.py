@@ -55,9 +55,9 @@ async def analyze_text(
     decision_type: Optional[str] = Form(None),
     options: Optional[str] = Form(None),
 ):
-    """Analyze text input with optional DecisionFocus"""
+    """Analyze text input with optional DecisionFocus (V1: forms are optional hints)"""
     try:
-        # Build DecisionFocus if provided
+        # Build DecisionFocus if provided (optional hint, not requirement)
         decision_focus = None
         if decision_question and options:
             options_list = [opt.strip() for opt in options.split(",")]
@@ -101,7 +101,7 @@ async def analyze_file(
     decision_type: Optional[str] = Form(None),
     options: Optional[str] = Form(None),
 ):
-    """Analyze uploaded file with optional DecisionFocus"""
+    """Analyze uploaded file with optional DecisionFocus (V1: forms are optional hints)"""
     try:
         # Save uploaded file temporarily
         temp_path = config.STORAGE_DIR / f"temp_{uuid.uuid4()}_{file.filename}"
@@ -109,7 +109,7 @@ async def analyze_file(
         temp_path.write_bytes(content)
 
         try:
-            # Build DecisionFocus if provided
+            # Build DecisionFocus if provided (optional hint, not requirement)
             decision_focus = None
             if decision_question and options:
                 options_list = [opt.strip() for opt in options.split(",")]

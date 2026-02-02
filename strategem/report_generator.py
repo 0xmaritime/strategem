@@ -629,19 +629,20 @@ class ReportGenerator:
         """
         Generate Pre-Decision Observations (Non-Analytical).
 
-        V1 Requirement: When Decision Binding is insufficient, system MUST NOT emit
-        Key Analytical Claims. Instead, emit pre-decision observations that are
-        explicitly labeled non-claims and excluded from framework attribution.
+        V1: Only used when input is genuinely ambiguous (descriptive, speculative, educational).
 
-        These observations should NOT include:
+        These observations MUST NOT include:
         - Framework attribution
-        - Confidence scoring
+        - Confidence scores
         - Option-specific assertions
+        - Claims or recommendations
 
         They should capture:
         - Material characteristics
         - Domain considerations
         - Pre-decision factors to investigate
+        - Sources of ambiguity
+        - What would be needed to bind a decision
         """
         observations = []
 
@@ -649,22 +650,31 @@ class ReportGenerator:
         if result.problem_context.provided_materials:
             observations.append("Problem context materials were provided and reviewed")
 
-        # Extract potential fragilities from systems analysis WITHOUT attribution
-        if result.systems_analysis and result.systems_analysis.fragilities:
-            observations.append(
-                "System materials suggest potential fragilities warranting further investigation"
-            )
-
-        # Extract considerations from assumptions WITHOUT attribution
-        if result.systems_analysis and result.systems_analysis.assumptions:
-            observations.append(
-                "Context materials contain assumptions that may require validation"
-            )
-
-        # Add explicit pre-decision guidance
+        # Note: Exploratory mode means no decision context was inferable
         observations.append(
-            "To proceed with analysis, a decision question with at least 2 options must be specified"
+            "This input appears to be descriptive or exploratory rather than decision-focused"
         )
+
+        # Suggest what would be needed
+        observations.append(
+            "To proceed with decision-focused analysis, the input should describe:"
+        )
+        observations.append("  - A choice to be made (choose, decide, select, etc.)")
+        observations.append(
+            "  - Multiple alternatives being considered (≥2 distinct options)"
+        )
+        observations.append(
+            "  - A decision owner or context (who is making this decision)"
+        )
+
+        # Extract domain considerations from materials
+        if result.problem_context.provided_materials:
+            for material in result.problem_context.provided_materials:
+                if len(material.content) > 100:
+                    observations.append(
+                        "Context materials contain descriptive information that may inform future analysis"
+                    )
+                    break
 
         return observations
 
@@ -695,36 +705,39 @@ class ReportGenerator:
         """
         Generate complete V1 compliant analysis report.
 
-        This is a reasoned artifact, not a recommendation.
+        V1: This is a reasoned artifact, not a recommendation.
+        Decision Focus is inferred, not required.
+
+        Exploratory mode is only for genuinely ambiguous inputs.
         """
-        # V1 Hard Gate: Check if decision binding is insufficient
-        is_insufficient = (
+        # V1: Check if decision context is genuinely ambiguous
+        is_exploratory = (
             result.analysis_sufficiency
             and result.analysis_sufficiency.decision_binding
-            == DecisionBindingStatus.INSUFFICIENT
+            == DecisionBindingStatus.GENUINELY_AMBIGUOUS
         )
 
         # Generate all sections
         context_summary = self._generate_context_summary(result)
 
-        # V1: No analytical claims when decision binding is insufficient
-        if is_insufficient:
+        # V1: No analytical claims when genuinely ambiguous
+        if is_exploratory:
             key_claims = []
             pre_decision_observations = self._generate_pre_decision_observations(result)
         else:
             key_claims = self._generate_key_claims_section(result)
             pre_decision_observations = None
 
-        # V1: Collapse structural pressures when decision binding is insufficient
-        if is_insufficient:
+        # V1: Run frameworks unless genuinely ambiguous
+        if is_exploratory:
             structural_pressures = ReportSection(
                 title="Structural Pressures (Operating Environment)",
-                content="## Structural Pressures (Operating Environment)\n\n*Analysis not performed - decision focus insufficient*",
+                content="## Structural Pressures (Operating Environment)\n\n*Exploratory mode - input was descriptive rather than decision-focused*",
                 claims=[],
             )
             systemic_risks = ReportSection(
                 title="Systemic Risks (Target System)",
-                content="## Systemic Risks (Target System)\n\n*Analysis not performed - decision focus insufficient*",
+                content="## Systemic Risks (Target System)\n\n*Exploratory mode - input was descriptive rather than decision-focused*",
                 claims=[],
             )
         else:
@@ -831,10 +844,10 @@ class ReportGenerator:
         if report.analysis_sufficiency:
             analysis_sufficiency_section = "## Analysis Sufficiency Summary\n\n"
             analysis_sufficiency_section += (
-                "*Descriptive summary of analysis completeness*\n\n"
+                "*Descriptive summary of analysis completeness (V1)*\n\n"
             )
 
-            analysis_sufficiency_section += f"**Decision Binding:** {report.analysis_sufficiency.decision_binding.value}\n"
+            analysis_sufficiency_section += f"**Decision Context:** {report.analysis_sufficiency.decision_binding.value}\n"
             if report.decision_surface.decision_question:
                 analysis_sufficiency_section += f"  - Decision Question: {report.decision_surface.decision_question}\n"
             if report.decision_surface.options:
@@ -847,11 +860,18 @@ class ReportGenerator:
             analysis_sufficiency_section += f"**Framework Coverage:** {report.analysis_sufficiency.framework_coverage.value}\n"
             analysis_sufficiency_section += f"**Overall Status:** {report.analysis_sufficiency.overall_status.value}\n\n"
 
+            # V1: Add note for exploratory or constrained analyses
             if (
                 report.analysis_sufficiency.overall_status
-                != AnalysisSufficiencyStatus.SUFFICIENT
+                != AnalysisSufficiencyStatus.DECISION_RELEVANT_REASONING_PRODUCED
             ):
-                analysis_sufficiency_section += "*Note: This analysis is marked as incomplete or constrained. See Decision Surface for blocked judgments and limitations.*\n"
+                if (
+                    report.analysis_sufficiency.overall_status
+                    == AnalysisSufficiencyStatus.EXPLORATORY_PRE_DECISION
+                ):
+                    analysis_sufficiency_section += "*Note: This analysis is exploratory. The input was descriptive rather than decision-focused. To proceed with decision analysis, provide a choice context with multiple alternatives.*\n"
+                else:
+                    analysis_sufficiency_section += "*Note: This analysis is constrained. See Decision Surface for limitations and areas requiring judgment.*\n"
 
         # Limitations formatted
         limitations_section = "## System Limitations\n\n"
