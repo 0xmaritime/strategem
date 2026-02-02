@@ -119,7 +119,8 @@ class AnalyticalClaim(BaseModel):
         None, description="Which framework produced this claim"
     )
     claim_type: ClaimType = Field(
-        ..., description="Type of claim: option_specific, comparative, or system_level"
+        default=ClaimType.SYSTEM_LEVEL,
+        description="Type of claim: option_specific, comparative, or system_level",
     )
     applicable_options: List[str] = Field(
         default_factory=list,
@@ -369,7 +370,8 @@ class FrameworkResult(BaseModel):
     error_message: Optional[str] = None
     claims: List[AnalyticalClaim] = Field(default_factory=list)
     execution_status: FrameworkExecutionStatus = Field(
-        ..., description="Execution status: successful, insufficient, or failed"
+        default=FrameworkExecutionStatus.SUCCESSFUL,
+        description="Execution status: successful, insufficient, or failed",
     )
     execution_reason: Optional[str] = Field(
         None, description="Reason for execution status if not successful"
