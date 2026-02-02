@@ -2,7 +2,9 @@
 
 ## System Overview
 
-Strategem Core is a decision support system that structures unstructured problem context and runs independent analytical frameworks via LLM inference. It produces **reasoned artifacts**, not recommendations.
+Strategem Core v1 is a decision support system that structures unstructured problem context and runs independent analytical frameworks via LLM inference. It produces **reasoned artifacts**, not recommendations.
+
+**V1 Key Principle: Decision Focus is inferred, not required.**
 
 ## Core Philosophy
 
@@ -26,6 +28,8 @@ Strategem Core is a decision support system that structures unstructured problem
 3. **No Recommendations**: System provides analysis, not advice
 4. **Domain Agnostic**: Works on Problem Context, not specific domains
 5. **Deterministic**: Fixed prompts, low temperature, reproducible outputs
+6. **Decision Focus Inference**: Inferred from context, not required via forms
+7. **No Framework Gating**: Frameworks adapt to context, never block analysis
 
 ## Architecture Layers
 
@@ -49,6 +53,7 @@ ProblemContext (Root Abstraction)
 - Everything depends on this
 - Domain-agnostic structure
 - Self-contained problem definition
+- Decision Focus: **inferred from context, not required**
 
 **Example Use Cases**:
 - Policy decision analysis
@@ -232,6 +237,17 @@ DecisionSurface:
     assessment_change_conditions: List[str]
     dominant_unknowns: List[str]
     judgment_required_areas: List[str]
+    decision_question: Optional[str]
+    options: List[str]
+```
+
+**Analysis Sufficiency Summary** (V1):
+```python
+AnalysisSufficiencySummary:
+    decision_binding: "decision_context_present" | "genuinely_ambiguous"
+    option_coverage: "not_applicable" | "partial" | "complete"
+    framework_coverage: "partial" | "complete"
+    overall_status: "decision_relevant_reasoning_produced" | "decision_relevant_but_constrained" | "exploratory_pre_decision"
 ```
 
 ### Layer 6: Persistence
@@ -278,12 +294,13 @@ DecisionSurface:
 │    User provides text/files describing the problem           │
 └──────────────────────────────────────────────────────────────┘
                               ↓
-┌──────────────────────────────────────────────────────────────┐
-│ 2. INGESTION: ContextIngestionModule                         │
-│    - Parse materials into ProvidedMaterial objects           │
-│    - Create ProblemContext with formal schema                │
-│    - Structure content for framework consumption             │
-└──────────────────────────────────────────────────────────────┘
+ ┌──────────────────────────────────────────────────────────────┐
+ │ 2. INGESTION: ContextIngestionModule                         │
+ │    - Parse materials into ProvidedMaterial objects           │
+ │    - Create ProblemContext with formal schema                │
+ │    - Structure content for framework consumption             │
+ │    - Infer decision focus from context (if not provided)  │
+ └──────────────────────────────────────────────────────────────┘
                               ↓
 ┌──────────────────────────────────────────────────────────────┐
 │ 3. ORCHESTRATION: AnalysisOrchestrator                       │
@@ -310,18 +327,19 @@ DecisionSurface:
 │    - Maintain backward compatibility fields                  │
 └──────────────────────────────────────────────────────────────┘
                               ↓
-┌──────────────────────────────────────────────────────────────┐
-│ 6. REPORT GENERATION: ReportGenerator                        │
-│    - Extract analytical claims from each framework           │
-│    - Generate Context Summary                                │
-│    - Create Structural Pressures section                     │
-│    - Create Systemic Risks section                           │
-│    - Compile Unknowns & Sensitivities                        │
-│    - Generate Framework Agreement & Tension                  │
-│    - Build Decision Surface                                  │
-│    - Add explicit limitations                                │
-│    - Inject hardcoded disclaimer                             │
-└──────────────────────────────────────────────────────────────┘
+ ┌──────────────────────────────────────────────────────────────┐
+ │ 6. REPORT GENERATION: ReportGenerator                        │
+ │    - Extract analytical claims from each framework           │
+ │    - Generate Context Summary                                │
+ │    - Create Structural Pressures section                     │
+ │    - Create Systemic Risks section                           │
+ │    - Compile Unknowns & Sensitivities                        │
+ │    - Generate Framework Agreement & Tension                  │
+ │    - Build Decision Surface                                  │
+ │    - Compute Analysis Sufficiency Summary (V1)                 │
+ │    - Add explicit limitations                                │
+ │    - Inject hardcoded disclaimer                             │
+ └──────────────────────────────────────────────────────────────┘
                               ↓
 ┌──────────────────────────────────────────────────────────────┐
 │ 7. PERSISTENCE: PersistenceLayer                             │
@@ -401,6 +419,7 @@ PersistenceLayer abstracts storage:
 - Individual framework failure → Mark in FrameworkResult
 - Other frameworks continue independently
 - Partial reports are valid
+- **Frameworks adapt to context, not gate on missing decision focus**
 
 ## Testing Strategy
 
@@ -526,11 +545,10 @@ class DatabasePersistence(PersistenceLayer):
 - Additional frameworks
 - API authentication
 
-### Non-Goals (Maintained from V1)
-- No automated decision-making
-- No recommendation engine
-- No learning/feedback loops
-- No external validation
+### V1 Freeze (Behavioral Stability)
+- No further behavioral tightening permitted in V1
+- Smarter inference, deeper frameworks, better claims → V2 by definition
+- Current implementation: v1.0.0 (stable, frozen)
 
 ## References
 

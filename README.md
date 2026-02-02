@@ -99,7 +99,21 @@ python -m strategem.cli analyze --file ./problem.txt \
 
 ---
 
-## Core Concepts
+ ## Core Concepts
+
+### Decision Focus (Inferred, Not Required)
+
+Decision Focus is **inferred from context**, not required via forms.
+
+**Decision Context exists if:**
+1. Choice intent is present (verbs: choose, decide, select, defend, compare)
+2. Multiple alternatives exist (≥2 materially distinct options)
+3. Decision ownership exists (role, committee, or actor)
+
+**Structured forms are optional hints:**
+- System infers decision focus from input if not provided
+- Missing forms reduce depth but never block analysis
+- Informal phrasing is valid
 
 ### Problem Context (First-Class Object)
 
@@ -113,6 +127,7 @@ ProblemContext:
   constraints: List[str]              # Known limitations or boundaries
   provided_materials: List[ProvidedMaterial]  # Input documents/texts/data
   declared_assumptions: List[str]     # Explicit assumptions from decision owner
+  decision_focus: Optional[DecisionFocus]  # Optional hint, inferred if absent
 ```
 
 **Example Problem Context:**
@@ -174,6 +189,25 @@ AnalyticalClaim:
 - Confidence: medium
 - Framework: porter_five_forces
 
+### Analysis Modes
+
+**Analytical Mode** (default):
+- Decision context present (choice intent + alternatives + decision owner)
+- Frameworks run independently
+- Claims with sources, confidence, and framework tags
+- Decision surface populated
+
+**Exploratory Mode** (rare, when input is descriptive/speculative):
+- No decision context inferable
+- Pre-decision observations (no analytical claims)
+- No framework attribution
+- Guidance on what would be needed to bind a decision
+
+**Analysis Sufficiency Statuses:**
+- `decision_relevant_reasoning_produced`: Decision context present, analysis produced
+- `decision_relevant_but_constrained`: Decision context present but partial
+- `exploratory_pre_decision`: No decision context, exploratory only
+
 ### Report Structure (V1)
 
 The system produces a **reasoned artifact** with the following sections:
@@ -207,18 +241,23 @@ Options:
   --title TEXT                 Title for this analysis
   --problem-statement TEXT     Clear problem statement
   -o, --output PATH            Output path for report
-  
+  --decision-question TEXT       Optional: Decision question being analyzed
+  --decision-type TEXT          Optional: explore, compare, or stress_test
+  --options TEXT               Optional: Comma-separated list of options
+
 Examples:
-  # Basic text analysis
-  strategem analyze --text "Company X operates in..."
-  
-  # File analysis
+  # Basic text analysis (decision focus inferred)
+  strategem analyze --text "Should we enter the European market or focus domestically?"
+
+  # File analysis (decision focus inferred)
   strategem analyze --file ./company_profile.txt
-  
-  # With formal schema
+
+  # With optional decision focus hints
   strategem analyze --file ./context.txt \
     --title "Market Entry Analysis" \
-    --problem-statement "Should we enter the European market?"
+    --decision-question "Should we enter European market?" \
+    --options "Enter European market,Focus on domestic growth,Partner with local firm" \
+    --decision-type "compare"
 ```
 
 #### `frameworks` - List Frameworks
