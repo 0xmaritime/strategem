@@ -1,0 +1,37 @@
+{
+  "artefact_id": "583d0f07-1bd6-458b-ac04-8c3ce2276372",
+  "analysis_id": "bd636567-9765-4d74-907c-41a694d269df",
+  "artefact_type": "option_report",
+  "version": "2.0.0-dev",
+  "content": {
+    "decision_question": "Which infrastructure migration strategy should NexTech commit to for decommissioning the Blackwood data center while ensuring business continuity, compliance, and future innovation capacity?",
+    "decision_type": "explore",
+    "options_analyzed": [
+      "Full Migration to Hyperscaler",
+      "Hybrid Colocation + Private Cloud",
+      "Multi-Cloud Strategy (AWS + Google Cloud)"
+    ],
+    "option_summaries": {
+      "Full Migration to Hyperscaler": {
+        "framework_insights": [],
+        "claims_affecting_option": [],
+        "assumptions_affecting_option": [],
+        "unknowns_affecting_option": []
+      },
+      "Hybrid Colocation + Private Cloud": {
+        "framework_insights": [],
+        "claims_affecting_option": [],
+        "assumptions_affecting_option": [],
+        "unknowns_affecting_option": []
+      },
+      "Multi-Cloud Strategy (AWS + Google Cloud)": {
+        "framework_insights": [],
+        "claims_affecting_option": [],
+        "assumptions_affecting_option": [],
+        "unknowns_affecting_option": []
+      }
+    }
+  },
+  "generated_at": "2026-02-04T21:00:29.688240",
+  "content_hash": "5db57746ed7ae33a"
+}

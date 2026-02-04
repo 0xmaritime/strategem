@@ -1,0 +1,15 @@
+{
+  "artefact_id": "990baaa0-0ba0-419b-8b21-cfaf93bfd8d5",
+  "analysis_id": "bd636567-9765-4d74-907c-41a694d269df",
+  "artefact_type": "tension_map",
+  "version": "2.0.0-dev",
+  "content": {
+    "framework_tensions": [],
+    "agreement_areas": [],
+    "tension_areas": [],
+    "contradiction_areas": [],
+    "summary": "No frameworks to compare"
+  },
+  "generated_at": "2026-02-04T21:00:29.688334",
+  "content_hash": "68a56917b89e7733"
+}

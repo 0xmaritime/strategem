@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V2 Analysis Results - Strategem Core</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 2px solid #000000;
+        }
+        .status-success { background: #ffffff; color: #000000; }
+        .status-error { background: #000000; color: #ffffff; }
+        .disclaimer-banner {
+            background: #000000;
+            color: #ffffff;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid #000000;
+        }
+        .disclaimer-banner p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        .decision-context {
+            background: #f5f5f5;
+            border: 2px solid #000000;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .tension-section {
+            background: #ffffff;
+            border: 2px solid #000000;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .tension-type {
+            padding: 0.25rem 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            border: 2px solid #000000;
+        }
+        .tension-agreement { background: #ffffff; color: #006400; }
+        .tension-tension { background: #eeeeee; color: #000000; }
+        .tension-contradiction { background: #000000; color: #ffffff; }
+        .artefact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .artefact-card {
+            background: #ffffff;
+            border: 2px solid #000000;
+            padding: 1.5rem;
+        }
+        .artefact-type {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+        .sensitivity-list {
+            background: #f9f9f9;
+            border: 2px solid #000000;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .framework-summary {
+            background: #ffffff;
+            border: 2px solid #000000;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .meta-info {
+            background: #ffffff;
+            padding: 1rem;
+            border: 2px solid #000000;
+            margin-bottom: 1.5rem;
+        }
+        .meta-info p {
+            margin: 0.25rem 0;
+            font-size: 0.9rem;
+        }
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Strategem Core V2</h1>
+            <p class="subtitle">Decision-Bound Reasoning Scaffold</p>
+            <nav>
+                <a href="/">New Analysis</a>
+                <a href="/analyses?version=v2">View V2 Analyses</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="page-header">
+                <h2>Reasoned Artifact (V2)</h2>
+                <div class="actions">
+                    <a href="/" class="btn btn-outline">New Analysis</a>
+                </div>
+            </div>
+
+            <div class="disclaimer-banner">
+                <p><strong>⚠️ This is a reasoned artifact, NOT a recommendation.</strong> This system does NOT output decisions, rank options, optimize objectives, or make recommendations. The Decision Owner retains full responsibility. V2 provides option-aware analysis, cross-framework tension mapping, and explicit sensitivity triggers. Framework disagreement is a valid outcome.</p>
+            </div>
+
+            <div class="decision-context">
+                <h3>Decision Context</h3>
+                <p><strong>Question:</strong> {{ result.decision.decision_question }}</p>
+                <p><strong>Type:</strong> {{ result.decision.decision_type.value }}</p>
+                <p><strong>Options:</strong> {{ result.options_analyzed | join(', ') }}</p>
+            </div>
+
+            <div class="meta-info">
+                <p><strong>Analysis ID:</strong> {{ result.analysis_id }}</p>
+                <p><strong>Created:</strong> {{ result.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+            </div>
+
+            <div class="framework-summary">
+                <h3>Framework Execution Summary</h3>
+                {% for fw in result.framework_results %}
+                    <div class="status-indicator {{ 'status-success' if fw.success else 'status-error' }}">
+                        {% if fw.success %}✓{% else %}✗{% endif %}
+                        {{ fw.framework_name }} ({{ fw.claims | length }} claims)
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if result.tension_map %}
+            <div class="tension-section">
+                <h3>Framework Tension Mapping</h3>
+                <p><strong>Summary:</strong> {{ result.tension_map.summary }}</p>
+
+                {% if result.tension_map.agreement_areas %}
+                <p><strong>Areas of Agreement:</strong></p>
+                <ul>
+                    {% for area in result.tension_map.agreement_areas %}
+                    <li>{{ area }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if result.tension_map.tension_areas %}
+                <p><strong>Areas of Tension:</strong></p>
+                <ul>
+                    {% for area in result.tension_map.tension_areas %}
+                    <li>{{ area }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if result.tension_map.contradiction_areas %}
+                <p><strong>Areas of Contradiction:</strong></p>
+                <ul>
+                    {% for area in result.tension_map.contradiction_areas %}
+                    <li>{{ area }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% for ft in result.tension_map.framework_tensions %}
+                <div style="margin-top: 1.5rem;">
+                    <h4>{{ ft.framework_1 }} vs {{ ft.framework_2 }}</h4>
+                    <span class="tension-type tension-{{ ft.tension_type.value }}">
+                        {{ ft.tension_type.value | upper }}
+                    </span>
+                    <p>{{ ft.summary }}</p>
+
+                    {% if ft.resolution_areas %}
+                    <p><strong>Resolution Required:</strong></p>
+                    <ul>
+                        {% for area in ft.resolution_areas %}
+                        <li>{{ area }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if result.sensitivity_triggers %}
+            <div class="sensitivity-list">
+                <h3>Sensitivity Triggers</h3>
+                <p><strong>Triggers identified:</strong> {{ result.sensitivity_triggers | length }}</p>
+                <ul>
+                    {% for trigger in result.sensitivity_triggers %}
+                    <li>
+                        <strong>{{ trigger.trigger_description }}</strong><br>
+                        <em>Evidence needed:</em> {{ trigger.evidence_needed or 'Not specified' }}<br>
+                        <em>Question:</em> {{ trigger.question_generated or 'None' }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if artefacts %}
+            <h3>Generated Artefacts</h3>
+            <div class="artefact-grid">
+                {% for artefact in artefacts %}
+                <div class="artefact-card">
+                    <div class="artefact-type">{{ artefact.artefact_type.replace('_', ' ') }}</div>
+                    <p><strong>ID:</strong> {{ artefact.artefact_id }}</p>
+                    <p><strong>Version:</strong> {{ artefact.version }}</p>
+                    <p><strong>Hash:</strong> {{ artefact.content_hash }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </main>
+
+        <footer>
+            <p>Strategem Core v2.0.0-dev - A reasoning scaffold, not an oracle. Framework disagreement is a valid outcome.</p>
+            <p>V2: Option-aware analysis | Decision-bound reasoning | Cross-framework tension mapping</p>
+        </footer>
+    </div>
+</body>
+</html>

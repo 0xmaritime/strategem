@@ -1,0 +1,30 @@
+{
+  "artefact_id": "184b9afd-8485-4436-a8de-0cc47ddec6cf",
+  "analysis_id": "e11b8aa6-efde-46f7-b88a-aa7a219621d1",
+  "artefact_type": "option_report",
+  "version": "2.0.0-dev",
+  "content": {
+    "decision_question": "Which?",
+    "decision_type": "compare",
+    "options_analyzed": [
+      "A",
+      "B"
+    ],
+    "option_summaries": {
+      "A": {
+        "framework_insights": [],
+        "claims_affecting_option": [],
+        "assumptions_affecting_option": [],
+        "unknowns_affecting_option": []
+      },
+      "B": {
+        "framework_insights": [],
+        "claims_affecting_option": [],
+        "assumptions_affecting_option": [],
+        "unknowns_affecting_option": []
+      }
+    }
+  },
+  "generated_at": "2026-02-04T20:55:56.649343",
+  "content_hash": "7cc88cd83f6885be"
+}

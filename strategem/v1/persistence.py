@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Optional, List
 from .models import AnalysisResult, ProblemContext, ProvidedMaterial, FrameworkResult
-from .config import config
+from strategem.core import config
 
 
 class PersistenceLayer:

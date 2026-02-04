@@ -1,0 +1,142 @@
+Analyze the following Target System using the Qualitative Systems Dynamics framework.
+
+⸻
+
+DECISION CONTEXT (V2: REQUIRED)
+
+Target System: {target_system_title}
+Decision Question: {decision_question}
+Decision Type: {decision_type}
+Options Under Consideration: {options}
+
+⸻
+
+PROBLEM CONTEXT MATERIAL
+
+{context}
+
+⸻
+
+YOUR TASK
+
+Analyze the target system's internal dynamics and how they affect EACH OPTION differently.
+
+V2 REQUIREMENTS:
+- Decision context is REQUIRED (no exploratory mode)
+- All claims MUST be option-aware (specify which options they affect)
+- Every system element must be tied to option outcomes
+- No system-level claims allowed (affects "all" is invalid)
+
+⸻
+
+REQUIRED OUTPUT STRUCTURE
+
+Provide your analysis in the following JSON format:
+
+{{
+  "DecisionQuestion": "{decision_question}",
+  "OptionsAnalyzed": {options_list},
+
+  "SystemOverview": "1-2 paragraph narrative describing how the target system operates and its structure",
+
+  "KeyComponents": [
+    "component 1",
+    "component 2",
+    "component 3"
+  ],
+
+  "FeedbackLoops": {{
+    "Reinforcing": [
+      {{
+        "Description": "loop 1 description",
+        "AffectedOptions": ["Option A", "Option B"],
+        "EffectType": "growth_driver | acceleration_mechanism",
+        "Assumptions": ["assumption 1", "assumption 2"]
+      }}
+    ],
+    "Balancing": [
+      {{
+        "Description": "loop 1 description",
+        "AffectedOptions": ["Option A"],
+        "EffectType": "constraint | stabilizer",
+        "Assumptions": ["assumption 1"]
+      }}
+    ]
+  }},
+
+  "Bottlenecks": [
+    {{
+      "Description": "bottleneck 1",
+      "AffectedOptions": ["Option A", "Option B", "Option C"],
+      "Severity": "high | medium | low",
+      "Unknowns": ["unknown 1", "unknown 2"]
+    }}
+  ],
+
+  "Fragilities": [
+    {{
+      "Description": "fragility 1",
+      "AffectedOptions": ["Option A"],
+      "Severity": "high | medium | low",
+      "Cascading": true | false,
+      "Assumptions": ["assumption 1"]
+    }}
+  ],
+
+  "OptionAwareClaims": [
+    {{
+      "ClaimId": "claim_1",
+      "Statement": "Option A's fragility to supply chain disruption is higher than Option B",
+      "AffectedOptions": ["Option A", "Option B"],
+      "Source": "inference",
+      "Confidence": "medium",
+      "Framework": "systems_dynamics_v2"
+    }}
+  ],
+
+  "Assumptions": [
+    "assumption 1",
+    "assumption 2"
+  ],
+
+  "Unknowns": [
+    {{
+      "Statement": "unknown 1",
+      "AffectedOptions": ["Option A", "Option B"],
+      "Sensitivity": "critical | high | medium | low",
+      "EvidenceNeeded": "What evidence would reduce this unknown"
+    }}
+  ]
+}}
+
+⸻
+
+CRITICAL V2 RULES
+
+1. Decision-Bound Only: Decision context is REQUIRED. No exploratory mode.
+
+2. Option-Aware Required: All claims MUST specify affected_options. "all" is not valid.
+
+3. System-Option Linkage: Every system element must specify which options it affects.
+
+4. Explicit Non-Goals: Do not make decisions, recommendations, or optimization advice.
+
+5. Framework disagreement is a valid outcome.
+
+⸻
+
+VALIDATION CHECKLIST
+
+Before outputting, verify:
+- [ ] Decision question is present and specific
+- [ ] Every component, loop, bottleneck, and fragility specifies affected_options
+- [ ] OptionAwareClaims has specific affected_options (no "all")
+- [ ] All claims tie system elements to option outcomes
+- [ ] No recommendation or ranking is present
+- [ ] Output is valid JSON only
+
+⸻
+
+CRITICAL: Output ONLY valid JSON. No markdown, no bold text, no explanations outside the JSON.
+
+Remember: V2 requires option-aware analysis. Every claim must specify which options it affects.

@@ -1,0 +1,24 @@
+{
+  "artefact_id": "2f38eb03-8492-4e79-add7-5f3396af52e4",
+  "analysis_id": "e11b8aa6-efde-46f7-b88a-aa7a219621d1",
+  "artefact_type": "analysis_sufficiency",
+  "version": "2.0.0-dev",
+  "content": {
+    "decision_question": "Which?",
+    "decision_type": "compare",
+    "options_count": 2,
+    "frameworks_executed": 2,
+    "frameworks_successful": 1,
+    "framework_success_rate": 0.5,
+    "total_claims": 0,
+    "total_assumptions": 0,
+    "total_unknowns": 0,
+    "option_claim_coverage": {
+      "A": 0,
+      "B": 0
+    },
+    "sufficiency_assessment": "INSUFFICIENT: No analytical claims produced"
+  },
+  "generated_at": "2026-02-04T20:55:56.649420",
+  "content_hash": "b9142c49504358ec"
+}

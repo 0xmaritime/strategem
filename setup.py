@@ -2,7 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name="strategem",
-    version="1.0.0",
+    version="2.0.0-dev",
+    description="Decision Support System with Independent Analytical Frameworks (V1 stable, V2 in development)",
     packages=find_packages(),
     install_requires=[
         "openrouter>=0.1.0",

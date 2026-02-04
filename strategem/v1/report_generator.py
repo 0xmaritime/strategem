@@ -933,7 +933,7 @@ class ReportGenerator:
     def save_report(self, report: AnalysisReport, output_path: str = None) -> str:
         """Save report to file"""
         if output_path is None:
-            from .config import config
+            from strategem.core import config
 
             output_path = config.REPORTS_DIR / f"report_{report.id}.md"
 

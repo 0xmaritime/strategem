@@ -1,8 +1,19 @@
-# Strategem Core v1.0.0
+# Strategem Core v2.0.0-dev
 
 **A Reasoning Scaffold for Decision Support**
 
 Strategem Core is a decision support system that structures unstructured problem context and runs independent analytical frameworks via LLM inference. It produces **reasoned artifacts**, not recommendations.
+
+---
+
+## Version Status
+
+| Version | Status | Key Features |
+|---------|--------|--------------|
+| **V1** | ✅ Fully Functional | Inferred decision focus, optional options, system-level claims allowed |
+| **V2** | ⚠️ Partially Implemented | Required decision & options, option-aware analysis, structured artefacts (frameworks currently not executing reliably) |
+
+**Use V1 for production analysis. V2 is in active development.**
 
 ---
 
@@ -43,6 +54,17 @@ Strategem Core is domain-agnostic. It can analyze:
 - Technology migrations
 
 ...without mental friction, because it operates on **Problem Context**, not domain-specific artifacts.
+
+---
+
+## Version Status
+
+| Version | Status | Key Features |
+|---------|--------|--------------|
+| **V1** | ✅ Fully Functional | Inferred decision focus, optional options, system-level claims allowed, Markdown reports |
+| **V2** | ⚠️ Partially Implemented | Required decision & options, option-aware analysis, structured JSON artefacts (frameworks currently not executing reliably) |
+
+**Use V1 for production analysis. V2 is in active development.**
 
 ---
 

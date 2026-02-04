@@ -243,53 +243,143 @@
             {% if has_porter and result.porter_analysis %}
             <div class="analysis-detail">
                 <h3>Operating Environment Structure - Detailed View</h3>
-                <p><em>Analysis of structural pressures in the target system's operating environment</em></p>
+                <p><em>Analysis of structural pressures in target system's operating environment (Decision-Bound)</em></p>
                 
+                {% if result.porter_analysis.decision_question %}
+                <p><strong>Decision Question:</strong> {{ result.porter_analysis.decision_question }}</p>
+                {% endif %}
+                {% if result.porter_analysis.options_analyzed %}
+                <p><strong>Options Analyzed:</strong> {{ result.porter_analysis.options_analyzed | join(', ') }}</p>
+                {% endif %}
+
                 <div class="force-card">
                     <div class="force-header">
-                        <h4>Pressure: New Entrant Threat</h4>
-                        <span class="force-level level-{{ result.porter_analysis.threat_of_new_entrants.level.lower() }}">{{ result.porter_analysis.threat_of_new_entrants.level }}</span>
+                        <h4>Threat of New Entrants</h4>
+                        <span class="force-level level-{{ result.porter_analysis.threat_of_new_entrants.relevance_to_decision }}">{{ result.porter_analysis.threat_of_new_entrants.relevance_to_decision|title }} Relevance</span>
                     </div>
-                    <p><strong>Rationale:</strong> {{ result.porter_analysis.threat_of_new_entrants.rationale }}</p>
-                    {% if result.porter_analysis.threat_of_new_entrants.unknowns %}
-                    <p><strong>Unknowns:</strong> {{ result.porter_analysis.threat_of_new_entrants.unknowns | join(', ') }}</p>
+                    <p><strong>Relevance Rationale:</strong> {{ result.porter_analysis.threat_of_new_entrants.relevance_rationale }}</p>
+                    {% if result.porter_analysis.threat_of_new_entrants.shared_assumptions %}
+                    <p><strong>Shared Assumptions:</strong> {{ result.porter_analysis.threat_of_new_entrants.shared_assumptions | join(', ') }}</p>
+                    {% endif %}
+                    {% if result.porter_analysis.threat_of_new_entrants.shared_unknowns %}
+                    <p><strong>Shared Unknowns:</strong> {{ result.porter_analysis.threat_of_new_entrants.shared_unknowns | join(', ') }}</p>
+                    {% endif %}
+                    {% if result.porter_analysis.threat_of_new_entrants.effect_by_option %}
+                    <p><strong>Effects by Option:</strong></p>
+                    <ul>
+                        {% for effect in result.porter_analysis.threat_of_new_entrants.effect_by_option %}
+                        <li><strong>{{ effect.option_name }}:</strong> {{ effect.description }}</li>
+                        {% endfor %}
+                    </ul>
                     {% endif %}
                 </div>
 
                 <div class="force-card">
                     <div class="force-header">
-                        <h4>Pressure: Supplier Power</h4>
-                        <span class="force-level level-{{ result.porter_analysis.supplier_power.level.lower() }}">{{ result.porter_analysis.supplier_power.level }}</span>
+                        <h4>Supplier Power</h4>
+                        <span class="force-level level-{{ result.porter_analysis.supplier_power.relevance_to_decision }}">{{ result.porter_analysis.supplier_power.relevance_to_decision|title }} Relevance</span>
                     </div>
-                    <p><strong>Rationale:</strong> {{ result.porter_analysis.supplier_power.rationale }}</p>
+                    <p><strong>Relevance Rationale:</strong> {{ result.porter_analysis.supplier_power.relevance_rationale }}</p>
+                    {% if result.porter_analysis.supplier_power.shared_assumptions %}
+                    <p><strong>Shared Assumptions:</strong> {{ result.porter_analysis.supplier_power.shared_assumptions | join(', ') }}</p>
+                    {% endif %}
+                    {% if result.porter_analysis.supplier_power.shared_unknowns %}
+                    <p><strong>Shared Unknowns:</strong> {{ result.porter_analysis.supplier_power.shared_unknowns | join(', ') }}</p>
+                    {% endif %}
+                    {% if result.porter_analysis.supplier_power.effect_by_option %}
+                    <p><strong>Effects by Option:</strong></p>
+                    <ul>
+                        {% for effect in result.porter_analysis.supplier_power.effect_by_option %}
+                        <li><strong>{{ effect.option_name }}:</strong> {{ effect.description }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                 </div>
 
                 <div class="force-card">
                     <div class="force-header">
-                        <h4>Pressure: Buyer Power</h4>
-                        <span class="force-level level-{{ result.porter_analysis.buyer_power.level.lower() }}">{{ result.porter_analysis.buyer_power.level }}</span>
+                        <h4>Buyer Power</h4>
+                        <span class="force-level level-{{ result.porter_analysis.buyer_power.relevance_to_decision }}">{{ result.porter_analysis.buyer_power.relevance_to_decision|title }} Relevance</span>
                     </div>
-                    <p><strong>Rationale:</strong> {{ result.porter_analysis.buyer_power.rationale }}</p>
+                    <p><strong>Relevance Rationale:</strong> {{ result.porter_analysis.buyer_power.relevance_rationale }}</p>
+                    {% if result.porter_analysis.buyer_power.shared_assumptions %}
+                    <p><strong>Shared Assumptions:</strong> {{ result.porter_analysis.buyer_power.shared_assumptions | join(', ') }}</p>
+                    {% endif %}
+                    {% if result.porter_analysis.buyer_power.shared_unknowns %}
+                    <p><strong>Shared Unknowns:</strong> {{ result.porter_analysis.buyer_power.shared_unknowns | join(', ') }}</p>
+                    {% endif %}
+                    {% if result.porter_analysis.buyer_power.effect_by_option %}
+                    <p><strong>Effects by Option:</strong></p>
+                    <ul>
+                        {% for effect in result.porter_analysis.buyer_power.effect_by_option %}
+                        <li><strong>{{ effect.option_name }}:</strong> {{ effect.description }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                 </div>
 
                 <div class="force-card">
                     <div class="force-header">
-                        <h4>Pressure: Substitution Threat</h4>
-                        <span class="force-level level-{{ result.porter_analysis.substitutes.level.lower() }}">{{ result.porter_analysis.substitutes.level }}</span>
+                        <h4>Threat of Substitutes</h4>
+                        <span class="force-level level-{{ result.porter_analysis.substitutes.relevance_to_decision }}">{{ result.porter_analysis.substitutes.relevance_to_decision|title }} Relevance</span>
                     </div>
-                    <p><strong>Rationale:</strong> {{ result.porter_analysis.substitutes.rationale }}</p>
+                    <p><strong>Relevance Rationale:</strong> {{ result.porter_analysis.substitutes.relevance_rationale }}</p>
+                    {% if result.porter_analysis.substitutes.shared_assumptions %}
+                    <p><strong>Shared Assumptions:</strong> {{ result.porter_analysis.substitutes.shared_assumptions | join(', ') }}</p>
+                    {% endif %}
+                    {% if result.porter_analysis.substitutes.shared_unknowns %}
+                    <p><strong>Shared Unknowns:</strong> {{ result.porter_analysis.substitutes.shared_unknowns | join(', ') }}</p>
+                    {% endif %}
+                    {% if result.porter_analysis.substitutes.effect_by_option %}
+                    <p><strong>Effects by Option:</strong></p>
+                    <ul>
+                        {% for effect in result.porter_analysis.substitutes.effect_by_option %}
+                        <li><strong>{{ effect.option_name }}:</strong> {{ effect.description }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                 </div>
 
                 <div class="force-card">
                     <div class="force-header">
-                        <h4>Pressure: Competitive Intensity</h4>
-                        <span class="force-level level-{{ result.porter_analysis.rivalry.level.lower() }}">{{ result.porter_analysis.rivalry.level }}</span>
+                        <h4>Competitive Rivalry</h4>
+                        <span class="force-level level-{{ result.porter_analysis.rivalry.relevance_to_decision }}">{{ result.porter_analysis.rivalry.relevance_to_decision|title }} Relevance</span>
                     </div>
-                    <p><strong>Rationale:</strong> {{ result.porter_analysis.rivalry.rationale }}</p>
+                    <p><strong>Relevance Rationale:</strong> {{ result.porter_analysis.rivalry.relevance_rationale }}</p>
+                    {% if result.porter_analysis.rivalry.shared_assumptions %}
+                    <p><strong>Shared Assumptions:</strong> {{ result.porter_analysis.rivalry.shared_assumptions | join(', ') }}</p>
+                    {% endif %}
+                    {% if result.porter_analysis.rivalry.shared_unknowns %}
+                    <p><strong>Shared Unknowns:</strong> {{ result.porter_analysis.rivalry.shared_unknowns | join(', ') }}</p>
+                    {% endif %}
+                    {% if result.porter_analysis.rivalry.effect_by_option %}
+                    <p><strong>Effects by Option:</strong></p>
+                    <ul>
+                        {% for effect in result.porter_analysis.rivalry.effect_by_option %}
+                        <li><strong>{{ effect.option_name }}:</strong> {{ effect.description }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                 </div>
+
+                {% if result.porter_analysis.structural_asymmetries %}
+                <div class="force-card">
+                    <h4>Structural Asymmetries</h4>
+                    <p><em>Forces that disproportionately affect different options</em></p>
+                    <ul>
+                        {% for asymmetry in result.porter_analysis.structural_asymmetries %}
+                        <li>
+                            <strong>{{ asymmetry.force_name }}:</strong> {{ asymmetry.description }}<br>
+                            <em>Stronger impact on: {{ asymmetry.stronger_impact_on }}</em><br>
+                            <small>Key assumption: {{ asymmetry.key_assumption }}</small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
             </div>
             {% endif %}
-
+ 
             {% if has_systems and result.systems_analysis %}
             <div class="analysis-detail">
                 <h3>Target System Dynamics - Overview</h3>

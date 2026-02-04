@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategem V1 - Inferred Decision Analysis</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .disclaimer-banner {
+            background: #000000;
+            color: #ffffff;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 2px solid #000000;
+        }
+        .disclaimer-banner h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+        .disclaimer-banner p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        .v1-features {
+            background: #f5f5f5;
+            border: 2px solid #000000;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .v1-features ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+        .v1-features li {
+            margin-bottom: 0.5rem;
+        }
+        .optional-field {
+            position: relative;
+        }
+        .optional-field::after {
+            content: '(optional)';
+            color: #666;
+            font-size: 0.8rem;
+            margin-left: 0.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Strategem V1</h1>
+            <p class="subtitle">Inferred Decision Focus | Framework-Adaptive Analysis</p>
+            <nav>
+                <a href="/" class="back-link">← Version Selection</a>
+                <a href="/analyses?version=v1">V1 Analyses</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="disclaimer-banner">
+                <h3>⚠️ V1 Features</h3>
+                <p><strong>Decision focus is optional.</strong> The system will infer decision context from materials if not provided. Frameworks adapt to the available context.</p>
+            </div>
+
+            <div class="v1-features">
+                <h3>V1 Key Features</h3>
+                <ul>
+                    <li><strong>Inferred Decision Focus:</strong> Decision question and options are optional (hint only)</li>
+                    <li><strong>Framework-Adaptive:</strong> Frameworks adjust analysis based on available context</li>
+                    <li><strong>System-Level Claims:</strong> Claims can affect the entire system or specific options</li>
+                    <li><strong>Markdown Output:</strong> Simple, readable report format</li>
+                    <li><strong>Simpler Requirements:</strong> Only problem context materials required</li>
+                </ul>
+            </div>
+
+            <section class="intro">
+                <h2>Analyze a Target System (V1)</h2>
+                <p>Provide Problem Context Materials to run analytical frameworks. The system produces a <strong>reasoned artifact</strong> highlighting operating environment pressures, target system fragilities, and uncertainties. Framework disagreement is a valid outcome.</p>
+            </section>
+
+            <div class="upload-options">
+                <div class="upload-section">
+                     <h3>Option 1: Paste Text</h3>
+                     <form action="/analyze/text" method="post" id="text-form">
+                          <textarea
+                              name="text"
+                              placeholder="Paste Problem Context Material here: target system description, operating environment information, objectives, constraints, or any relevant context..."
+                              rows="15"
+                              required
+                          ></textarea>
+
+                          <div class="decision-focus-section" style="margin: 1.5rem 0; padding: 1rem; border: 2px solid #000000; background: #f5f5f5;">
+                              <h4 style="margin-bottom: 1rem;">🎯 Decision Focus <span style="color: #666; font-size: 0.85rem; font-weight: 400;">(OPTIONAL HINT)</span></h4>
+                              <p style="font-size: 0.9rem; margin-bottom: 1rem;">Optional: Improves precision if provided, but system will infer from context if absent</p>
+
+                              <div style="margin-bottom: 1rem;">
+                                  <label class="optional-field" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Question</label>
+                                  <input type="text" name="decision_question" placeholder="e.g., Should we enter the European market?" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                              </div>
+
+                              <div style="margin-bottom: 1rem;">
+                                  <label class="optional-field" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Type</label>
+                                  <select name="decision_type" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                                      <option value="explore">Explore</option>
+                                      <option value="compare" selected>Compare</option>
+                                      <option value="stress_test">Stress Test</option>
+                                  </select>
+                              </div>
+
+                              <div style="margin-bottom: 1rem;">
+                                  <label class="optional-field" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Options (comma-separated)</label>
+                                  <input type="text" name="options" placeholder="e.g., Enter European market, Focus on domestic growth, Partner with local firm" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                              </div>
+                          </div>
+
+                          <input type="hidden" name="version" value="v1">
+
+                          <button type="submit" class="btn btn-primary">Run V1 Analysis</button>
+                     </form>
+                </div>
+
+                <div class="divider">OR</div>
+
+                <div class="upload-section">
+                     <h3>Option 2: Upload File</h3>
+                     <form action="/analyze/file" method="post" enctype="multipart/form-data" id="upload-form">
+                          <div class="file-input-wrapper">
+                              <input
+                                  type="file"
+                                  name="file"
+                                  id="upload-file"
+                                  accept=".txt,.md"
+                                  required
+                              >
+                              <label for="upload-file" class="file-label">
+                                  <span class="file-icon">📄</span>
+                                  <span class="file-text">Choose a file...</span>
+                              </label>
+                          </div>
+                          <p class="file-types">Accepted: .txt, .md (Problem Context Materials)</p>
+
+                          <div class="decision-focus-section" style="margin: 1.5rem 0; padding: 1rem; border: 2px solid #000000; background: #f5f5f5;">
+                              <h4 style="margin-bottom: 1rem;">🎯 Decision Focus <span style="color: #666; font-size: 0.85rem; font-weight: 400;">(OPTIONAL HINT)</span></h4>
+                              <p style="font-size: 0.9rem; margin-bottom: 1rem;">Optional: Improves precision if provided, but system will infer from context if absent</p>
+
+                              <div style="margin-bottom: 1rem;">
+                                  <label class="optional-field" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Question</label>
+                                  <input type="text" name="decision_question" placeholder="e.g., Should we enter the European market?" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                              </div>
+
+                              <div style="margin-bottom: 1rem;">
+                                  <label class="optional-field" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Type</label>
+                                  <select name="decision_type" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                                      <option value="explore">Explore</option>
+                                      <option value="compare" selected>Compare</option>
+                                      <option value="stress_test">Stress Test</option>
+                                  </select>
+                              </div>
+
+                              <div style="margin-bottom: 1rem;">
+                                  <label class="optional-field" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Options (comma-separated)</label>
+                                  <input type="text" name="options" placeholder="e.g., Enter European market, Focus on domestic growth, Partner with local firm" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                              </div>
+                          </div>
+
+                          <input type="hidden" name="version" value="v1">
+
+                          <button type="submit" class="btn btn-primary">Run V1 Analysis</button>
+                     </form>
+                </div>
+            </div>
+
+            <section class="info">
+                <h3>What to Expect (V1)</h3>
+                <div class="features">
+                    <div class="feature">
+                        <h4>📊 Operating Environment Structure</h4>
+                        <p>Assess structural pressures across the target system's operating environment: new entrant threats, supplier power, buyer power, substitution threats, and competitive intensity.</p>
+                    </div>
+                    <div class="feature">
+                        <h4>🔄 Target System Dynamics</h4>
+                        <p>Understand feedback loops, reinforcing dynamics, bottlenecks, and fragilities that affect target system sustainability.</p>
+                    </div>
+                    <div class="feature">
+                        <h4>⚠️ Uncertainty Surfacing</h4>
+                        <p>Explicit identification of risks, assumptions, unknowns, and missing information. Framework disagreement is valid and expected.</p>
+                    </div>
+                    <div class="feature">
+                        <h4>🎯 Decision Surface</h4>
+                        <p>Clear identification of where judgment is required, what would change assessment, and which unknowns dominate outcome variance.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="info">
+                <h3>System Boundaries (V1)</h3>
+                <div style="background: #f5f5f5; padding: 1rem; border: 2px solid #000000; margin-top: 1rem;">
+                    <p><strong>V1 does NOT:</strong></p>
+                    <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+                        <li>Output decisions or recommendations</li>
+                        <li>Rank or compare options</li>
+                        <li>Optimize objectives</li>
+                        <li>Provide investment advice</li>
+                        <li>Validate against external reality</li>
+                        <li>Learn from past outcomes</li>
+                    </ul>
+                    <p style="margin-top: 1rem; font-size: 0.9rem;">
+                        <strong>Known Limitations:</strong> Analysis quality depends on Problem Context Materials quality. No ground truth. No domain authority. Framework outputs may contradict.
+                    </p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Strategem V1.0.0 - A reasoning scaffold, not a gatekeeper. Framework disagreement is a valid outcome.</p>
+        </footer>
+    </div>
+
+    <style>
+        .loading-indicator {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .loading-indicator.show {
+            display: flex;
+        }
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #000000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+        }
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+        .loading-content {
+            background: #ffffff;
+            padding: 3rem;
+            border: 4px solid #000000;
+            text-align: center;
+            max-width: 500px;
+        }
+        .loading-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #000000;
+        }
+        .loading-message {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        .loading-steps {
+            text-align: left;
+            margin-top: 1.5rem;
+            padding-left: 0.5rem;
+        }
+        .loading-step {
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #999;
+        }
+        .loading-step.active {
+            color: #000000;
+            font-weight: 600;
+        }
+        .loading-step.completed {
+            color: #000000;
+            text-decoration: line-through;
+        }
+        .loading-step.completed::before {
+            content: '✓';
+        }
+        .loading-step.active::before {
+            content: '⟳';
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        .loading-step::before {
+            margin-right: 0.5rem;
+        }
+    </style>
+    <script>
+        // Simple file input label update - only for file upload form
+        const uploadFileInput = document.querySelector('#upload-file');
+        if (uploadFileInput) {
+            uploadFileInput.addEventListener('change', function(e) {
+                const fileName = e.target.files[0]?.name || 'Choose a file...';
+                const uploadFileLabel = document.querySelector('#upload-form .file-text');
+                if (uploadFileLabel) {
+                    uploadFileLabel.textContent = fileName;
+                }
+            });
+        }
+
+        // Show detailed loading overlay when forms are submitted
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const loadingOverlay = document.querySelector('.loading-overlay');
+                if (loadingOverlay) {
+                    loadingOverlay.classList.add('active');
+                    // Animate through steps with timing that reflects actual framework execution
+                    const steps = loadingOverlay.querySelectorAll('.loading-step');
+                    let currentStep = 0;
+                    
+                    const animateStep = () => {
+                        if (currentStep > 0) {
+                            steps[currentStep - 1].classList.remove('active');
+                            steps[currentStep - 1].classList.add('completed');
+                        }
+                        if (currentStep < steps.length) {
+                            steps[currentStep].classList.add('active');
+                            // Different timing for different steps to reflect reality
+                            // Ingest context: 1-2s
+                            // Porter framework: 8-12s (LLM call)
+                            // Systems framework: 8-12s (LLM call)
+                            // Generate report: 2-3s
+                            const timings = [1500, 10000, 10000, 2000];
+                            const timing = timings[currentStep] || 2000;
+                            currentStep++;
+                            setTimeout(animateStep, timing);
+                        }
+                    };
+                    setTimeout(animateStep, 500);
+                }
+            });
+        });
+    </script>
+
+    <div class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-title">Running V1 Analysis</div>
+            <div class="loading-message">Inferred decision analysis with framework-adaptive workflows...</div>
+            <div class="loading-steps">
+                <div class="loading-step">Ingesting problem context</div>
+                <div class="loading-step">Inferring decision focus (if needed)</div>
+                <div class="loading-step">Running Porter's Five Forces framework</div>
+                <div class="loading-step">Running Systems Dynamics framework</div>
+                <div class="loading-step">Generating reasoned artifact</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

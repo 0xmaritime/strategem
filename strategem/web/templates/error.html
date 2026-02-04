@@ -43,7 +43,18 @@
                 <h2>Analysis Failed</h2>
                 <p>Something went wrong while processing your request.</p>
                 
-                <div class="error-message">{{ error }}</div>
+                <div class="error-message">
+                    <pre>{{ error }}</pre>
+                </div>
+                
+                {% if error_trace %}
+                <div class="error-message" style="margin-top: 1rem;">
+                    <details>
+                        <summary style="cursor: pointer; font-weight: 600;">Show Error Trace</summary>
+                        <pre style="font-size: 0.8rem; margin-top: 0.5rem;">{{ error_trace }}</pre>
+                    </details>
+                </div>
+                {% endif %}
                 
                 <div class="actions">
                     <a href="/" class="btn btn-primary">Try Again</a>

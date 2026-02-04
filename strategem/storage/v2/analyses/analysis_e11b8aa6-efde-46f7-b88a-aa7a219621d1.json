@@ -1,0 +1,264 @@
+{
+  "analysis_id": "e11b8aa6-efde-46f7-b88a-aa7a219621d1",
+  "decision": {
+    "decision_question": "Which?",
+    "decision_type": "compare"
+  },
+  "options_analyzed": [
+    "A",
+    "B"
+  ],
+  "framework_results": [
+    {
+      "framework_name": "porter_five_forces_v2",
+      "success": true,
+      "execution_status": "successful",
+      "result": {
+        "decision_question": "Which?",
+        "options_analyzed": [
+          "A",
+          "B"
+        ],
+        "threat_of_new_entrants": {
+          "name": "Threat of New Entrants",
+          "relevance_to_decision": "high",
+          "relevance_rationale": "The presence of new entrants can significantly impact market dynamics for both options.",
+          "effect_by_option": [
+            {
+              "option_name": "Option A",
+              "description": "New entrants may find it easier to compete with Option A due to lower barriers to entry.",
+              "magnitude": "high",
+              "direction": "negative",
+              "key_assumptions": [
+                "Option A has lower brand loyalty",
+                "Market entry costs are manageable for new competitors"
+              ],
+              "key_unknowns": [
+                "The actual cost of entry for new competitors",
+                "The level of differentiation of Option A"
+              ]
+            },
+            {
+              "option_name": "Option B",
+              "description": "Option B may have established barriers that deter new entrants, making it less vulnerable.",
+              "magnitude": "medium",
+              "direction": "positive",
+              "key_assumptions": [
+                "Option B has higher brand loyalty",
+                "Market entry costs are significant for new competitors"
+              ],
+              "key_unknowns": [
+                "The potential for new entrants to innovate",
+                "The regulatory environment affecting Option B"
+              ]
+            }
+          ],
+          "shared_assumptions": [
+            "Both options operate in a competitive market",
+            "Market demand is stable"
+          ],
+          "shared_unknowns": [
+            "Overall market growth rate",
+            "Consumer preferences"
+          ]
+        },
+        "supplier_power": {
+          "name": "Supplier Power",
+          "relevance_to_decision": "medium",
+          "relevance_rationale": "Supplier dynamics can influence costs and availability of resources for both options.",
+          "effect_by_option": [
+            {
+              "option_name": "Option A",
+              "description": "Option A may face higher supplier power due to reliance on fewer suppliers.",
+              "magnitude": "high",
+              "direction": "negative",
+              "key_assumptions": [
+                "Option A has limited supplier diversity",
+                "Suppliers have strong bargaining power"
+              ],
+              "key_unknowns": [
+                "The number of suppliers available",
+                "The potential for supplier consolidation"
+              ]
+            },
+            {
+              "option_name": "Option B",
+              "description": "Option B may have a more diversified supplier base, reducing supplier power.",
+              "magnitude": "medium",
+              "direction": "neutral",
+              "key_assumptions": [
+                "Option B has established relationships with multiple suppliers",
+                "Suppliers are less concentrated"
+              ],
+              "key_unknowns": [
+                "The stability of supplier relationships",
+                "Potential changes in supplier pricing strategies"
+              ]
+            }
+          ],
+          "shared_assumptions": [
+            "Both options require similar inputs",
+            "Supplier market conditions are similar"
+          ],
+          "shared_unknowns": [
+            "Future supplier pricing trends",
+            "Availability of alternative suppliers"
+          ]
+        },
+        "buyer_power": {
+          "name": "Buyer Power",
+          "relevance_to_decision": "high",
+          "relevance_rationale": "The power of buyers can significantly affect pricing and profitability for both options.",
+          "effect_by_option": [
+            {
+              "option_name": "Option A",
+              "description": "Option A may be more susceptible to buyer power due to lower differentiation.",
+              "magnitude": "high",
+              "direction": "negative",
+              "key_assumptions": [
+                "Buyers have many alternatives to Option A",
+                "Price sensitivity is high among buyers"
+              ],
+              "key_unknowns": [
+                "The extent of buyer loyalty to Option A",
+                "Changes in buyer preferences"
+              ]
+            },
+            {
+              "option_name": "Option B",
+              "description": "Option B may enjoy higher buyer loyalty, reducing buyer power.",
+              "magnitude": "medium",
+              "direction": "positive",
+              "key_assumptions": [
+                "Option B has unique features that buyers value",
+                "Buyers are less price-sensitive for Option B"
+              ],
+              "key_unknowns": [
+                "The potential for new alternatives to emerge",
+                "Changes in buyer demographics"
+              ]
+            }
+          ],
+          "shared_assumptions": [
+            "Both options target similar customer segments",
+            "Market conditions are similar for buyers"
+          ],
+          "shared_unknowns": [
+            "Overall market demand",
+            "Trends in consumer behavior"
+          ]
+        },
+        "substitutes": {
+          "name": "Threat of Substitutes",
+          "relevance_to_decision": "medium",
+          "relevance_rationale": "The availability of substitutes can impact the competitive landscape for both options.",
+          "effect_by_option": [
+            {
+              "option_name": "Option A",
+              "description": "Option A may face a higher threat from substitutes due to lower differentiation.",
+              "magnitude": "high",
+              "direction": "negative",
+              "key_assumptions": [
+                "Substitutes are readily available",
+                "Buyers are willing to switch to substitutes"
+              ],
+              "key_unknowns": [
+                "The quality of substitutes compared to Option A",
+                "Consumer awareness of substitutes"
+              ]
+            },
+            {
+              "option_name": "Option B",
+              "description": "Option B may have fewer substitutes available, reducing the threat.",
+              "magnitude": "medium",
+              "direction": "positive",
+              "key_assumptions": [
+                "Option B offers unique features",
+                "Substitutes are less appealing to buyers"
+              ],
+              "key_unknowns": [
+                "Emergence of new substitutes",
+                "Changes in consumer preferences"
+              ]
+            }
+          ],
+          "shared_assumptions": [
+            "Both options operate in a similar market",
+            "Consumer needs are similar"
+          ],
+          "shared_unknowns": [
+            "Future trends in substitute products",
+            "Market acceptance of substitutes"
+          ]
+        },
+        "rivalry": {
+          "name": "Competitive Rivalry",
+          "relevance_to_decision": "high",
+          "relevance_rationale": "The level of rivalry can significantly impact market share and profitability for both options.",
+          "effect_by_option": [
+            {
+              "option_name": "Option A",
+              "description": "Option A may experience intense rivalry due to many competitors in the market.",
+              "magnitude": "high",
+              "direction": "negative",
+              "key_assumptions": [
+                "Market is saturated with competitors",
+                "Competitors are aggressively pricing their products"
+              ],
+              "key_unknowns": [
+                "The number of competitors",
+                "Competitor strategies"
+              ]
+            },
+            {
+              "option_name": "Option B",
+              "description": "Option B may face less rivalry due to a more niche market segment.",
+              "magnitude": "medium",
+              "direction": "neutral",
+              "key_assumptions": [
+                "Option B targets a specific audience",
+                "Fewer competitors exist in this niche"
+              ],
+              "key_unknowns": [
+                "Potential entrants into the niche market",
+                "Changes in market dynamics"
+              ]
+            }
+          ],
+          "shared_assumptions": [
+            "Both options are in competitive markets",
+            "Market growth is limited"
+          ],
+          "shared_unknowns": [
+            "Future competitive actions",
+            "Market entry of new players"
+          ]
+        },
+        "structural_asymmetries": [],
+        "option_aware_claims": [],
+        "shared_observations": "Both options face significant competitive pressures, but the nature and intensity of these pressures differ."
+      },
+      "claims": [],
+      "assumptions": [],
+      "unknowns": []
+    },
+    {
+      "framework_name": "systems_dynamics_v2",
+      "success": false,
+      "execution_status": "failed",
+      "execution_reason": "V2 analysis failed: Analysis failed after 2 attempts: 2 validation errors for SystemsDynamicsAnalysisV2\nsystem_overview\n  Field required [type=missing, input_value={'DecisionQuestion': 'Whi...esource availability'}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\nkey_components\n  Field required [type=missing, input_value={'DecisionQuestion': 'Whi...esource availability'}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing",
+      "claims": [],
+      "assumptions": [],
+      "unknowns": []
+    }
+  ],
+  "tension_map": {
+    "framework_tensions": [],
+    "agreement_areas": [],
+    "tension_areas": [],
+    "contradiction_areas": [],
+    "summary": "No frameworks to compare"
+  },
+  "sensitivity_triggers": [],
+  "created_at": "2026-02-04T20:55:56.646886"
+}

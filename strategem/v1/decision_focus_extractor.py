@@ -194,8 +194,9 @@ class DecisionFocusExtractor:
             return alternatives  # Found clean vs match, stop here
 
         # Method 1b: "or" pattern (weaker signal, but still useful)
+        # V1: Stricter filtering to avoid capturing descriptive sentences
         or_pattern = re.findall(
-            r"(.{10,100})\s+or\s+([^.,\n]{10,100})",
+            r"([A-Z][^.?!\n]{4,60})\s+or\s+([A-Z][^.?!\n]{4,60})",
             text,
             re.IGNORECASE,
         )
@@ -236,10 +237,10 @@ class DecisionFocusExtractor:
 
             # Filter out role definitions and context sentences
             # These are NOT decision options
+            option_lower = option_text.lower()
             if any(
-                phrase in option_text.lower()
+                phrase in option_lower
                 for phrase in [
-                    "you are the",
                     "you are",
                     "you're",
                     "you represent",
@@ -250,6 +251,17 @@ class DecisionFocusExtractor:
                     "addressing homeless services",
                     "cost structures",
                     "trade-offs",
+                    "should we",
+                    "at the event",
+                    "red x",
+                    "green tick",
+                    "simple dashboard",
+                    "staff scans",
+                    "shows",
+                    "visual id",
+                    "valid",
+                    "used",
+                    "invalid",
                 ]
             ):
                 continue
@@ -261,11 +273,18 @@ class DecisionFocusExtractor:
                 ". each option",
                 "; each option",
                 ", this provides",
+                " for visual id check",
             ]:
-                if stop_phrase in option_text.lower():
-                    option_text = option_text[
-                        : option_text.lower().find(stop_phrase)
-                    ].strip()
+                if stop_phrase in option_lower:
+                    idx = option_lower.find(stop_phrase)
+                    if idx > 0:
+                        option_text = option_text[:idx].strip()
+                        option_lower = option_text.lower()
+
+            # Limit option length to reasonable max (avoid full sentences)
+            if len(option_text) > 50:
+                option_text = option_text[:50].strip()
+                option_lower = option_text.lower()
 
             if len(option_text) > 5 and option_text not in alternatives:
                 alternatives.append(option_text)

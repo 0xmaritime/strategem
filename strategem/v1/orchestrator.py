@@ -22,7 +22,7 @@ from .models import (
     AnalysisSufficiencyStatus,
 )
 from .llm_layer import LLMInferenceLayer, LLMError
-from .config import config
+from strategem.core import config
 from .decision_focus_extractor import DecisionFocusExtractor
 
 

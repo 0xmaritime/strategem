@@ -2,9 +2,14 @@
 
 ## System Overview
 
-Strategem Core v1 is a decision support system that structures unstructured problem context and runs independent analytical frameworks via LLM inference. It produces **reasoned artifacts**, not recommendations.
+Strategem Core is a decision support system with two analysis versions. V1 is fully functional. V2 is partially implemented with framework execution issues.
 
-**V1 Key Principle: Decision Focus is inferred, not required.**
+### Version Status
+
+| Version | Status | Architecture | State |
+|---------|--------|-------------|--------|
+| **V1** | ✅ Stable, Production-Ready | Monolithic, Inferred Decision | Fully Functional |
+| **V2** | ⚠️ In Development | Versioned, Required Decision | Partially Implemented |
 
 ## Core Philosophy
 
@@ -22,7 +27,6 @@ Strategem Core v1 is a decision support system that structures unstructured prob
 - A ranking or optimization tool
 
 ### Key Design Decisions
-
 1. **Framework Independence**: Frameworks run independently and may disagree
 2. **Explicit Uncertainty**: Unknowns are surfaced, not hidden
 3. **No Recommendations**: System provides analysis, not advice
@@ -30,6 +34,55 @@ Strategem Core v1 is a decision support system that structures unstructured prob
 5. **Deterministic**: Fixed prompts, low temperature, reproducible outputs
 6. **Decision Focus Inference**: Inferred from context, not required via forms
 7. **No Framework Gating**: Frameworks adapt to context, never block analysis
+
+---
+
+## Current Implementation Status
+
+### V1 (Stable - Production Ready)
+
+**Status: ✅ Fully Functional**
+
+- **Problem Context**: Ingestion, parsing, formalization (working)
+- **Orchestrator**: Framework execution, result aggregation (working)
+- **Frameworks**: Porter Five Forces, Systems Dynamics (working)
+- **Report Generator**: Markdown output with all sections (working)
+- **Persistence**: JSON + Markdown storage (working)
+- **CLI**: Full V1 analysis commands (working)
+- **Web UI**: `/v1` entry point (working)
+
+### V2 (In Development - Known Issues)
+
+**Status: ⚠️ Partially Implemented**
+
+**What's Working:**
+- ✅ Version isolation (v1/ and v2/ separated)
+- ✅ Core layer (mechanical primitives only)
+- ✅ V2 models (enums, core, tension, dependency, sensitivity, output, framework)
+- ✅ V2 web UI (`/v2` entry point with required fields)
+- ✅ Separate landing page (`/`) for version selection
+
+**What's NOT Working:**
+- ❌ **V2 Framework Execution**: Frameworks are defined but LLM response parsing fails consistently
+  - Issue: Pydantic validation errors (mismatched field names, required fields)
+  - Root cause: LLM output format doesn't match V2 model expectations
+  - Result: V2 analyses fail with validation errors
+
+**Known V2 Limitations:**
+- V2 prompts (`porter_v2.txt`, `systems_dynamics_v2.txt`) exist but produce incompatible JSON
+- V2 models are designed with many optional fields to handle parsing issues
+- `V2AnalysisOrchestrator` has framework registration but framework execution fails
+- Tension mapper and artefact generator exist but can't be tested due to framework failures
+
+**Development Path Forward:**
+1. Fix LLM prompt-output alignment (simplify V2 prompts or adjust models)
+2. Add fallback parsing for malformed LLM responses
+3. Implement robust error handling in V2 orchestrator
+4. Add comprehensive V2 integration testing
+
+**Recommendation**: Use V1 for all production analysis. V2 requires additional development to be production-ready.
+
+---
 
 ## Architecture Layers
 

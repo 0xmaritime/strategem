@@ -1,0 +1,17 @@
+{
+  "artefact_id": "a7d3586b-b703-41f5-89f5-562a81a59d1e",
+  "analysis_id": "bd636567-9765-4d74-907c-41a694d269df",
+  "artefact_type": "claim_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "claims_by_framework": {
+      "porter_five_forces_v2": []
+    },
+    "framework_claim_counts": {
+      "porter_five_forces_v2": 0
+    },
+    "total_claims": 0
+  },
+  "generated_at": "2026-02-04T21:00:29.688538",
+  "content_hash": "b8344ca1cfa9f503"
+}

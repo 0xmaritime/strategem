@@ -1,0 +1,336 @@
+{
+  "analysis_id": "bd636567-9765-4d74-907c-41a694d269df",
+  "decision": {
+    "decision_question": "Which infrastructure migration strategy should NexTech commit to for decommissioning the Blackwood data center while ensuring business continuity, compliance, and future innovation capacity?",
+    "decision_type": "explore"
+  },
+  "options_analyzed": [
+    "Full Migration to Hyperscaler",
+    "Hybrid Colocation + Private Cloud",
+    "Multi-Cloud Strategy (AWS + Google Cloud)"
+  ],
+  "framework_results": [
+    {
+      "framework_name": "porter_five_forces_v2",
+      "success": true,
+      "execution_status": "successful",
+      "result": {
+        "decision_question": "Which infrastructure migration strategy should NexTech commit to for decommissioning the Blackwood data center while ensuring business continuity, compliance, and future innovation capacity?",
+        "options_analyzed": [
+          "Full Migration to Hyperscaler",
+          "Hybrid Colocation + Private Cloud",
+          "Multi-Cloud Strategy (AWS + Google Cloud)"
+        ],
+        "threat_of_new_entrants": {
+          "name": "Threat of New Entrants",
+          "relevance_to_decision": "medium",
+          "relevance_rationale": "New entrants could disrupt the market dynamics, but the existing infrastructure and expertise required limit their impact.",
+          "effect_by_option": [
+            {
+              "option_name": "Full Migration to Hyperscaler",
+              "description": "New entrants may find it challenging to compete with established hyperscalers, potentially limiting the impact on this option.",
+              "magnitude": "low",
+              "direction": "negative",
+              "key_assumptions": [
+                "Established hyperscalers have significant market share.",
+                "New entrants lack the resources to compete effectively."
+              ],
+              "key_unknowns": [
+                "Potential for new technologies that could lower barriers to entry.",
+                "Market response to new entrants."
+              ]
+            },
+            {
+              "option_name": "Hybrid Colocation + Private Cloud",
+              "description": "This option may face moderate threats from new entrants offering innovative solutions that combine colocation and private cloud services.",
+              "magnitude": "medium",
+              "direction": "positive",
+              "key_assumptions": [
+                "New entrants can innovate in hybrid solutions.",
+                "Existing providers may not adapt quickly."
+              ],
+              "key_unknowns": [
+                "The speed of technological advancements.",
+                "Customer preferences for hybrid solutions."
+              ]
+            },
+            {
+              "option_name": "Multi-Cloud Strategy (AWS + Google Cloud)",
+              "description": "The multi-cloud approach may be less affected by new entrants due to the dominance of established cloud providers.",
+              "magnitude": "low",
+              "direction": "negative",
+              "key_assumptions": [
+                "AWS and Google Cloud have strong brand loyalty.",
+                "New entrants struggle to gain market trust."
+              ],
+              "key_unknowns": [
+                "Emerging cloud providers' capabilities.",
+                "Regulatory changes affecting cloud services."
+              ]
+            }
+          ],
+          "shared_assumptions": [
+            "Market dynamics are influenced by existing players.",
+            "New entrants require significant investment."
+          ],
+          "shared_unknowns": [
+            "Future technological trends.",
+            "Regulatory impacts on new entrants."
+          ]
+        },
+        "supplier_power": {
+          "name": "Supplier Power",
+          "relevance_to_decision": "high",
+          "relevance_rationale": "The power of suppliers can significantly impact the cost and availability of services for each option.",
+          "effect_by_option": [
+            {
+              "option_name": "Full Migration to Hyperscaler",
+              "description": "High supplier power from hyperscalers can lead to increased costs and reduced flexibility.",
+              "magnitude": "high",
+              "direction": "negative",
+              "key_assumptions": [
+                "Hyperscalers control significant resources.",
+                "Limited alternatives for critical services."
+              ],
+              "key_unknowns": [
+                "Potential for new suppliers to emerge.",
+                "Changes in pricing models by hyperscalers."
+              ]
+            },
+            {
+              "option_name": "Hybrid Colocation + Private Cloud",
+              "description": "This option may benefit from moderate supplier power, allowing for negotiation on services.",
+              "magnitude": "medium",
+              "direction": "neutral",
+              "key_assumptions": [
+                "Multiple suppliers exist for colocation services.",
+                "Private cloud solutions can be customized."
+              ],
+              "key_unknowns": [
+                "Market consolidation among suppliers.",
+                "Emerging technologies affecting supplier dynamics."
+              ]
+            },
+            {
+              "option_name": "Multi-Cloud Strategy (AWS + Google Cloud)",
+              "description": "Supplier power is high due to reliance on major cloud providers, which can dictate terms.",
+              "magnitude": "high",
+              "direction": "negative",
+              "key_assumptions": [
+                "AWS and Google Cloud dominate the market.",
+                "Limited competition among cloud providers."
+              ],
+              "key_unknowns": [
+                "Potential for new cloud entrants.",
+                "Regulatory impacts on cloud services."
+              ]
+            }
+          ],
+          "shared_assumptions": [
+            "Supplier relationships are critical for service delivery.",
+            "Market dynamics influence supplier power."
+          ],
+          "shared_unknowns": [
+            "Future supplier market changes.",
+            "Impact of technological advancements on supplier power."
+          ]
+        },
+        "buyer_power": {
+          "name": "Buyer Power",
+          "relevance_to_decision": "medium",
+          "relevance_rationale": "The power of buyers can influence pricing and service offerings across options.",
+          "effect_by_option": [
+            {
+              "option_name": "Full Migration to Hyperscaler",
+              "description": "Buyers may have limited power due to the dominance of hyperscalers, leading to less favorable terms.",
+              "magnitude": "low",
+              "direction": "negative",
+              "key_assumptions": [
+                "Hyperscalers have established customer bases.",
+                "Switching costs are high."
+              ],
+              "key_unknowns": [
+                "Changes in buyer preferences.",
+                "Emergence of alternative solutions."
+              ]
+            },
+            {
+              "option_name": "Hybrid Colocation + Private Cloud",
+              "description": "Buyers may exert moderate power, allowing for negotiation on service levels and pricing.",
+              "magnitude": "medium",
+              "direction": "positive",
+              "key_assumptions": [
+                "Buyers have multiple options for hybrid solutions.",
+                "Customization is valued by buyers."
+              ],
+              "key_unknowns": [
+                "Market trends affecting buyer preferences.",
+                "Economic factors influencing buyer power."
+              ]
+            },
+            {
+              "option_name": "Multi-Cloud Strategy (AWS + Google Cloud)",
+              "description": "Buyers may have some power due to the availability of multiple cloud options, but major providers still dominate.",
+              "magnitude": "medium",
+              "direction": "neutral",
+              "key_assumptions": [
+                "Buyers seek flexibility in cloud services.",
+                "Competition exists among cloud providers."
+              ],
+              "key_unknowns": [
+                "Future shifts in buyer preferences.",
+                "Impact of new entrants on buyer power."
+              ]
+            }
+          ],
+          "shared_assumptions": [
+            "Buyer preferences influence service offerings.",
+            "Market competition affects buyer power."
+          ],
+          "shared_unknowns": [
+            "Changes in buyer behavior.",
+            "Economic conditions affecting buyer power."
+          ]
+        },
+        "substitutes": {
+          "name": "Threat of Substitutes",
+          "relevance_to_decision": "medium",
+          "relevance_rationale": "The availability of substitute solutions can impact the attractiveness of each option.",
+          "effect_by_option": [
+            {
+              "option_name": "Full Migration to Hyperscaler",
+              "description": "The threat of substitutes is low as hyperscalers offer unique capabilities that are hard to replicate.",
+              "magnitude": "low",
+              "direction": "negative",
+              "key_assumptions": [
+                "Hyperscalers provide specialized services.",
+                "Limited substitutes for core functionalities."
+              ],
+              "key_unknowns": [
+                "Emerging technologies that could serve as substitutes.",
+                "Market shifts affecting service offerings."
+              ]
+            },
+            {
+              "option_name": "Hybrid Colocation + Private Cloud",
+              "description": "Moderate threat from substitutes exists as businesses may consider alternative hybrid solutions.",
+              "magnitude": "medium",
+              "direction": "positive",
+              "key_assumptions": [
+                "Hybrid solutions are increasingly popular.",
+                "Businesses seek flexibility."
+              ],
+              "key_unknowns": [
+                "Innovations in hybrid solutions.",
+                "Changes in regulatory environments affecting substitutes."
+              ]
+            },
+            {
+              "option_name": "Multi-Cloud Strategy (AWS + Google Cloud)",
+              "description": "The threat of substitutes is moderate as businesses may explore other cloud combinations.",
+              "magnitude": "medium",
+              "direction": "neutral",
+              "key_assumptions": [
+                "Multi-cloud strategies are gaining traction.",
+                "Businesses value flexibility."
+              ],
+              "key_unknowns": [
+                "Future cloud service developments.",
+                "Emerging competitors in the cloud space."
+              ]
+            }
+          ],
+          "shared_assumptions": [
+            "Substitutes can impact market dynamics.",
+            "Innovation drives the threat of substitutes."
+          ],
+          "shared_unknowns": [
+            "Technological advancements in substitutes.",
+            "Market acceptance of new solutions."
+          ]
+        },
+        "rivalry": {
+          "name": "Competitive Rivalry",
+          "relevance_to_decision": "high",
+          "relevance_rationale": "High levels of competition can influence pricing and service quality across options.",
+          "effect_by_option": [
+            {
+              "option_name": "Full Migration to Hyperscaler",
+              "description": "Intense rivalry among hyperscalers can lead to competitive pricing and improved services.",
+              "magnitude": "high",
+              "direction": "positive",
+              "key_assumptions": [
+                "Hyperscalers compete aggressively for market share.",
+                "Innovation is driven by competition."
+              ],
+              "key_unknowns": [
+                "Future competitive dynamics.",
+                "Potential market disruptions."
+              ]
+            },
+            {
+              "option_name": "Hybrid Colocation + Private Cloud",
+              "description": "Moderate rivalry exists as various providers compete in the hybrid space, impacting service offerings.",
+              "magnitude": "medium",
+              "direction": "neutral",
+              "key_assumptions": [
+                "Multiple providers offer hybrid solutions.",
+                "Competition drives service differentiation."
+              ],
+              "key_unknowns": [
+                "Market consolidation trends.",
+                "Emerging competitors in hybrid services."
+              ]
+            },
+            {
+              "option_name": "Multi-Cloud Strategy (AWS + Google Cloud)",
+              "description": "High rivalry exists among cloud providers, leading to competitive pricing and service enhancements.",
+              "magnitude": "high",
+              "direction": "positive",
+              "key_assumptions": [
+                "Cloud providers are in constant competition.",
+                "Innovation is a key competitive factor."
+              ],
+              "key_unknowns": [
+                "Future shifts in competitive landscape.",
+                "Impact of new entrants on rivalry."
+              ]
+            }
+          ],
+          "shared_assumptions": [
+            "Rivalry affects pricing and service quality.",
+            "Market dynamics are influenced by competition."
+          ],
+          "shared_unknowns": [
+            "Changes in competitive strategies.",
+            "Market responses to competitive pressures."
+          ]
+        },
+        "structural_asymmetries": [],
+        "option_aware_claims": [],
+        "shared_observations": ""
+      },
+      "claims": [],
+      "assumptions": [],
+      "unknowns": []
+    },
+    {
+      "framework_name": "systems_dynamics_v2",
+      "success": false,
+      "execution_status": "failed",
+      "execution_reason": "V2 analysis failed: Analysis failed after 2 attempts: 2 validation errors for SystemsDynamicsAnalysisV2\nsystem_overview\n  Field required [type=missing, input_value={'DecisionQuestion': 'Whi...nology requirements.'}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\nkey_components\n  Field required [type=missing, input_value={'DecisionQuestion': 'Whi...nology requirements.'}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing",
+      "claims": [],
+      "assumptions": [],
+      "unknowns": []
+    }
+  ],
+  "tension_map": {
+    "framework_tensions": [],
+    "agreement_areas": [],
+    "tension_areas": [],
+    "contradiction_areas": [],
+    "summary": "No frameworks to compare"
+  },
+  "sensitivity_triggers": [],
+  "created_at": "2026-02-04T21:00:29.682816"
+}

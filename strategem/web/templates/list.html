@@ -67,7 +67,8 @@
             <p class="subtitle">Decision Support System for Target System Analysis</p>
             <nav>
                 <a href="/">New Analysis</a>
-                <a href="/analyses" class="active">View All Analyses</a>
+                <a href="/analyses?version=v1" class="{% if version == 'v1' %}active{% endif %}">V1 Analyses</a>
+                <a href="/analyses?version=v2" class="{% if version == 'v2' %}active{% endif %}">V2 Analyses</a>
             </nav>
         </header>
 
@@ -76,33 +77,38 @@
                 <p><strong>⚠️ This system does NOT output decisions, rank options, optimize objectives, or make recommendations.</strong></p>
             </div>
 
-            <div class="page-header">
-                <h2>All Reasoned Artifacts</h2>
-                <a href="/" class="btn btn-primary">New Analysis</a>
-            </div>
+             <div class="page-header">
+                 <h2>
+                     {% if version == 'v2' %}V2{% else %}V1{% endif %} Reasoned Artifacts
+                 </h2>
+                 <a href="/" class="btn btn-primary">New Analysis</a>
+             </div>
 
             {% if analyses %}
                 <ul class="analysis-list">
                     {% for analysis in analyses %}
-                    <li class="analysis-item">
-                        <div class="analysis-info">
-                            <h3>{{ analysis.title if analysis.title else "Analysis " + analysis.id[:8] + "..." }}</h3>
-                            <p>
-                                {{ analysis.created_at.strftime('%Y-%m-%d %H:%M') }} | 
-                                {{ analysis.problem_context.provided_materials | length }} Problem Context Material(s)
-                            </p>
-                        </div>
-                        <div class="analysis-status">
-                            {% for fw in analysis.framework_results %}
-                                {% if fw.success %}
-                                <span class="badge badge-success">{{ fw.framework_name[:8] }} ✓</span>
-                                {% else %}
-                                <span class="badge badge-error">{{ fw.framework_name[:8] }} ✗</span>
-                                {% endif %}
-                            {% endfor %}
-                            <a href="/analysis/{{ analysis.id }}" class="btn btn-sm">View</a>
-                        </div>
-                    </li>
+                     <li class="analysis-item">
+                         <div class="analysis-info">
+                             <h3>
+                                 {% if analysis.version == 'v2' %}
+                                     <span style="background: #000000; color: #ffffff; padding: 0.2rem 0.5rem; margin-right: 0.5rem; font-size: 0.7rem;">V2</span>
+                                 {% endif %}
+                                 {{ analysis.title if analysis.title else ("Analysis " + analysis.id[:8] + "...") }}
+                             </h3>
+                             <p>
+                                 {{ analysis.created_at.strftime('%Y-%m-%d %H:%M') }} |
+                                 {{ analysis.framework_results | length }} frameworks |
+                                 {% if analysis.version == 'v2' %}
+                                     Decision-Bound
+                                 {% else %}
+                                     {{ analysis.problem_context.provided_materials | length }} materials
+                                 {% endif %}
+                             </p>
+                         </div>
+                         <div class="analysis-status">
+                             <a href="/analysis{% if analysis.version == 'v2' %}/v2{% endif %}/{{ analysis.id }}" class="btn btn-sm">View</a>
+                         </div>
+                     </li>
                     {% endfor %}
                 </ul>
             {% else %}
@@ -113,9 +119,10 @@
             {% endif %}
         </main>
 
-        <footer>
-            <p>Strategem Core v1.0.0 - A reasoning scaffold, not an oracle. Framework disagreement is a valid outcome.</p>
-        </footer>
+         <footer>
+             <p>Strategem Core v2.0.0-dev - A reasoning scaffold, not an oracle. Framework disagreement is a valid outcome.</p>
+             <p>Showing {{ version | upper }} analyses</p>
+         </footer>
     </div>
 </body>
 </html>

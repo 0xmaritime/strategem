@@ -1,0 +1,172 @@
+You are applying the Porter Five Forces framework within Strategem Core V2.
+
+⸻
+
+SCOPE RULE (CRITICAL - MUST FOLLOW)
+
+Apply the analytical lens ONLY insofar as it helps illuminate the stated Decision Focus.
+Do NOT describe the operating environment in general terms unless it materially affects the decision.
+
+⸻
+
+DECISION CONTEXT (V2: REQUIRED)
+
+Target System: {target_system_title}
+Decision Question: {decision_question}
+Decision Type: {decision_type}
+Options Under Consideration: {options}
+
+⸻
+
+PROBLEM CONTEXT
+
+{context}
+
+⸻
+
+YOUR TASK
+
+Analyze how structural pressures in the operating environment affect EACH OPTION differently.
+
+V2 REQUIREMENTS:
+- Decision context is REQUIRED (no exploratory mode)
+- All claims MUST be option-aware (specify which options they affect)
+- Every force must describe how it affects EACH option
+- No system-level claims allowed (affects "all" is invalid)
+
+⸻
+
+REQUIRED OUTPUT STRUCTURE
+
+Provide your analysis in the following JSON format:
+
+{{
+  "DecisionQuestion": "{decision_question}",
+  "OptionsAnalyzed": {options_list},
+
+  "ThreatOfNewEntrants": {{
+    "Name": "Threat of New Entrants",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "Why this force matters or doesn't matter to the decision",
+    "EffectByOption": [
+      {{
+        "OptionName": "Option A",
+        "Description": "How new entrant threats affect this specific option",
+        "Magnitude": "high | medium | low",
+        "Direction": "positive | negative | neutral",
+        "KeyAssumptions": ["assumption 1", "assumption 2"],
+        "KeyUnknowns": ["unknown 1", "unknown 2"]
+      }},
+      {{
+        "OptionName": "Option B",
+        "Description": "How new entrant threats affect this specific option",
+        "Magnitude": "high | medium | low",
+        "Direction": "positive | negative | neutral",
+        "KeyAssumptions": ["assumption 1"],
+        "KeyUnknowns": ["unknown 1"]
+      }}
+    ],
+    "SharedAssumptions": ["assumptions applying to all options"],
+    "SharedUnknowns": ["unknowns applying to all options"]
+  }},
+
+  "SupplierPower": {{
+    "Name": "Supplier Power",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [...],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
+  }},
+
+  "BuyerPower": {{
+    "Name": "Buyer Power",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [...],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
+  }},
+
+  "Substitutes": {{
+    "Name": "Threat of Substitutes",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [...],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
+  }},
+
+  "Rivalry": {{
+    "Name": "Competitive Rivalry",
+    "RelevanceToDecision": "high | medium | low",
+    "RelevanceRationale": "...",
+    "EffectByOption": [...],
+    "SharedAssumptions": [...],
+    "SharedUnknowns": [...]
+  }},
+
+  "StructuralAsymmetries": [
+    {{
+      "ForceName": "ThreatOfNewEntrants",
+      "Description": "New entrants pose a significantly higher threat to Option A than Option B because...",
+      "StrongerImpactOn": "Option A",
+      "Rationale": "Detailed explanation of why impact differs",
+      "KeyAssumption": "The assumption underlying this asymmetry",
+      "AffectedOptions": ["Option A", "Option B"]
+    }}
+  ],
+
+  "OptionAwareClaims": [
+    {{
+      "ClaimId": "claim_1",
+      "Statement": "Option A is more vulnerable to supplier power consolidation than Option B",
+      "AffectedOptions": ["Option A", "Option B"],
+      "Source": "inference",
+      "Confidence": "medium",
+      "Framework": "porter_five_forces_v2"
+    }}
+  ],
+
+  "SharedObservations": "Optional: Only if observations apply equally to all options (rare)"
+}}
+
+⸻
+
+CRITICAL V2 RULES
+
+1. Decision-Bound Only: Decision context is REQUIRED. No exploratory mode.
+
+2. Option-Aware Required: All claims MUST specify affected_options. "all" is not valid.
+
+3. No Generic Analysis: Do NOT provide industry overview. Focus only on decision-relevant pressures.
+
+4. Option-Specific Effects: Every force must describe how it affects EACH option differently.
+
+5. Structural Asymmetries REQUIRED: Identify at least 2-3 forces that disproportionately affect different options.
+
+6. Explicit Non-Goals: Do not recommend, rank, or select an option. Surface structural differences and pressures only.
+
+7. Inconclusive is Valid: If the analysis doesn't clearly favor one option, state this explicitly.
+
+⸻
+
+VALIDATION CHECKLIST
+
+Before outputting, verify:
+- [ ] Decision question is present and specific
+- [ ] Each force has RelevanceToDecision rated (high/medium/low)
+- [ ] Each force has EffectByOption for ALL options
+- [ ] Every claim in OptionAwareClaims has specific affected_options (no "all")
+- [ ] StructuralAsymmetries section has at least 2 entries
+- [ ] All claims reference specific options
+- [ ] No recommendation or ranking of options is present
+- [ ] Output is valid JSON only
+
+⸻
+
+CRITICAL: Output ONLY valid JSON. No markdown, no bold text, no explanations outside the JSON.
+
+Remember: Lack of clarity or inconclusive results are valid outcomes. This is V2-correct.
+
+Remember: V2 requires option-aware claims. Every claim must specify which options it affects.
