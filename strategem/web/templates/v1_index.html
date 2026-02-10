@@ -179,10 +179,6 @@
                 <h3>What to Expect (V1)</h3>
                 <div class="features">
                     <div class="feature">
-                        <h4>📊 Operating Environment Structure</h4>
-                        <p>Assess structural pressures across the target system's operating environment: new entrant threats, supplier power, buyer power, substitution threats, and competitive intensity.</p>
-                    </div>
-                    <div class="feature">
                         <h4>🔄 Target System Dynamics</h4>
                         <p>Understand feedback loops, reinforcing dynamics, bottlenecks, and fragilities that affect target system sustainability.</p>
                     </div>
@@ -356,10 +352,9 @@
                             steps[currentStep].classList.add('active');
                             // Different timing for different steps to reflect reality
                             // Ingest context: 1-2s
-                            // Porter framework: 8-12s (LLM call)
                             // Systems framework: 8-12s (LLM call)
                             // Generate report: 2-3s
-                            const timings = [1500, 10000, 10000, 2000];
+                            const timings = [1500, 10000, 2000];
                             const timing = timings[currentStep] || 2000;
                             currentStep++;
                             setTimeout(animateStep, timing);
@@ -379,7 +374,6 @@
             <div class="loading-steps">
                 <div class="loading-step">Ingesting problem context</div>
                 <div class="loading-step">Inferring decision focus (if needed)</div>
-                <div class="loading-step">Running Porter's Five Forces framework</div>
                 <div class="loading-step">Running Systems Dynamics framework</div>
                 <div class="loading-step">Generating reasoned artifact</div>
             </div>

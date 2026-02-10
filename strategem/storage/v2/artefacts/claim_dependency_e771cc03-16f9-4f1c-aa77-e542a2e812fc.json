@@ -1,0 +1,17 @@
+{
+  "artefact_id": "e771cc03-16f9-4f1c-aa77-e542a2e812fc",
+  "analysis_id": "42109b51-41cf-4c0f-805d-66dd3961ff92",
+  "artefact_type": "claim_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "claims_by_framework": {
+      "systems_dynamics_v2": []
+    },
+    "framework_claim_counts": {
+      "systems_dynamics_v2": 0
+    },
+    "total_claims": 0
+  },
+  "generated_at": "2026-02-10T11:49:11.572598",
+  "content_hash": "c44e3733adc80800"
+}

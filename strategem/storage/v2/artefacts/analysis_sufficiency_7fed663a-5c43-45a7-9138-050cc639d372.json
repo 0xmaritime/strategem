@@ -1,0 +1,25 @@
+{
+  "artefact_id": "7fed663a-5c43-45a7-9138-050cc639d372",
+  "analysis_id": "2eca4dd6-e117-4352-a763-5eec52dc2a12",
+  "artefact_type": "analysis_sufficiency",
+  "version": "2.0.0-dev",
+  "content": {
+    "decision_question": "What to choose?",
+    "decision_type": "compare",
+    "options_count": 3,
+    "frameworks_executed": 2,
+    "frameworks_successful": 2,
+    "framework_success_rate": 1.0,
+    "total_claims": 1,
+    "total_assumptions": 2,
+    "total_unknowns": 1,
+    "option_claim_coverage": {
+      "Timed Check-In Codes": 1,
+      "Silent SMS Pings": 1,
+      "Audio Beacon Listeners": 0
+    },
+    "sufficiency_assessment": "CONSTRAINED: Frameworks executed but produced limited claims"
+  },
+  "generated_at": "2026-02-04T22:22:45.626689",
+  "content_hash": "e6b12edeedd1bf52"
+}

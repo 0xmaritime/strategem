@@ -50,19 +50,12 @@ def run_v1_analysis(
         )
         click.echo(f"🎯 Decision Focus: {decision_question}")
         click.echo(f"   Options: {', '.join(options_list)}")
-    elif decision_question or options:
-        click.echo(
-            "⚠️  Note: Decision focus requires both --decision-question and --options",
-            err=True,
-        )
-        click.echo("   If not provided, system will attempt to infer from your input.")
-
-    # Ingest context
-    ingestion = ContextIngestionModule()
-    try:
-        if text:
-            click.echo("📄 Ingesting Problem Context Material (text)...")
-            context = ingestion.ingest_text(
+        elif decision_question or options:
+            click.echo(
+                "🎯 Decision Focus (Optional): {decision_question}"
+            )
+            click.echo(f"   Options (Optional): {', '.join(options_list) if options_list else 'None'}")
+            click.echo("   V2 supports minimal input (context only) or optional decision/options")
                 text=text,
                 title=title or "Untitled Analysis",
                 problem_statement=problem_statement
@@ -88,7 +81,6 @@ def run_v1_analysis(
 
     # Run analysis
     click.echo("\n🔍 Running analytical frameworks...")
-    click.echo("   - Operating Environment Structure (Porter's Five Forces)")
     click.echo("   - Target System Dynamics (Systems Dynamics)")
     click.echo()
 
@@ -140,7 +132,6 @@ def run_v1_analysis(
     click.echo(
         f"   - Key Analytical Claims: {len(report.key_analytical_claims)} extracted"
     )
-    click.echo(f"   - Structural Pressures (Operating Environment)")
     click.echo(f"   - Systemic Risks (Target System)")
     click.echo(
         f"   - Unknowns & Sensitivities: {len(report.unknowns_and_sensitivities)} identified"
@@ -166,18 +157,148 @@ def run_v2_analysis(
     decision_type=None,
     options=None,
 ):
-    """Run V2 analysis (DEVELOPMENT STATUS)"""
-    click.echo("⚠️  V2 is in active development.", err=True)
-    click.echo("   Framework execution is not yet reliable.", err=True)
-    click.echo("   Use --v1 for production analysis.", err=True)
+    """Run V2 analysis (decision and options are optional)"""
+    from strategem.v2 import (
+        V2AnalysisOrchestrator,
+        V2PersistenceLayer,
+        V2ArtefactGenerator,
+        V2ResponseNormalizer,
+        Decision,
+        Option,
+        DecisionType as V2DecisionType,
+        FrameworkExecutionStatus,
+    )
+    from strategem.core import (
+        load_text,
+        save_text,
+        generate_storage_path,
+        get_timestamp,
+        generate_id,
+    )
+
+    click.echo("ℹ️  Running V2 Analysis (Reasoning Substrate)", err=True)
     click.echo()
-    click.echo("For V2 development testing:", err=True)
-    click.echo("  1. Configure OPENROUTER_API_KEY", err=True)
-    click.echo("  2. Run: strategem analyze --v2 --text 'context...' \\")
-    click.echo("       --decision-question 'Your question?' \\")
-    click.echo("       --options 'Option A,Option B'", err=True)
+
+    if not text and not file:
+        click.echo("Error: Must provide either --text or --file", err=True)
+        sys.exit(1)
+
+    if text and file:
+        click.echo("Error: Cannot use both --text and --file", err=True)
+        sys.exit(1)
+
+    decision = None
+    options_objects = None
+    options_list = []
+
+    if decision_question:
+        decision_type_enum = V2DecisionType(decision_type or "explore")
+        decision = Decision(
+            decision_question=decision_question,
+            decision_type=decision_type_enum,
+        )
+        click.echo(f"🎯 Decision: {decision_question}")
+        if decision_type_enum:
+            click.echo(f"   Type: {decision_type_enum.value}")
+        click.echo()
+
+    if options:
+        options_list = [opt.strip() for opt in options.split(",")]
+        options_objects = [Option(name=opt) for opt in options_list]
+        click.echo(f"   Options: {', '.join(options_list)}")
+        click.echo()
+
+    if not decision_question and not options:
+        click.echo("ℹ️  Running with minimal input (problem context only)")
+        click.echo()
+
+    # Load problem context
+    if text:
+        click.echo("📄 Loading problem context (text)...")
+        context_text = text
+    else:
+        click.echo(f"📄 Loading problem context from file: {file}")
+        context_text = load_text(file)
+
+    # Run V2 analysis
+    orchestrator = V2AnalysisOrchestrator()
+    persistence = V2PersistenceLayer()
+
+    try:
+        click.echo("\n🔍 Running V2 analysis frameworks...")
+        result = orchestrator.run_full_analysis(
+            decision=decision,
+            options=options_objects,
+            context=context_text,
+        )
+        click.echo()
+    except Exception as e:
+        click.echo(f"Error: Analysis failed - {e}", err=True)
+        import traceback
+
+        traceback.print_exc()
+        sys.exit(1)
+
+    # Display results
+    click.echo("=" * 60)
+    click.echo(f"V2 ANALYSIS COMPLETED")
+    click.echo("=" * 60)
+    click.echo(f"Analysis ID: {result.analysis_id}")
+    if decision:
+        click.echo(f"Decision: {decision_question}")
+        if options_list:
+            click.echo(f"Options: {', '.join(options_list)}")
+    else:
+        click.echo("Decision: None (context-only analysis)")
     click.echo()
-    sys.exit(1)
+    click.echo(f"Framework Results:")
+    for fw_result in result.framework_results:
+        status_icon = (
+            "✓" if fw_result.status == FrameworkExecutionStatus.SUCCESSFUL else "✗"
+        )
+        click.echo(f"  {status_icon} {fw_result.framework_name}")
+        click.echo(f"    Status: {fw_result.status.value}")
+        click.echo(f"    Success: {fw_result.success}")
+        if not fw_result.success:
+            click.echo(f"    Reason: {fw_result.error_message}")
+        click.echo(f"    Claims: {len(fw_result.claims)}")
+        click.echo(f"    Assumptions: {len(fw_result.assumptions)}")
+        click.echo(f"    Unknowns: {len(fw_result.unknowns)}")
+        click.echo()
+
+    if result.tension_map:
+        click.echo(
+            f"Tension Mapping: {len(result.tension_map.framework_tensions)} tensions identified"
+        )
+        for tension in result.tension_map.framework_tensions:
+            click.echo(f"  - {tension.tension_type.value}: {tension.description}")
+    else:
+        click.echo("Tension Mapping: Skipped (insufficient successful frameworks)")
+
+    click.echo(f"\nSensitivity Triggers: {len(result.sensitivity_triggers)}")
+    for trigger in result.sensitivity_triggers:
+        click.echo(f"  - {trigger.unknown_id}: {trigger.trigger_condition}")
+
+    # Save results
+    persistence.save_analysis(result)
+
+    # Generate artefact
+    artefact_gen = V2ArtefactGenerator()
+    artefact = artefact_gen.generate_artefact(result)
+
+    # Save report
+    report_dir = generate_storage_path("reports", "")
+    report_filename = f"report_{result.analysis_id}.md"
+    report_path = report_dir / report_filename
+    save_text(str(report_path), artefact.markdown_report)
+
+    click.echo(f"\n📁 Output Files:")
+    click.echo(
+        f"   Analysis: {persistence.storage_dir / f'analysis_{result.analysis_id}.json'}"
+    )
+    click.echo(f"   Report: {report_path}")
+
+    print_v2_disclaimer()
 
 
 def print_v2_disclaimer():
@@ -187,16 +308,17 @@ def print_v2_disclaimer():
     click.echo("=" * 60)
     click.echo("This is a reasoned artifact, NOT a recommendation.")
     click.echo("V2 provides:")
-    click.echo("  - Option-aware analysis")
-    click.echo("  - Cross-framework tension mapping")
-    click.echo("  - Explicit sensitivity triggers")
-    click.echo("  - Assumption fragility detection")
+    click.echo("  - Reasoning substrate for framework outputs")
+    click.echo("  - Externalized judgment nodes")
+    click.echo("  - Framework toggleability")
+    click.echo("  - Implicit decision support")
     click.echo()
     click.echo("This system does NOT:")
     click.echo("  - Recommend, rank, or score options")
     click.echo("  - Aggregate or reconcile framework tensions")
     click.echo("  - Optimize objectives or make decisions")
     click.echo("  - Transfer learning from past cases")
+    click.echo("  - Require decision context to run")
     click.echo()
     click.echo("The Decision Owner retains full responsibility for all judgments.")
     click.echo("=" * 60)
@@ -392,7 +514,12 @@ def list(use_v1, use_v2):
         for analysis_id in analyses:
             result = persistence.load_analysis(analysis_id)
             if result:
-                click.echo(f"  - {analysis_id} | {result.decision.decision_question}")
+                title = (
+                    result.decision.decision_question
+                    if result.decision
+                    else f"Analysis {analysis_id[:8]}"
+                )
+                click.echo(f"  - {analysis_id} | {title}")
 
 
 @cli.command()
@@ -440,12 +567,6 @@ def show(analysis_id, use_v1, use_v2):
             f"\nProblem Context Materials: {len(result.problem_context.provided_materials)} provided"
         )
 
-        if result.porter_analysis:
-            click.echo(f"\nOperating Environment Analysis (Porter):")
-            click.echo(
-                f"   Overall: {result.porter_analysis.shared_observations[:100] if result.porter_analysis.shared_observations else 'N/A'}..."
-            )
-
         if result.systems_analysis:
             click.echo(f"\nTarget System Analysis (Systems Dynamics):")
             click.echo(
@@ -464,9 +585,12 @@ def show(analysis_id, use_v1, use_v2):
 
         click.echo(f"V2 Analysis ID: {result.analysis_id}")
         click.echo(f"Created: {result.created_at}")
-        click.echo(f"Decision Question: {result.decision.decision_question}")
-        click.echo(f"Decision Type: {result.decision.decision_type.value}")
-        click.echo(f"Options Analyzed: {', '.join(result.options_analyzed)}")
+        if result.decision:
+            click.echo(f"Decision Question: {result.decision.decision_question}")
+            if result.decision.decision_type:
+                click.echo(f"Decision Type: {result.decision.decision_type.value}")
+        if result.options_analyzed:
+            click.echo(f"Options Analyzed: {', '.join(result.options_analyzed)}")
 
         click.echo(f"\nFramework Results:")
         for fw_result in result.framework_results:
@@ -538,8 +662,8 @@ def frameworks(use_v1, use_v2):
             click.echo(f"  📐 {fw.name}")
             click.echo(f"     Analytical Lens: {fw.analytical_lens}")
             click.echo(f"     Description: {fw.description}")
-            click.echo(f"     Requires Decision: {fw.requires_decision}")
-            click.echo(f"     Requires Options: {fw.requires_options}")
+            click.echo(f"     Supports Decision: {fw.supports_decision}")
+            click.echo(f"     Supports Options: {fw.supports_options}")
             click.echo(f"     Option-Aware: {fw.produces_option_effects}")
             if fw.input_requirements:
                 click.echo(

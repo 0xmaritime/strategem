@@ -1,0 +1,30 @@
+{
+  "artefact_id": "ba0af6ab-cbb2-4032-8081-edf4302ee803",
+  "analysis_id": "2eca4dd6-e117-4352-a763-5eec52dc2a12",
+  "artefact_type": "claim_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "claims_by_framework": {
+      "porter_five_forces_v2": [],
+      "systems_dynamics_v2": [
+        {
+          "statement": "Timed Check-In Codes may lead to higher user engagement compared to Silent SMS Pings due to their simplicity.",
+          "claim_id": "claim_1",
+          "confidence": "medium",
+          "source": "inference",
+          "affected_options": [
+            "Timed Check-In Codes",
+            "Silent SMS Pings"
+          ]
+        }
+      ]
+    },
+    "framework_claim_counts": {
+      "porter_five_forces_v2": 0,
+      "systems_dynamics_v2": 1
+    },
+    "total_claims": 1
+  },
+  "generated_at": "2026-02-04T22:22:45.626605",
+  "content_hash": "0eaf7ea7f8c34da8"
+}

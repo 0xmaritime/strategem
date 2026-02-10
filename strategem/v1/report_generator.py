@@ -25,7 +25,6 @@ class ReportGenerator:
     V1 Structure:
     - Context Summary: What was analyzed
     - Key Analytical Claims: Explicit claims with sources and confidence
-    - Structural Pressures: Operating environment analysis
     - Systemic Risks: Target system fragilities
     - Unknowns & Sensitivities: Explicit uncertainty
     - Decision Surface: Where judgment is required
@@ -36,108 +35,6 @@ class ReportGenerator:
     - Optimize objectives
     - Make recommendations
     """
-
-    def _format_force(self, name: str, force) -> str:
-        """Format a single force/pressure analysis"""
-        lines = [
-            f"### {name}",
-            f"**Relevance to Decision:** {force.relevance_to_decision}",
-            "",
-            f"**Relevance Rationale:** {force.relevance_rationale}",
-            "",
-        ]
-
-        if force.shared_assumptions:
-            lines.append("**Shared Assumptions:**")
-            for assumption in force.shared_assumptions:
-                lines.append(f"- {assumption}")
-            lines.append("")
-
-        if force.shared_unknowns:
-            lines.append("**Shared Unknowns:**")
-            for unknown in force.shared_unknowns:
-                lines.append(f"- {unknown}")
-            lines.append("")
-
-        if force.effect_by_option:
-            lines.append("**Effect by Option:**")
-            for effect in force.effect_by_option:
-                lines.append(f"- **{effect.option_name}**: {effect.description}")
-                if effect.key_assumptions:
-                    lines.append(
-                        f"  - Key Assumptions: {', '.join(effect.key_assumptions)}"
-                    )
-                if effect.key_unknowns:
-                    lines.append(f"  - Key Unknowns: {', '.join(effect.key_unknowns)}")
-            lines.append("")
-
-        return "\n".join(lines)
-
-    def _extract_claims_from_porter(self, porter) -> List[AnalyticalClaim]:
-        """Extract explicit analytical claims from Porter analysis"""
-        claims = []
-
-        forces = [
-            ("Threat of New Entrants", porter.threat_of_new_entrants),
-            ("Supplier Power", porter.supplier_power),
-            ("Buyer Power", porter.buyer_power),
-            ("Substitutes", porter.substitutes),
-            ("Competitive Rivalry", porter.rivalry),
-        ]
-
-        for force_name, force in forces:
-            # Main claim for each force - system level
-            claims.append(
-                AnalyticalClaim(
-                    statement=f"{force_name}: {force.relevance_to_decision} relevance to decision",
-                    source=ClaimSource.INFERENCE,
-                    confidence=ConfidenceLevel.MEDIUM,  # Porter analysis is inferential
-                    framework="porter_five_forces",
-                    claim_type=ClaimType.SYSTEM_LEVEL,
-                    applicable_options=["all"],
-                )
-            )
-
-            # Claims from shared assumptions - system level
-            for assumption in force.shared_assumptions:
-                claims.append(
-                    AnalyticalClaim(
-                        statement=assumption,
-                        source=ClaimSource.ASSUMPTION,
-                        confidence=ConfidenceLevel.LOW,
-                        framework="porter_five_forces",
-                        claim_type=ClaimType.SYSTEM_LEVEL,
-                        applicable_options=["all"],
-                    )
-                )
-
-        # Extract claims from option-aware claims if available
-        if hasattr(porter, "option_aware_claims") and porter.option_aware_claims:
-            for claim in porter.option_aware_claims:
-                # Determine claim type based on affected options
-                claim_type = ClaimType.COMPARATIVE
-                applicable_options = (
-                    claim.affected_options if claim.affected_options else []
-                )
-
-                if len(applicable_options) == 1:
-                    claim_type = ClaimType.OPTION_SPECIFIC
-                elif not applicable_options:
-                    claim_type = ClaimType.SYSTEM_LEVEL
-                    applicable_options = ["all"]
-
-                claims.append(
-                    AnalyticalClaim(
-                        statement=claim.statement,
-                        source=claim.source,
-                        confidence=claim.confidence,
-                        framework="porter_five_forces",
-                        claim_type=claim_type,
-                        applicable_options=applicable_options,
-                    )
-                )
-
-        return claims
 
     def _extract_claims_from_systems(self, systems) -> List[AnalyticalClaim]:
         """Extract explicit analytical claims from Systems Dynamics analysis"""
@@ -233,113 +130,12 @@ class ReportGenerator:
         """Generate key analytical claims from all frameworks"""
         all_claims = []
 
-        if result.porter_analysis:
-            all_claims.extend(self._extract_claims_from_porter(result.porter_analysis))
-
         if result.systems_analysis:
             all_claims.extend(
                 self._extract_claims_from_systems(result.systems_analysis)
             )
 
         return all_claims
-
-    def _generate_structural_pressures_section(
-        self, result: AnalysisResult
-    ) -> ReportSection:
-        """
-        Generate Structural Pressures section (Operating Environment analysis).
-
-        Uses Porter's Five Forces framework to assess the target system's operating environment.
-
-        V1: Frameworks always run and adapt to context. Missing decision focus reduces depth
-        but never invalidates the artifact.
-        """
-        if not result.porter_analysis:
-            return ReportSection(
-                title="Structural Pressures (Operating Environment)",
-                content="## Structural Pressures (Operating Environment)\n\n*No claims surfaced under current inputs.*",
-            )
-
-        porter = result.porter_analysis
-        lines = ["## Structural Pressures (Operating Environment)", ""]
-        lines.append(
-            "*Analysis of the target system's operating environment using structural pressure framework*"
-        )
-        lines.append("")
-
-        # Display decision question and options being analyzed
-        if hasattr(porter, "decision_question") and porter.decision_question:
-            lines.append(f"**Decision Question:** {porter.decision_question}")
-            lines.append("")
-
-        if hasattr(porter, "options_analyzed") and porter.options_analyzed:
-            lines.append("**Options Analyzed:**")
-            for option in porter.options_analyzed:
-                lines.append(f"- {option}")
-            lines.append("")
-
-        lines.append(
-            self._format_force(
-                "Pressure: New Entrant Threat", porter.threat_of_new_entrants
-            )
-        )
-        lines.append(
-            self._format_force("Pressure: Supplier Power", porter.supplier_power)
-        )
-        lines.append(self._format_force("Pressure: Buyer Power", porter.buyer_power))
-        lines.append(
-            self._format_force("Pressure: Substitution Threat", porter.substitutes)
-        )
-        lines.append(
-            self._format_force("Pressure: Competitive Intensity", porter.rivalry)
-        )
-
-        if porter.overall_observations:
-            lines.append("### Overall Operating Environment Characteristics")
-            lines.append(porter.overall_observations)
-            lines.append("")
-
-        if porter.key_risks:
-            lines.append("### Key Structural Risks")
-            for risk in porter.key_risks:
-                lines.append(f"- {risk}")
-            lines.append("")
-
-        if porter.key_strengths:
-            lines.append("### Key Structural Strengths")
-            for strength in porter.key_strengths:
-                lines.append(f"- {strength}")
-            lines.append("")
-
-        # Add Structural Asymmetries section
-        if hasattr(porter, "structural_asymmetries") and porter.structural_asymmetries:
-            lines.append("### Structural Asymmetries")
-            for asymmetry in porter.structural_asymmetries:
-                lines.append(f"**{asymmetry.force_name}**")
-                lines.append(f"- Description: {asymmetry.description}")
-                lines.append(f"- Stronger Impact On: {asymmetry.stronger_impact_on}")
-                lines.append(f"- Rationale: {asymmetry.rationale}")
-                if hasattr(asymmetry, "key_assumption") and asymmetry.key_assumption:
-                    lines.append(f"- Key Assumption: {asymmetry.key_assumption}")
-                lines.append("")
-
-        # Add Option-Aware Claims section
-        if hasattr(porter, "option_aware_claims") and porter.option_aware_claims:
-            lines.append("### Option-Aware Claims")
-            for claim in porter.option_aware_claims:
-                lines.append(f"- **{claim.statement}**")
-                if hasattr(claim, "source") and claim.source:
-                    lines.append(f"  - Source: {claim.source}")
-                if hasattr(claim, "confidence") and claim.confidence:
-                    lines.append(f"  - Confidence: {claim.confidence}")
-            lines.append("")
-
-        claims = self._extract_claims_from_porter(porter)
-        return ReportSection(
-            title="Structural Pressures (Operating Environment)",
-            content="\n".join(lines),
-            claims=claims,
-        )
 
     def _generate_systemic_risks_section(self, result: AnalysisResult) -> ReportSection:
         """
@@ -359,7 +155,7 @@ class ReportGenerator:
         systems = result.systems_analysis
         lines = ["## Systemic Risks (Target System)", ""]
         lines.append(
-            "*Analysis of the target system's internal dynamics, feedback loops, and fragilities*"
+            "*Analysis of target system's internal dynamics, feedback loops, and fragilities*"
         )
         lines.append("")
 
@@ -414,20 +210,6 @@ class ReportGenerator:
         """Generate Unknowns & Sensitivities section"""
         unknowns = []
 
-        # Collect all unknowns from Porter
-        if result.porter_analysis:
-            for force in [
-                result.porter_analysis.threat_of_new_entrants,
-                result.porter_analysis.supplier_power,
-                result.porter_analysis.buyer_power,
-                result.porter_analysis.substitutes,
-                result.porter_analysis.rivalry,
-            ]:
-                if hasattr(force, "shared_unknowns") and force.shared_unknowns:
-                    unknowns.extend(
-                        [f"[Operating Environment] {u}" for u in force.shared_unknowns]
-                    )
-
         # Collect unknowns from Systems Dynamics
         if result.systems_analysis and result.systems_analysis.unknowns:
             unknowns.extend(
@@ -471,38 +253,6 @@ class ReportGenerator:
             decision_question = result.problem_context.decision_focus.decision_question
             options = result.problem_context.decision_focus.options
 
-        # From Porter analysis
-        if result.porter_analysis:
-            # High-relevance forces could change with market shifts
-            high_relevance_forces = []
-            for force_name, force in [
-                ("New Entrant Threat", result.porter_analysis.threat_of_new_entrants),
-                ("Supplier Power", result.porter_analysis.supplier_power),
-                ("Buyer Power", result.porter_analysis.buyer_power),
-                ("Substitution Threat", result.porter_analysis.substitutes),
-                ("Competitive Intensity", result.porter_analysis.rivalry),
-            ]:
-                if (
-                    hasattr(force, "relevance_to_decision")
-                    and force.relevance_to_decision == "High"
-                ):
-                    high_relevance_forces.append(force_name)
-                    judgment_required_areas.append(
-                        f"How to navigate {force_name} relevance"
-                    )
-                if hasattr(force, "shared_unknowns") and force.shared_unknowns:
-                    dominant_unknowns.extend(force.shared_unknowns)
-
-            if high_relevance_forces:
-                assessment_change_conditions.append(
-                    f"Operating environment relevance would change if: {', '.join(high_relevance_forces)} dynamics shift"
-                )
-
-            # Extract tradeoff axes from structural asymmetries
-            if hasattr(result.porter_analysis, "structural_asymmetries"):
-                for asymmetry in result.porter_analysis.structural_asymmetries:
-                    tradeoff_axes.append(f"{asymmetry.force_name} impact asymmetry")
-
         # From Systems Dynamics
         if result.systems_analysis:
             if result.systems_analysis.fragilities:
@@ -529,9 +279,7 @@ class ReportGenerator:
             )
 
         if not assessment_change_conditions:
-            assessment_change_conditions.append(
-                "New information about target system or operating environment"
-            )
+            assessment_change_conditions.append("New information about target system")
 
         if not tradeoff_axes:
             tradeoff_axes.append("Information completeness vs analysis timeliness")
@@ -570,49 +318,18 @@ class ReportGenerator:
         ]
 
         # Check framework results
-        porter_complete = result.porter_analysis is not None
         systems_complete = result.systems_analysis is not None
-
-        if not porter_complete and not systems_complete:
-            lines.append(
-                "*Both framework analyses incomplete - no comparison possible*"
-            )
-            return "\n".join(lines)
-
-        if not porter_complete:
-            lines.append(
-                "*Operating Environment analysis incomplete - Systems Dynamics analysis only*"
-            )
-            return "\n".join(lines)
 
         if not systems_complete:
             lines.append(
-                "*Target System analysis incomplete - Operating Environment analysis only*"
+                "*Target System analysis incomplete - no framework comparison possible*"
             )
             return "\n".join(lines)
 
-        # Both complete - provide comparison structure
-        lines.append("### Points of Agreement")
-        lines.append(
-            "[Decision Owner to identify where Operating Environment and Target System analyses converge]"
-        )
+        # Systems complete
+        lines.append("### System Analysis")
+        lines.append("Systems Dynamics analysis completed successfully.")
         lines.append("")
-
-        lines.append("### Points of Tension")
-        lines.append(
-            "[Decision Owner to identify where analyses conflict or highlight different aspects]"
-        )
-        lines.append(
-            "*Example: High competitive pressure (Operating Environment) vs. strong reinforcing growth loops (Target System)*"
-        )
-        lines.append("")
-
-        lines.append("### Complementary Insights")
-        lines.append(
-            "[Decision Owner to note how frameworks provide different but compatible perspectives]"
-        )
-        lines.append("")
-
         lines.append("### Resolution Required")
         lines.append("The Decision Owner must resolve tensions through:")
         lines.append("- Additional information gathering")
@@ -655,7 +372,7 @@ class ReportGenerator:
 
         # Suggest what would be needed
         observations.append(
-            "To proceed with decision-focused analysis, the input should describe:"
+            "To proceed with decision-focused analysis, input should describe:"
         )
         observations.append("  - A choice to be made (choose, decide, select, etc.)")
         observations.append(
@@ -727,8 +444,7 @@ class ReportGenerator:
             pre_decision_observations = None
 
         # V1: Frameworks always run, decision focus is optional
-        # They adapt to context, not the other way around
-        structural_pressures = self._generate_structural_pressures_section(result)
+        # They adapt to context, not other way around
         systemic_risks = self._generate_systemic_risks_section(result)
 
         unknowns = self._generate_unknowns_and_sensitivities(result)
@@ -737,15 +453,10 @@ class ReportGenerator:
         analysis_sufficiency = self._generate_analysis_sufficiency_summary(result)
         limitations = self._generate_limitations()
 
-        # Legacy sections (for backward compatibility)
-        porter_section = self._generate_structural_pressures_section(result)
-        systems_section = self._generate_systemic_risks_section(result)
-
         report = AnalysisReport(
             id=result.id,
             context_summary=context_summary,
             key_analytical_claims=key_claims,
-            structural_pressures=structural_pressures,
             systemic_risks=systemic_risks,
             unknowns_and_sensitivities=unknowns,
             decision_surface=decision_surface,
@@ -753,8 +464,7 @@ class ReportGenerator:
             analysis_sufficiency=analysis_sufficiency,
             limitations=limitations,
             # Legacy fields
-            porter_section=porter_section,
-            systems_section=systems_section,
+            systems_section=systemic_risks,
             agreement_tension=framework_agreement,
             open_questions=unknowns,
         )
@@ -770,7 +480,7 @@ class ReportGenerator:
         report: AnalysisReport,
         pre_decision_observations: Optional[List[str]] = None,
     ) -> str:
-        """Generate the complete markdown report"""
+        """Generate complete markdown report"""
 
         # Key claims formatted - or pre-decision observations if applicable
         if pre_decision_observations is not None:
@@ -863,7 +573,7 @@ class ReportGenerator:
         # Limitations formatted
         limitations_section = "## System Limitations\n\n"
         limitations_section += (
-            "This analysis is subject to the following explicit limitations:\n\n"
+            "This analysis is subject to following explicit limitations:\n\n"
         )
         for limitation in report.limitations:
             limitations_section += f"- {limitation}\n"
@@ -892,10 +602,6 @@ class ReportGenerator:
  ---
 
  {claims_section}
-
- ---
-
- {report.structural_pressures.content}
 
  ---
 

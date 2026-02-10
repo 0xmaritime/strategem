@@ -76,8 +76,6 @@ def test_core_has_no_analytical_types():
         "Decision",
         "Option",
         "OptionEffect",
-        "StructuralAsymmetry",
-        "PorterAnalysis",
         "SystemsDynamicsAnalysis",
         "FrameworkTension",
         "AssumptionDependency",

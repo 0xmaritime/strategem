@@ -1,0 +1,32 @@
+{
+  "artefact_id": "6178777e-dd77-44a2-8cef-7fb099479c19",
+  "analysis_id": "5ad58e06-0afc-4e2c-8637-79feb8ae0951",
+  "artefact_type": "assumption_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "assumptions_by_framework": {
+      "porter_five_forces_v2": [],
+      "systems_dynamics_v2": [
+        "Users will prioritize ease of use in distress signaling methods",
+        "The system must function effectively under limited cellular conditions"
+      ]
+    },
+    "shared_assumptions": [],
+    "single_point_failures": [
+      {
+        "assumption": "Users will prioritize ease of use in distress signaling methods",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      },
+      {
+        "assumption": "The system must function effectively under limited cellular conditions",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-02-04T22:59:56.158115",
+  "content_hash": "1e66c26fa562e10e"
+}

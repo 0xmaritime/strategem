@@ -1,0 +1,32 @@
+{
+  "artefact_id": "2f3bbb6f-65ac-4cb0-9d05-7fedc8c30f7b",
+  "analysis_id": "c2b2e6e4-3320-4ba4-b29a-70267750fa2d",
+  "artefact_type": "assumption_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "assumptions_by_framework": {
+      "porter_five_forces_v2": [],
+      "systems_dynamics_v2": [
+        "Users will engage with the new system if it is easy to use",
+        "The current system's ineffectiveness is due to user disengagement"
+      ]
+    },
+    "shared_assumptions": [],
+    "single_point_failures": [
+      {
+        "assumption": "Users will engage with the new system if it is easy to use",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      },
+      {
+        "assumption": "The current system's ineffectiveness is due to user disengagement",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-02-04T22:28:27.607204",
+  "content_hash": "2bf2e7074b3ef1f8"
+}

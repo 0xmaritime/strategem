@@ -1,0 +1,72 @@
+{
+  "artefact_id": "45bdfd0f-616d-4530-b9e0-6b5cd1e09508",
+  "analysis_id": "f3fb441a-8edf-4605-9fd9-f5250ff5307f",
+  "artefact_type": "option_report",
+  "version": "2.0.0-dev",
+  "content": {
+    "decision_question": "What to choose?",
+    "decision_type": "compare",
+    "options_analyzed": [
+      "Option A",
+      "Option B"
+    ],
+    "option_summaries": {
+      "Option A": {
+        "framework_insights": [],
+        "claims_affecting_option": [
+          {
+            "statement": "Option A's fragility to supply chain disruption is higher than Option B.",
+            "framework": "systems_dynamics_v2",
+            "confidence": "medium",
+            "source": "inference"
+          }
+        ],
+        "assumptions_affecting_option": [
+          {
+            "statement": "Resource allocation positively impacts market demand",
+            "framework": "systems_dynamics_v2"
+          },
+          {
+            "statement": "Risk management is effective in controlling resource allocation",
+            "framework": "systems_dynamics_v2"
+          }
+        ],
+        "unknowns_affecting_option": [
+          {
+            "statement": "Future resource availability",
+            "framework": "systems_dynamics_v2"
+          }
+        ]
+      },
+      "Option B": {
+        "framework_insights": [],
+        "claims_affecting_option": [
+          {
+            "statement": "Option A's fragility to supply chain disruption is higher than Option B.",
+            "framework": "systems_dynamics_v2",
+            "confidence": "medium",
+            "source": "inference"
+          }
+        ],
+        "assumptions_affecting_option": [
+          {
+            "statement": "Resource allocation positively impacts market demand",
+            "framework": "systems_dynamics_v2"
+          },
+          {
+            "statement": "Risk management is effective in controlling resource allocation",
+            "framework": "systems_dynamics_v2"
+          }
+        ],
+        "unknowns_affecting_option": [
+          {
+            "statement": "Future resource availability",
+            "framework": "systems_dynamics_v2"
+          }
+        ]
+      }
+    }
+  },
+  "generated_at": "2026-02-04T22:45:09.461591",
+  "content_hash": "2097af83d6086356"
+}

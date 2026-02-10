@@ -2,14 +2,14 @@
 
 ## System Overview
 
-Strategem Core is a decision support system with two analysis versions. V1 is fully functional. V2 is partially implemented with framework execution issues.
+Strategem Core is a decision support system with two analysis versions. Both V1 and V2 are fully functional.
 
 ### Version Status
 
 | Version | Status | Architecture | State |
 |---------|--------|-------------|--------|
 | **V1** | ✅ Stable, Production-Ready | Monolithic, Inferred Decision | Fully Functional |
-| **V2** | ⚠️ In Development | Versioned, Required Decision | Partially Implemented |
+| **V2** | ✅ Stable, Production-Ready | Versioned, Required Decision | Fully Functional |
 
 ## Core Philosophy
 
@@ -45,15 +45,15 @@ Strategem Core is a decision support system with two analysis versions. V1 is fu
 
 - **Problem Context**: Ingestion, parsing, formalization (working)
 - **Orchestrator**: Framework execution, result aggregation (working)
-- **Frameworks**: Porter Five Forces, Systems Dynamics (working)
+- **Frameworks**: Systems Dynamics (working)
 - **Report Generator**: Markdown output with all sections (working)
 - **Persistence**: JSON + Markdown storage (working)
 - **CLI**: Full V1 analysis commands (working)
 - **Web UI**: `/v1` entry point (working)
 
-### V2 (In Development - Known Issues)
+### V2 (Stable - Production-Ready)
 
-**Status: ⚠️ Partially Implemented**
+**Status: ✅ Fully Functional**
 
 **What's Working:**
 - ✅ Version isolation (v1/ and v2/ separated)
@@ -61,26 +61,41 @@ Strategem Core is a decision support system with two analysis versions. V1 is fu
 - ✅ V2 models (enums, core, tension, dependency, sensitivity, output, framework)
 - ✅ V2 web UI (`/v2` entry point with required fields)
 - ✅ Separate landing page (`/`) for version selection
+- ✅ V2 persistence layer (JSON-native format)
+- ✅ V2 LLM layer (wraps core for V2-specific prompts)
+- ✅ V2 orchestrator (decision-bound execution with partial success tolerance)
+- ✅ V2 response normalization layer (handles LLM output variations)
+- ✅ V2 tension mapper (cross-framework analysis)
+- ✅ V2 artefact generator (structured JSON artefacts)
+- ✅ V2 prompts (`systems_dynamics_v2.txt`)
+- ✅ V2 report generation (markdown with claims, tension, unknowns)
 
-**What's NOT Working:**
-- ❌ **V2 Framework Execution**: Frameworks are defined but LLM response parsing fails consistently
-  - Issue: Pydantic validation errors (mismatched field names, required fields)
-  - Root cause: LLM output format doesn't match V2 model expectations
-  - Result: V2 analyses fail with validation errors
+**V2-Specific Features:**
+- Option-aware analysis (all claims specify affected options)
+- Cross-framework tension mapping between frameworks
+- Structured artefacts (JSON + metadata)
+- Explicit uncertainty surface (unknowns with sensitivities)
+- Download report as Markdown
+- Enhanced web display with expandable framework details
 
 **Known V2 Limitations:**
-- V2 prompts (`porter_v2.txt`, `systems_dynamics_v2.txt`) exist but produce incompatible JSON
-- V2 models are designed with many optional fields to handle parsing issues
-- `V2AnalysisOrchestrator` has framework registration but framework execution fails
-- Tension mapper and artefact generator exist but can't be tested due to framework failures
+- LLM responses may contain typos (e.g., "Rivalry" → "Rivalr")
+  - Handled by normalization layer with common typo mappings
+- V2 models have relaxed field constraints for parsing tolerance
 
-**Development Path Forward:**
-1. Fix LLM prompt-output alignment (simplify V2 prompts or adjust models)
-2. Add fallback parsing for malformed LLM responses
-3. Implement robust error handling in V2 orchestrator
-4. Add comprehensive V2 integration testing
+**V2 vs V1 Differences:**
+| Feature | V1 | V2 |
+|---------|-----|-----|
+| Decision Focus | Optional (inferred) | Optional (explicit or implicit) |
+| Options | Optional | Optional (annotations) |
+| Claim Awareness | Partial (system-level) | Full (option-aware when options present) |
+| Tension Mapping | None | Yes (cross-framework) |
+| Output Format | Markdown only | Markdown + JSON artefacts |
+| Report Type | Single report | Downloadable report + structured artefacts |
 
-**Recommendation**: Use V1 for all production analysis. V2 requires additional development to be production-ready.
+**Both V1 and V2 are production-ready.** Choose based on your analysis needs:
+- Use V1 for quick, flexible analysis with inferred decision focus
+- Use V2 for option-aware analysis (when options provided), tension mapping, and explicit uncertainty tracking
 
 ---
 
@@ -151,29 +166,6 @@ AnalysisOrchestrator
 ```
 
 **Current Frameworks**:
-
-#### Operating Environment Structure (Porter's Five Forces)
-**Analytical Lens**: Structural Attractiveness
-
-Reveals:
-- Threat of New Entrants
-- Supplier Power
-- Buyer Power
-- Threat of Substitutes
-- Competitive Rivalry
-
-Output Schema:
-```json
-{
-  "ThreatOfNewEntrants": {
-    "Level": "Low | Medium | High",
-    "Rationale": "...",
-    "Assumptions": [...],
-    "Unknowns": [...]
-  },
-  ...
-}
-```
 
 #### Target System Dynamics (Systems Dynamics)
 **Analytical Lens**: Systemic Fragility
@@ -259,8 +251,6 @@ Reasoned Artifact
 │   └── Problem statement, objectives, constraints
 ├── Key Analytical Claims
 │   └── Claims with source and confidence
-├── Structural Pressures (Operating Environment)
-│   └── Porter analysis reframed
 ├── Systemic Risks (Target System)
 │   └── Systems Dynamics analysis reframed
 ├── Unknowns & Sensitivities
@@ -330,7 +320,6 @@ AnalysisSufficiencySummary:
     "source_type": "..."
   },
   "framework_results": [...],
-  "porter_analysis": {...},
   "systems_analysis": {...},
   "created_at": "isoformat",
   "generated_report": "..."
@@ -384,7 +373,7 @@ AnalysisSufficiencySummary:
  │ 6. REPORT GENERATION: ReportGenerator                        │
  │    - Extract analytical claims from each framework           │
  │    - Generate Context Summary                                │
- │    - Create Structural Pressures section                     │
+ │                         │
  │    - Create Systemic Risks section                           │
  │    - Compile Unknowns & Sensitivities                        │
  │    - Generate Framework Agreement & Tension                  │
@@ -414,7 +403,6 @@ AnalysisSufficiencySummary:
 
 ### 1. Strategy Pattern (Frameworks)
 Frameworks implement the same interface but with different algorithms:
-- Operating Environment Structure: External pressure analysis
 - Target System Dynamics: Internal fragility analysis
 - Future frameworks can be added without code changes
 
@@ -608,7 +596,6 @@ class DatabasePersistence(PersistenceLayer):
 - Pydantic: https://docs.pydantic.dev/
 - FastAPI: https://fastapi.tiangolo.com/
 - OpenRouter: https://openrouter.ai/
-- Porter's Five Forces: https://en.wikipedia.org/wiki/Porter%27s_five_forces_analysis
 - Systems Dynamics: https://en.wikipedia.org/wiki/System_dynamics
 
 ---
@@ -616,3 +603,168 @@ class DatabasePersistence(PersistenceLayer):
 **Document Version**: 1.0.0  
 **Last Updated**: February 2026  
 **Maintainer**: Strategem Core Team
+
+---
+
+## V2 Reasoning Substrate Architecture (NEW)
+
+### Architecture Overview
+
+V2 (Reasoning Substrate) introduces a canonical internal representation that separates analysis from interpretation.
+
+**New Flow:**
+```
+Input
+  → Frameworks (isolated)
+  → Adapters (translate framework output → primitives)
+  → Reasoning Substrate (store primitives, track provenance)
+  → Judgment Derivation (derive judgment nodes from substrate)
+  → Artefact Exporter (generate JSON from substrate + judgment nodes)
+  → Output (reasoning_primitives.json, judgment_surface.json, option_annotations.json)
+```
+
+### Layer 4.1: Framework Adapter Layer
+
+**Purpose**: Translate framework-native output → canonical primitives without interpretation.
+
+**Components:**
+- `strategem/v2/framework_adapters/`
+  - `SystemsDynamicsAdapter` - Translates Systems Dynamics V2 output
+
+**Mapping Rules:**
+- Feedback loops → Mechanisms
+- State transitions → Claims
+- Growth/reinforcing assumptions → Assumptions
+- Unknown parameters → Uncertainties
+
+**Invariants:**
+- Frameworks never talk to orchestrator/artefact generator directly
+- All communication goes through substrate via adapters
+- No interpretation, only structural translation
+
+### Layer 4.2: Reasoning Substrate
+
+**Purpose**: Canonical internal representation for cross-framework comparison.
+
+**Components:**
+- `strategem/v2/substrate/`
+  - `primitives.py` - Canonical primitive models (Claim, Assumption, Uncertainty, Mechanism, StakeholderPower)
+  - `graph.py` - Reasoning graph with nodes and edges
+  - `ingest.py` - Framework output ingestion
+
+**Canonical Primitives:**
+```python
+Claim: Structural assertion about the system
+Assumption: Belief required for a claim to hold
+Uncertainty: Unknown that affects outcomes
+Mechanism: Causal pathway (no outcome evaluation)
+StakeholderPower: Ability to block, distort, or enable outcomes
+```
+
+**Invariants:**
+- No ranking
+- No weighting (except for provenance tracking)
+- No scoring
+- Provenance required for all primitives
+
+### Layer 4.3: Judgment Layer
+
+**Purpose**: Externalize irreducible judgment (not emitted by frameworks).
+
+**Components:**
+- `strategem/v2/judgment/`
+  - `nodes.py` - JudgmentNode model (with Stance model)
+  - `derive.py` - JudgmentDeriver with derivation rules
+
+**JudgmentNode Structure:**
+```python
+why_judgment_required: Why judgment is required
+what_cannot_resolve: What analytical tools cannot resolve
+plausible_stances: List of stances (NO preference allowed)
+triggering_primitives: IDs of primitives that triggered this
+affected_frameworks: Frameworks involved
+```
+
+**Derivation Rules:**
+- Conflicting claims → judgment nodes
+- Competing mechanisms → judgment nodes
+- High-sensitivity uncertainties → judgment nodes
+- Value-laden assumptions → judgment nodes (future)
+- Stakeholder power trade-offs → judgment nodes (future)
+
+**Invariants:**
+- No stance marked as preferred
+- Judgment nodes are derived, never emitted by frameworks
+
+### Layer 4.4: Artefact Exports
+
+**Purpose**: Generate structured JSON artefacts from substrate and judgment nodes.
+
+**Components:**
+- `strategem/v2/artefacts/`
+  - `ArtefactExporter` - Generates and saves JSON artefacts
+
+**Artefact Types:**
+1. `reasoning_primitives.json` (REQUIRED)
+   - All canonical primitives organized by type
+   - Framework summary
+   - Stable schema, deterministic ordering
+
+2. `judgment_surface.json` (REQUIRED)
+   - All judgment nodes
+   - Trigger types found
+   - Plausible stances (no preferences)
+
+3. `option_annotations.json` (OPTIONAL)
+   - Annotations for each option
+   - Never ranked or scored
+   - Only generated if options exist
+
+**Invariants:**
+- No ranking or scoring in option annotations
+- No preferences in judgment stances
+- Deterministic ordering (sorted by ID)
+- Human-readable labels
+
+### V2 Key Differences from V1
+
+| Aspect | V1 | V2 (Reasoning Substrate) |
+|---------|-----|------------------------|
+| Decision Focus | Optional (inferred) | Optional (implicit) |
+| Options | Optional | Optional (annotations only) |
+| Claim Types | Option-specific, comparative, system-level | Global or option-aware |
+| Framework Contract | Flexible (AnalysisFramework) | Strict (FrameworkContract) |
+| Framework Output | Direct to orchestrator | Via adapter → substrate |
+| Judgment | Implicit in report | Explicit judgment nodes derived |
+| Cross-Framework Interaction | None (frameworks run independently) | Substrate comparison, tension mapping |
+| Tension Mapping | V2 only | V2 only (via substrate) |
+| Output Format | Markdown only | Markdown + JSON artefacts |
+| Required Fields | None | None (minimal input) |
+| Framework Toggleability | Not applicable | Yes (via adapters) |
+
+### Reasoning Substrate Invariants
+
+1. **Frameworks cannot emit judgment nodes**
+   - Judgment nodes are derived by JudgmentDeriver
+   - Frameworks only emit primitives
+
+2. **Judgment cannot exist without conflict or irreducibility**
+   - Judgment nodes only generated when:
+     - Conflicting claims exist
+     - Competing mechanisms exist
+     - High-sensitivity uncertainties exist
+     - Value-laden assumptions exist
+
+3. **No required options, decisions, or questions**
+   - V2 runs with minimal input (context only)
+   - Decision and options are optional annotations
+
+4. **Toggling frameworks changes judgment nodes, not system validity**
+   - Frameworks are independently executable
+   - Removing a framework removes its primitives
+   - Judgment nodes update accordingly
+
+5. **The system explicitly says "this cannot be resolved analytically"**
+   - JudgmentNode.what_cannot_resolve field
+   - No recommendation leakage
+

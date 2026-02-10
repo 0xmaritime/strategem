@@ -65,9 +65,7 @@ class AnalysisResult(BaseModel):
     problem_context: ProblemContext
 
     # Framework results (legacy specific fields)
-    porter_analysis: Optional[Any] = None
     systems_analysis: Optional[Any] = None
-    porter_error: Optional[str] = None
     systems_error: Optional[str] = None
 
     # Generic framework results (V1 compliant)
@@ -138,7 +136,6 @@ class AnalysisReport(BaseModel):
     This report provides:
     - Context Summary: What was analyzed
     - Key Analytical Claims: Explicit claims with sources and confidence
-    - Structural Pressures: Operating environment analysis
     - Systemic Risks: Target system fragilities
     - Unknowns & Sensitivities: Explicit uncertainty
     - Decision Surface: Where judgment is required
@@ -156,7 +153,6 @@ class AnalysisReport(BaseModel):
     # V1 Compliant report structure
     context_summary: str
     key_analytical_claims: List[AnalyticalClaim]
-    structural_pressures: ReportSection  # Porter/Operating Environment
     systemic_risks: ReportSection  # Systems Dynamics/Target System
     unknowns_and_sensitivities: List[str]
     decision_surface: DecisionSurface
@@ -175,7 +171,6 @@ class AnalysisReport(BaseModel):
     executive_summary: Optional[str] = Field(
         None, description="[Legacy] Replaced by context_summary + key_analytical_claims"
     )
-    porter_section: Optional[ReportSection] = None
     systems_section: Optional[ReportSection] = None
     agreement_tension: Optional[str] = None
     open_questions: Optional[List[str]] = Field(default_factory=list)

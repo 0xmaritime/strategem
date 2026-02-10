@@ -1,23 +1,27 @@
 """Strategem V2 - Systems Dynamics Analysis Model (V2 Specific)"""
 
-from typing import List, Optional
+from typing import List, Optional, Union
 from pydantic import BaseModel, Field
 
 from .core import AnalyticalClaim, Unknown
 
 
 class FeedbackLoop(BaseModel):
-    """A feedback loop in the system (V2: option-aware)"""
+    """A feedback loop in system (V2: option-aware)"""
 
-    description: str = Field(..., alias="Description", description="Loop description")
-    affected_options: List[str] = Field(
-        ..., alias="AffectedOptions", description="Options affected by this loop"
+    description: Optional[str] = Field(
+        None, alias="Description", description="Loop description"
+    )
+    affected_options: Optional[List[str]] = Field(
+        default_factory=list,
+        alias="AffectedOptions",
+        description="Options affected by this loop",
     )
     effect_type: Optional[str] = Field(
         None,
         description="growth_driver, acceleration_mechanism, constraint, stabilizer",
     )
-    assumptions: List[str] = Field(default_factory=list)
+    assumptions: Optional[List[str]] = Field(default_factory=list)
 
     class Config:
         populate_by_name = True
@@ -26,14 +30,16 @@ class FeedbackLoop(BaseModel):
 class Bottleneck(BaseModel):
     """A system bottleneck (V2: option-aware)"""
 
-    description: str = Field(
-        ..., alias="Description", description="Bottleneck description"
+    description: Optional[str] = Field(
+        None, alias="Description", description="Bottleneck description"
     )
-    affected_options: List[str] = Field(
-        ..., alias="AffectedOptions", description="Options affected"
+    affected_options: Optional[List[str]] = Field(
+        default_factory=list, alias="AffectedOptions", description="Options affected"
     )
-    severity: str = Field(..., alias="Severity", description="high, medium, or low")
-    unknowns: List[str] = Field(default_factory=list)
+    severity: Optional[str] = Field(
+        "medium", alias="Severity", description="high, medium, or low"
+    )
+    unknowns: Optional[List[str]] = Field(default_factory=list)
 
     class Config:
         populate_by_name = True
@@ -42,15 +48,19 @@ class Bottleneck(BaseModel):
 class Fragility(BaseModel):
     """A system fragility (V2: option-aware)"""
 
-    description: str = Field(
-        ..., alias="Description", description="Fragility description"
+    description: Optional[str] = Field(
+        None, alias="Description", description="Fragility description"
     )
-    affected_options: List[str] = Field(
-        ..., alias="AffectedOptions", description="Options affected"
+    affected_options: Optional[List[str]] = Field(
+        default_factory=list, alias="AffectedOptions", description="Options affected"
     )
-    severity: str = Field(..., alias="Severity", description="high, medium, or low")
-    cascading: bool = Field(..., alias="Cascading", description="Whether this cascades")
-    assumptions: List[str] = Field(default_factory=list)
+    severity: Optional[str] = Field(
+        "medium", alias="Severity", description="high, medium, or low"
+    )
+    cascading: Optional[bool] = Field(
+        False, alias="Cascading", description="Whether this cascades"
+    )
+    assumptions: Optional[List[str]] = Field(default_factory=list)
 
     class Config:
         populate_by_name = True
@@ -60,99 +70,47 @@ class SystemsDynamicsAnalysisV2(BaseModel):
     """
     Systems Dynamics analysis result (V2).
 
-    V2: All claims are option-aware. Decision context is required.
+    V2: Decision context is optional. Claims can be option-aware or global.
     """
 
-    decision_question: str = Field(
-        ..., description="Decision being analyzed", alias="DecisionQuestion"
+    decision_question: Optional[str] = Field(
+        "", description="Decision being analyzed", alias="DecisionQuestion"
     )
-    options_analyzed: List[str] = Field(
-        ..., description="Options under consideration", alias="OptionsAnalyzed"
+    options_analyzed: Optional[List[str]] = Field(
+        None, description="Options under consideration", alias="OptionsAnalyzed"
     )
-
-    system_overview: str = Field(
-        ..., alias="SystemOverview", description="System narrative overview"
+    system_overview: Optional[str] = Field(
+        "", alias="SystemOverview", description="System narrative overview"
     )
-
-    key_components: List[str] = Field(
-        ..., alias="KeyComponents", description="System components"
+    key_components: Optional[List[str]] = Field(
+        default_factory=list, alias="KeyComponents", description="System components"
     )
-
     feedback_loops: Optional[dict] = Field(
         None, alias="FeedbackLoops", description="Reinforcing and balancing loops"
     )
-
     bottlenecks: Optional[List[Bottleneck]] = Field(
         default_factory=list, alias="Bottlenecks"
     )
-
     fragilities: Optional[List[Fragility]] = Field(default_factory=list)
-
     option_aware_claims: Optional[List[AnalyticalClaim]] = Field(
-        default_factory=list, description="Option-aware claims"
+        default_factory=list,
+        description="Option-aware claims (optional, for when options are provided)",
+        alias="OptionAwareClaims",
     )
-
-    assumptions: Optional[List[str]] = Field(default_factory=list)
-
-    unknowns: Optional[List[dict]] = Field(
-        default_factory=list, description="Unknowns with sensitivities"
+    global_claims: Optional[List[AnalyticalClaim]] = Field(
+        default_factory=list,
+        description="Global claims (for when no options or option-independent analysis)",
+        alias="GlobalClaims",
+    )
+    assumptions: Optional[List[str]] = Field(default_factory=list, alias="Assumptions")
+    unknowns: Optional[List[Union[str, dict]]] = Field(
+        default_factory=list,
+        description="Unknowns with sensitivities",
+        alias="Unknowns",
     )
 
     class Config:
         populate_by_name = True
-
-    options_analyzed: Optional[List[str]] = Field(
-        None, description="Options under consideration", alias="OptionsAnalyzed"
-    )
-
-    system_overview: Optional[str] = Field(
-        None, description="System narrative overview"
-    )
-
-    key_components: Optional[List[str]] = Field(None, description="System components")
-
-    feedback_loops: Optional[dict] = Field(
-        None, alias="FeedbackLoops", description="Reinforcing and balancing loops"
-    )
-
-    bottlenecks: Optional[List[Bottleneck]] = Field(default_factory=list)
-
-    fragilities: Optional[List[Fragility]] = Field(default_factory=list)
-
-    option_aware_claims: Optional[List[AnalyticalClaim]] = Field(
-        default_factory=list, description="Option-aware claims"
-    )
-
-    assumptions: Optional[List[str]] = Field(default_factory=list)
-
-    unknowns: Optional[List[dict]] = Field(
-        default_factory=list, description="Unknowns with sensitivities"
-    )
-    options_analyzed: List[str] = Field(
-        ..., description="Options under consideration", alias="OptionsAnalyzed"
-    )
-
-    system_overview: str = Field(..., description="System narrative overview")
-
-    key_components: List[str] = Field(..., description="System components")
-
-    feedback_loops: dict = Field(
-        ..., alias="FeedbackLoops", description="Reinforcing and balancing loops"
-    )
-
-    bottlenecks: List[Bottleneck] = Field(default_factory=list, alias="Bottlenecks")
-
-    fragilities: List[Fragility] = Field(default_factory=list)
-
-    option_aware_claims: List[AnalyticalClaim] = Field(
-        default_factory=list, description="Option-aware claims"
-    )
-
-    assumptions: List[str] = Field(default_factory=list)
-
-    unknowns: List[dict] = Field(
-        default_factory=list, description="Unknowns with sensitivities"
-    )
 
 
 __all__ = [

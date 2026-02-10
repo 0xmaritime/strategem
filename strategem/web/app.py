@@ -156,8 +156,6 @@ async def _analyze_v1_text(
         )
 
 
-@app.get("/v1")
-@app.post("/analyze/file")
 async def _analyze_v2_text(
     request: Request,
     text: str,
@@ -165,30 +163,23 @@ async def _analyze_v2_text(
     decision_type: Optional[str],
     options: Optional[str],
 ):
-    """V2 text analysis (REQUIRED decision and options)"""
+    """V2 text analysis (decision and options are optional)"""
     try:
-        if not decision_question or not options:
-            raise HTTPException(
-                status_code=400,
-                detail="V2 requires decision_question and options",
+        decision = None
+        options_objs = None
+
+        if decision_question:
+            decision = Decision(
+                decision_question=decision_question,
+                decision_type=DecisionType(decision_type or "explore"),
             )
 
-        options_list = [opt.strip() for opt in options.split(",")]
-
-        if len(options_list) < 2:
-            raise HTTPException(
-                status_code=400, detail="V2 requires at least 2 options"
-            )
-
-        decision = Decision(
-            decision_question=decision_question,
-            decision_type=DecisionType(decision_type or "compare"),
-        )
-
-        options_objs = [
-            Option(name=opt_name, description=f"Option: {opt_name}")
-            for opt_name in options_list
-        ]
+        if options:
+            options_list = [opt.strip() for opt in options.split(",")]
+            options_objs = [
+                Option(name=opt_name, description=f"Option: {opt_name}")
+                for opt_name in options_list
+            ]
 
         result = v2_orchestrator.run_full_analysis(
             decision=decision, options=options_objs, context=text
@@ -207,6 +198,12 @@ async def _analyze_v2_text(
         for artefact in artefacts:
             v2_persistence.save_artefact(artefact)
 
+        # Generate and save markdown report for V2
+        report_content = generate_v2_report(result, artefacts)
+        report_path = config.REPORTS_DIR / f"report_{result.analysis_id}.md"
+        config.REPORTS_DIR.mkdir(exist_ok=True)
+        report_path.write_text(report_content)
+
         return RedirectResponse(
             url=f"/analysis/v2/{result.analysis_id}", status_code=303
         )
@@ -215,6 +212,180 @@ async def _analyze_v2_text(
         return templates.TemplateResponse(
             "error.html", {"request": request, "error": str(e)}
         )
+
+
+def generate_v2_report(
+    result: AnalysisResult, artefacts: List[AnalysisArtefact]
+) -> str:
+    """
+    Generate markdown report for V2 analysis.
+
+    V2 (Reasoning Substrate): Decision and options are optional.
+    Structured report with claims and unknowns.
+    """
+    lines = []
+
+    # Header
+    lines.append(f"# Strategem Core V2 - Analysis Report")
+    lines.append("")
+    lines.append(f"**Analysis ID:** {result.analysis_id}")
+    lines.append(f"**Generated:** {result.created_at.strftime('%Y-%m-%d %H:%M:%S')}")
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+
+    # Disclaimer
+    lines.append("> ⚠️ **This is a reasoned artifact, NOT a recommendation.**")
+    lines.append(
+        "> This system does NOT output decisions, rank options, optimize objectives, or make recommendations."
+    )
+    lines.append("> The Decision Owner retains full responsibility.")
+    lines.append("")
+
+    # Decision Context (optional)
+    if result.decision:
+        lines.append("## Decision Context")
+        lines.append("")
+        lines.append(f"- **Question:** {result.decision.decision_question}")
+        if result.decision.decision_type:
+            lines.append(f"- **Type:** {result.decision.decision_type.value}")
+        if result.options_analyzed:
+            lines.append(f"- **Options:** {', '.join(result.options_analyzed)}")
+        lines.append("")
+
+    # Framework Results
+    lines.append("## Framework Analysis Results")
+    lines.append("")
+
+    for fw_result in result.framework_results:
+        if not fw_result.success:
+            lines.append(f"### ❌ {fw_result.framework_name} - FAILED")
+            if fw_result.execution_reason:
+                lines.append(f"**Reason:** {fw_result.execution_reason}")
+            lines.append("")
+            continue
+
+        lines.append(f"### {fw_result.framework_name}")
+        lines.append("")
+
+        # Claims
+        if fw_result.claims:
+            lines.append(f"**Claims ({len(fw_result.claims)}):**")
+            for i, claim in enumerate(fw_result.claims, 1):
+                lines.append(f"{i}. {claim.statement}")
+                lines.append(f"   - Framework: {claim.framework}")
+                lines.append(f"   - Confidence: {claim.confidence.value}")
+                lines.append(f"   - Source: {claim.source.value}")
+                lines.append(f"   - Affects: {', '.join(claim.affected_options)}")
+                lines.append("")
+        else:
+            lines.append("**Claims: None**")
+            lines.append("")
+
+        # Assumptions
+        if fw_result.assumptions:
+            lines.append(f"**Assumptions ({len(fw_result.assumptions)}):**")
+            for i, assumption in enumerate(fw_result.assumptions, 1):
+                lines.append(f"{i}. {assumption}")
+            lines.append("")
+        else:
+            lines.append("**Assumptions: None**")
+            lines.append("")
+
+        # Unknowns
+        if fw_result.unknowns:
+            lines.append(f"**Unknowns ({len(fw_result.unknowns)}):**")
+            for i, unknown in enumerate(fw_result.unknowns, 1):
+                lines.append(f"{i}. {unknown}")
+            lines.append("")
+        else:
+            lines.append("**Unknowns: None**")
+            lines.append("")
+
+        lines.append("---")
+        lines.append("")
+
+    # Tension Mapping
+    if result.tension_map:
+        lines.append("## Framework Tension Mapping")
+        lines.append("")
+        lines.append(f"**Summary:** {result.tension_map.summary}")
+        lines.append("")
+
+        if result.tension_map.agreement_areas:
+            lines.append("**Areas of Agreement:**")
+            for area in result.tension_map.agreement_areas:
+                lines.append(f"- {area}")
+            lines.append("")
+
+        if result.tension_map.tension_areas:
+            lines.append("**Areas of Tension:**")
+            for area in result.tension_map.tension_areas:
+                lines.append(f"- {area}")
+            lines.append("")
+
+        if result.tension_map.contradiction_areas:
+            lines.append("**Areas of Contradiction:**")
+            for area in result.tension_map.contradiction_areas:
+                lines.append(f"- {area}")
+            lines.append("")
+
+        if result.tension_map.framework_tensions:
+            lines.append("**Framework Tensions:**")
+            for ft in result.tension_map.framework_tensions:
+                lines.append("")
+                lines.append(f"**{ft.framework_1} vs {ft.framework_2}**")
+                lines.append(f"- Type: {ft.tension_type.value}")
+                lines.append(f"- Summary: {ft.summary}")
+                if ft.resolution_areas:
+                    lines.append(f"- Resolution Required:")
+                    for area in ft.resolution_areas:
+                        lines.append(f"  - {area}")
+            lines.append("")
+
+        lines.append("---")
+        lines.append("")
+
+    # Sensitivity Triggers
+    if result.sensitivity_triggers:
+        lines.append("## Sensitivity Triggers")
+        lines.append("")
+        for i, trigger in enumerate(result.sensitivity_triggers, 1):
+            lines.append(f"### {i}. {trigger.trigger_description}")
+            lines.append(
+                f"- **Evidence needed:** {trigger.evidence_needed or 'Not specified'}"
+            )
+            if trigger.question_generated:
+                lines.append(f"- **Question:** {trigger.question_generated}")
+            lines.append("")
+
+    # Structured Artefacts
+    if artefacts:
+        lines.append("## Structured Artefacts")
+        lines.append("")
+        for artefact in artefacts:
+            lines.append(f"### {artefact.artefact_type.replace('_', ' ').title()}")
+            lines.append(f"- **ID:** {artefact.artefact_id}")
+            lines.append(f"- **Type:** {artefact.artefact_type}")
+            lines.append(f"- **Version:** {artefact.version}")
+            lines.append(
+                f"- **Generated:** {artefact.generated_at.strftime('%Y-%m-%d %H:%M:%S')}"
+            )
+            if artefact.content_hash:
+                lines.append(f"- **Hash:** {artefact.content_hash}")
+            lines.append("")
+        lines.append("---")
+        lines.append("")
+
+    # Footer
+    lines.append("---")
+    lines.append("")
+    lines.append("*Strategem Core v2.0.0-dev - A reasoning scaffold, not an oracle.*")
+    lines.append(
+        "*V2: Reasoning Substrate | Judgment Externalization | Framework Toggleability*"
+    )
+
+    return "\n".join(lines)
 
 
 @app.post("/analyze/file")
@@ -287,36 +458,29 @@ async def _analyze_v2_file(
     decision_type: Optional[str],
     options: Optional[str],
 ):
-    """V2 file analysis (REQUIRED decision and options)"""
+    """V2 file analysis (decision and options are optional)"""
     try:
-        if not decision_question or not options:
-            raise HTTPException(
-                status_code=400,
-                detail="V2 requires decision_question and options",
+        decision = None
+        options_objs = None
+
+        if decision_question:
+            decision = Decision(
+                decision_question=decision_question,
+                decision_type=DecisionType(decision_type or "explore"),
             )
 
-        options_list = [opt.strip() for opt in options.split(",")]
-
-        if len(options_list) < 2:
-            raise HTTPException(
-                status_code=400, detail="V2 requires at least 2 options"
-            )
+        if options:
+            options_list = [opt.strip() for opt in options.split(",")]
+            options_objs = [
+                Option(name=opt_name, description=f"Option: {opt_name}")
+                for opt_name in options_list
+            ]
 
         temp_path = config.STORAGE_DIR / f"temp_{uuid.uuid4()}_{file.filename}"
         content = await file.read()
         temp_path.write_bytes(content)
 
         try:
-            decision = Decision(
-                decision_question=decision_question,
-                decision_type=DecisionType(decision_type or "compare"),
-            )
-
-            options_objs = [
-                Option(name=opt_name, description=f"Option: {opt_name}")
-                for opt_name in options_list
-            ]
-
             result = v2_orchestrator.run_full_analysis(
                 decision=decision, options=options_objs, context=temp_path.read_text()
             )
@@ -368,7 +532,6 @@ async def view_analysis(request: Request, analysis_id: str):
             "version": "v1",
             "result": result,
             "report_content": report_content,
-            "has_porter": result.porter_analysis is not None,
             "has_systems": result.systems_analysis is not None,
         },
     )
@@ -377,24 +540,33 @@ async def view_analysis(request: Request, analysis_id: str):
 @app.get("/analysis/v2/{analysis_id}", response_class=HTMLResponse)
 async def view_v2_analysis(request: Request, analysis_id: str):
     """View V2 analysis results"""
-    result = v2_persistence.load_analysis(analysis_id)
+    import sys
 
-    if not result:
-        raise HTTPException(status_code=404, detail="V2 Analysis not found")
+    try:
+        result = v2_persistence.load_analysis(analysis_id)
 
-    artefacts = v2_persistence.load_all_artefacts()
-    # Filter artefacts to only show those for the current analysis
-    analysis_artefacts = [a for a in artefacts if a.analysis_id == analysis_id]
+        if not result:
+            raise HTTPException(status_code=404, detail="V2 Analysis not found")
 
-    return templates.TemplateResponse(
-        "results_v2.html",
-        {
-            "request": request,
-            "version": "v2",
-            "result": result,
-            "artefacts": analysis_artefacts,
-        },
-    )
+        artefacts = v2_persistence.load_all_artefacts()
+        # Filter artefacts to only show those for the current analysis
+        analysis_artefacts = [a for a in artefacts if a.analysis_id == analysis_id]
+
+        return templates.TemplateResponse(
+            "results_v2.html",
+            {
+                "request": request,
+                "version": "v2",
+                "result": result,
+                "artefacts": analysis_artefacts,
+            },
+        )
+    except Exception as e:
+        import traceback
+
+        print(f"Error rendering V2 results: {e}", file=sys.stderr)
+        print(f"Traceback: {traceback.format_exc()}", file=sys.stderr)
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 
 @app.get("/analyses", response_class=HTMLResponse)
@@ -439,10 +611,15 @@ async def _list_v2_analyses(request: Request):
     for analysis_id in analysis_ids:
         result = v2_persistence.load_analysis(analysis_id)
         if result:
+            title = (
+                result.decision.decision_question
+                if result.decision
+                else f"Analysis {analysis_id[:8]}"
+            )
             analyses.append(
                 {
                     "id": result.analysis_id,
-                    "title": result.decision.decision_question,
+                    "title": title,
                     "created_at": result.created_at,
                     "framework_results": result.framework_results,
                     "version": "v2",
@@ -467,6 +644,21 @@ async def download_report(analysis_id: str):
     return FileResponse(
         path=report_path,
         filename=f"strategem_report_{analysis_id}.md",
+        media_type="text/markdown",
+    )
+
+
+@app.get("/report/v2/{analysis_id}/download")
+async def download_v2_report(analysis_id: str):
+    """Download V2 analysis report as Markdown file"""
+    report_path = config.REPORTS_DIR / f"report_{analysis_id}.md"
+
+    if not report_path.exists():
+        raise HTTPException(status_code=404, detail="V2 Report not found")
+
+    return FileResponse(
+        path=report_path,
+        filename=f"strategem_v2_report_{analysis_id}.md",
         media_type="text/markdown",
     )
 

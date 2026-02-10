@@ -2,7 +2,7 @@ Analyze the following Target System using the Qualitative Systems Dynamics frame
 
 ⸻
 
-DECISION CONTEXT (V2: REQUIRED)
+DECISION CONTEXT (V2: OPTIONAL)
 
 Target System: {target_system_title}
 Decision Question: {decision_question}
@@ -19,13 +19,13 @@ PROBLEM CONTEXT MATERIAL
 
 YOUR TASK
 
-Analyze the target system's internal dynamics and how they affect EACH OPTION differently.
+Analyze target system's internal dynamics. If decision context is provided, analyze how each option is affected differently.
 
 V2 REQUIREMENTS:
-- Decision context is REQUIRED (no exploratory mode)
-- All claims MUST be option-aware (specify which options they affect)
-- Every system element must be tied to option outcomes
-- No system-level claims allowed (affects "all" is invalid)
+- Decision context is OPTIONAL (can run with problem context only)
+- If decision options are provided, claims should be option-aware (specify which options they affect)
+- If no options provided, produce global claims (apply to entire target system)
+- Analysis should not require decision context to function
 
 ⸻
 
@@ -94,6 +94,16 @@ Provide your analysis in the following JSON format:
     }}
   ],
 
+  "GlobalClaims": [
+    {{
+      "ClaimId": "global_claim_1",
+      "Statement": "Global claim about the target system that applies regardless of options",
+      "Source": "inference",
+      "Confidence": "medium",
+      "Framework": "systems_dynamics_v2"
+    }}
+  ],
+
   "Assumptions": [
     "assumption 1",
     "assumption 2"
@@ -113,14 +123,10 @@ Provide your analysis in the following JSON format:
 
 CRITICAL V2 RULES
 
-1. Decision-Bound Only: Decision context is REQUIRED. No exploratory mode.
-
-2. Option-Aware Required: All claims MUST specify affected_options. "all" is not valid.
-
-3. System-Option Linkage: Every system element must specify which options it affects.
-
+1. Decision Context is OPTIONAL: Analysis can proceed with problem context only.
+2. Option-Aware When Possible: If options are provided, claims should specify affected_options. If not, global claims are acceptable.
+3. Flexible Analysis: Every system element may specify which options it affects if relevant.
 4. Explicit Non-Goals: Do not make decisions, recommendations, or optimization advice.
-
 5. Framework disagreement is a valid outcome.
 
 ⸻
@@ -128,10 +134,10 @@ CRITICAL V2 RULES
 VALIDATION CHECKLIST
 
 Before outputting, verify:
-- [ ] Decision question is present and specific
-- [ ] Every component, loop, bottleneck, and fragility specifies affected_options
-- [ ] OptionAwareClaims has specific affected_options (no "all")
-- [ ] All claims tie system elements to option outcomes
+- [ ] Decision question is present if provided (optional if not)
+- [ ] Every component, loop, bottleneck, and fragility may specify affected_options if options are present
+- [ ] OptionAwareClaims has specific affected_options if options are provided (optional if not)
+- [ ] Claims tie system elements to option outcomes if options are relevant
 - [ ] No recommendation or ranking is present
 - [ ] Output is valid JSON only
 
@@ -139,4 +145,4 @@ Before outputting, verify:
 
 CRITICAL: Output ONLY valid JSON. No markdown, no bold text, no explanations outside the JSON.
 
-Remember: V2 requires option-aware analysis. Every claim must specify which options it affects.
+Remember: V2 supports optional decision context. If options are provided, claims should be option-aware. If not, global analysis is acceptable.

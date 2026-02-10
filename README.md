@@ -10,10 +10,10 @@ Strategem Core is a decision support system that structures unstructured problem
 
 | Version | Status | Key Features |
 |---------|--------|--------------|
-| **V1** | ✅ Fully Functional | Inferred decision focus, optional options, system-level claims allowed |
-| **V2** | ⚠️ Partially Implemented | Required decision & options, option-aware analysis, structured artefacts (frameworks currently not executing reliably) |
+| **V1** | ✅ Fully Functional | Inferred decision focus, optional options, system-level claims allowed, Markdown reports |
+| **V2** | ✅ Functional | Required decision & options, option-aware analysis, structured artefacts, tension mapping, download report |
 
-**Use V1 for production analysis. V2 is in active development.**
+**Both V1 and V2 are fully functional for production use.**
 
 ---
 
@@ -104,19 +104,43 @@ strategem-web
 
 Then open http://localhost:8000
 
+**V1 Route**: http://localhost:8000/ (Inferred decision focus)
+**V2 Route**: http://localhost:8000/v2 (Required decision question & options)
+
 ### Use the CLI
 
 ```bash
-# Analyze from text
+# Analyze from text (V1)
 python -m strategem.cli analyze --text "Your problem context here..."
 
-# Analyze from file  
+# Analyze from file (V1)
 python -m strategem.cli analyze --file ./problem_context.txt
 
-# With formal schema
+# With formal schema (V1)
 python -m strategem.cli analyze --file ./problem.txt \
   --title "Q3 Strategy Review" \
   --problem-statement "Evaluate market expansion options"
+```
+
+### Use V2 (Web Interface)
+
+```bash
+# V2 is available via web interface at http://localhost:8000/v2
+# V2 supports optional decision question and options
+# Analysis can run with problem context only
+# Example submission:
+#   Decision question (optional): "What should we choose?"
+#   Options (optional): "Option A, Option B, Option C"
+#   Problem context: Provide materials to analyze
+```
+
+**V2 Features:**
+- Optional decision context (decision and options are annotations, not required)
+- Option-aware analysis when options provided (all claims specify affected options)
+- Cross-framework tension mapping
+- Structured artefacts (JSON + metadata)
+- Download report as Markdown
+- Explicit uncertainty surface (unknowns with sensitivities)
 ```
 
 ---
@@ -179,7 +203,6 @@ Frameworks are **swappable** without touching orchestration logic.
 
 | Framework | Analytical Lens | Reveals |
 |-----------|----------------|---------|
-| **Operating Environment Structure** (Porter's Five Forces) | Structural Attractiveness | Pressures from new entrants, suppliers, buyers, substitutes, competitive intensity |
 | **Target System Dynamics** (Systems Dynamics) | Systemic Fragility | Feedback loops, bottlenecks, fragilities, growth drivers |
 
 **Framework Interface:**
@@ -209,7 +232,7 @@ AnalyticalClaim:
 - Statement: "Competitive pressure is High"
 - Source: inference
 - Confidence: medium
-- Framework: porter_five_forces
+- Framework: systems_dynamics
 
 ### Analysis Modes
 
@@ -236,7 +259,7 @@ The system produces a **reasoned artifact** with the following sections:
 
 1. **Context Summary**: What was analyzed
 2. **Key Analytical Claims**: Explicit claims with sources and confidence levels
-3. **Structural Pressures** (Operating Environment): Analysis of external pressures
+3. **Systemic Risks** (Target System): Analysis of internal dynamics and fragilities
 4. **Systemic Risks** (Target System): Analysis of internal dynamics and fragilities
 5. **Unknowns & Sensitivities**: Explicit uncertainty inventory
 6. **Framework Agreement & Tension**: Points of convergence and conflict between frameworks
@@ -289,9 +312,9 @@ strategem frameworks
 
 # Output:
 # Available Analytical Frameworks:
-#   📐 porter_five_forces
-#      Analytical Lens: structural_attractiveness
-#      Description: Assesses structural attractiveness of the target system's operating environment
+#   📐 systems_dynamics
+#      Analytical Lens: systemic_fragility
+#      Description: Understands feedback loops, dependencies, and fragility of target system
 ```
 
 #### `list` - List Analyses
@@ -316,20 +339,26 @@ strategem show <analysis_id>
 
 #### Routes
 
-| Route | Description |
-|-------|-------------|
-| `/` | Upload form for new analysis |
-| `/analyses` | List all saved analyses |
-| `/analysis/<id>` | View specific analysis results |
-| `/report/<id>/download` | Download report as Markdown |
-| `/api/health` | Health check endpoint |
+| Route | Version | Description |
+|-------|---------|-------------|
+| `/` | V1 | Upload form for new analysis |
+| `/v2` | V2 | Upload form for new analysis (requires decision & options) |
+| `/analyses` | V1 | List all V1 saved analyses |
+| `/analyses?version=v2` | V2 | List all V2 saved analyses |
+| `/analysis/<id>` | V1 | View specific V1 analysis results |
+| `/analysis/v2/<id>` | V2 | View specific V2 analysis results (with claims, tension, unknowns) |
+| `/report/<id>/download` | V1 | Download V1 report as Markdown |
+| `/report/v2/<id>/download` | V2 | Download V2 report as Markdown (with structured artefacts) |
+| `/api/health` | Both | Health check endpoint |
 
 #### POST Endpoints
 
-| Endpoint | Form Data | Description |
-|----------|-----------|-------------|
-| `/analyze/text` | `text` | Analyze text input |
-| `/analyze/file` | `file` | Analyze uploaded file |
+| Endpoint | Version | Form Data | Description |
+|----------|---------|-----------|-------------|
+| `/analyze/text` | V1 | `text` (optional: decision-question, decision-type, options) | Analyze text input |
+| `/analyze/text` | V2 | `text`, `version=v2`, `decision-question`, `decision-type`, `options` | Analyze text with explicit decision (V2) |
+| `/analyze/file` | V1 | `file` (optional: decision-question, decision-type, options) | Analyze uploaded file |
+| `/analyze/file` | V2 | `file`, `version=v2`, `decision-question`, `decision-type`, `options` | Analyze uploaded file with explicit decision (V2) |
 
 ---
 
@@ -501,7 +530,7 @@ orchestrator.register_framework(
 # Run custom framework
 result = orchestrator.run_analysis_with_frameworks(
     context=context,
-    frameworks=["porter", "systems_dynamics", "custom_analysis"]
+    frameworks=["systems_dynamics", "custom_analysis"]
 )
 ```
 
@@ -549,6 +578,13 @@ Error: OpenRouter API key not configured
 Solution: export OPENROUTER_API_KEY="your-key"
 ```
 
+**V2 Internal Server Error:**
+```
+Error: Internal Server Error (500)
+Cause: Missing or malformed decision question/options in V2
+Solution: Ensure decision question and at least 2 options are provided
+```
+
 **LLM Output Parse Error:**
 ```
 The system will retry once automatically.
@@ -584,12 +620,7 @@ strategem/
 ├── cli.py                   # CLI interface
 ├── prompts/                 # LLM prompts
 │   ├── system.txt
-│   ├── porter.txt
 │   └── systems_dynamics.txt
-└── web/                     # FastAPI web app
-    ├── app.py
-    ├── templates/
-    └── static/
 ```
 
 ### Adding New Frameworks

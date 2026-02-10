@@ -1,0 +1,86 @@
+{
+  "analysis_id": "42109b51-41cf-4c0f-805d-66dd3961ff92",
+  "options_analyzed": [],
+  "framework_results": [
+    {
+      "framework_name": "systems_dynamics_v2",
+      "success": true,
+      "execution_status": "successful",
+      "result": {
+        "decision_question": "",
+        "options_analyzed": [],
+        "system_overview": "The Precision Components division (PCD) of Sterling Manufacturing operates within a legacy framework characterized by declining margins and commoditized products. It faces intense competition from lower-cost suppliers and has struggled with innovation, leading to a risk-averse culture. The division's internal dynamics are influenced by long-tenured employees, outdated IT systems, and a lack of integrated data, which complicates decision-making and hinders operational efficiency.",
+        "key_components": [
+          "Legacy product lines",
+          "Long-tenured workforce",
+          "Outdated IT systems"
+        ],
+        "feedback_loops": {
+          "Reinforcing": [
+            {
+              "Description": "The cycle of declining margins leads to reduced investment in innovation, which further exacerbates the division's inability to compete effectively.",
+              "AffectedOptions": [],
+              "EffectType": "growth_driver",
+              "Assumptions": [
+                "Declining margins will continue without intervention",
+                "Lack of investment leads to further commoditization"
+              ]
+            }
+          ],
+          "Balancing": [
+            {
+              "Description": "The pressure from corporate to meet operating margin targets acts as a constraint on the division's ability to invest in necessary modernization.",
+              "AffectedOptions": [],
+              "EffectType": "constraint",
+              "Assumptions": [
+                "Corporate targets are non-negotiable",
+                "Investment is necessary for turnaround"
+              ]
+            }
+          ]
+        },
+        "bottlenecks": [
+          {
+            "description": "The outdated IT systems prevent accurate assessment of product-line profitability and operational efficiency, hindering strategic decision-making.",
+            "affected_options": [],
+            "severity": "high",
+            "unknowns": []
+          }
+        ],
+        "fragilities": [],
+        "option_aware_claims": [],
+        "assumptions": [
+          "The market dynamics affecting PCD are largely irreversible without significant intervention",
+          "Employee morale and resistance to change will hinder rapid transformation efforts"
+        ],
+        "unknowns": [
+          {
+            "Statement": "The potential for profitable segments within the division remains unclear due to lack of data.",
+            "AffectedOptions": [],
+            "Sensitivity": "critical",
+            "EvidenceNeeded": "Comprehensive analysis of product-line profitability and customer lifetime value"
+          }
+        ]
+      },
+      "claims": [],
+      "assumptions": [
+        "The market dynamics affecting PCD are largely irreversible without significant intervention",
+        "Employee morale and resistance to change will hinder rapid transformation efforts"
+      ],
+      "unknowns": [
+        "The potential for profitable segments within the division remains unclear due to lack of data."
+      ]
+    }
+  ],
+  "sensitivity_triggers": [
+    {
+      "trigger_description": "Unknown: The potential for profitable segments within the division remains unclear due to lack of data.",
+      "affected_claims": [],
+      "affected_options": [],
+      "sensitivity_level": "medium",
+      "evidence_needed": "Evidence to address: The potential for profitable segments within the division remains unclear due to lack of data.",
+      "question_generated": "What evidence would materially reduce uncertainty about: The potential for profitable segments within the division remains unclear due to lack of data.?"
+    }
+  ],
+  "created_at": "2026-02-10T11:49:11.569526"
+}

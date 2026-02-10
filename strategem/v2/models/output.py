@@ -61,13 +61,17 @@ class AnalysisResult(BaseModel):
     """
     Complete analysis result (V2).
 
-    V2: Includes explicit decision context, framework results,
-    tension mapping, and sensitivity triggers.
+    V2 (Reasoning Substrate): Decision and options are optional.
+    Includes framework results, tension mapping, and sensitivity triggers.
     """
 
     analysis_id: str
-    decision: Decision
-    options_analyzed: List[str]
+    decision: Optional[Decision] = Field(
+        None, description="Decision context (optional)"
+    )
+    options_analyzed: List[str] = Field(
+        default_factory=list, description="Options being analyzed (optional)"
+    )
     framework_results: List[FrameworkResult]
     tension_map: Optional[TensionMapResult] = Field(
         None, description="Cross-framework tension mapping"

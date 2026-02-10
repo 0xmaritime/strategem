@@ -1,0 +1,32 @@
+{
+  "artefact_id": "1d1bb1cb-b505-4c63-be57-85ccef299f19",
+  "analysis_id": "b2ce1a1c-a045-46a7-a315-11238d06abe9",
+  "artefact_type": "assumption_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "assumptions_by_framework": {
+      "porter_five_forces_v2": [],
+      "systems_dynamics_v2": [
+        "Kayakers will engage with the new system",
+        "The system must function effectively under limited cellular conditions"
+      ]
+    },
+    "shared_assumptions": [],
+    "single_point_failures": [
+      {
+        "assumption": "Kayakers will engage with the new system",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      },
+      {
+        "assumption": "The system must function effectively under limited cellular conditions",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-02-04T22:49:14.336383",
+  "content_hash": "6f56d0cd9365c2e0"
+}

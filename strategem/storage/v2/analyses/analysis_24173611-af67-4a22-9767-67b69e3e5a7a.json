@@ -1,0 +1,79 @@
+{
+  "analysis_id": "24173611-af67-4a22-9767-67b69e3e5a7a",
+  "decision": {
+    "decision_question": "What to choose?",
+    "decision_type": "compare"
+  },
+  "options_analyzed": [
+    "Timed Check-In Codes",
+    "Silent SMS Pings",
+    "Audio Beacon Listeners"
+  ],
+  "framework_results": [
+    {
+      "framework_name": "porter_five_forces_v2",
+      "success": true,
+      "execution_status": "successful",
+      "result": {
+        "decision_question": "What to choose?",
+        "options_analyzed": [
+          "Timed Check-In Codes",
+          "Silent SMS Pings",
+          "Audio Beacon Listeners"
+        ],
+        "threat_of_new_entrants": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "supplier_power": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "buyer_power": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "substitutes": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "rivalry": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "structural_asymmetries": [],
+        "option_aware_claims": [],
+        "shared_observations": "None"
+      },
+      "claims": [],
+      "assumptions": [],
+      "unknowns": []
+    },
+    {
+      "framework_name": "systems_dynamics_v2",
+      "success": false,
+      "execution_status": "failed",
+      "execution_reason": "V2 analysis failed: Pydantic validation failed for systems_dynamics_v2:\n  - Field: OptionAwareClaims -> 0 -> framework\n    Type: missing\n    Message: Field required\n\nReceived fields: ['DecisionQuestion', 'OptionsAnalyzed', 'SystemOverview', 'KeyComponents', 'FeedbackLoops', 'Bottlenecks', 'Fragilities', 'OptionAwareClaims', 'Assumptions', 'Unknowns']",
+      "claims": [],
+      "assumptions": [],
+      "unknowns": []
+    }
+  ],
+  "sensitivity_triggers": [],
+  "created_at": "2026-02-04T22:07:19.183320"
+}

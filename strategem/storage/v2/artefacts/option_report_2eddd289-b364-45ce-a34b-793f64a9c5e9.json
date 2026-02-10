@@ -1,0 +1,93 @@
+{
+  "artefact_id": "2eddd289-b364-45ce-a34b-793f64a9c5e9",
+  "analysis_id": "b2ce1a1c-a045-46a7-a315-11238d06abe9",
+  "artefact_type": "option_report",
+  "version": "2.0.0-dev",
+  "content": {
+    "decision_question": "What to choose?",
+    "decision_type": "compare",
+    "options_analyzed": [
+      "Timed Check-In Codes",
+      "Silent SMS Pings",
+      "Audio Beacon Listeners"
+    ],
+    "option_summaries": {
+      "Timed Check-In Codes": {
+        "framework_insights": [],
+        "claims_affecting_option": [
+          {
+            "statement": "Silent SMS Pings are more susceptible to cellular signal issues compared to Timed Check-In Codes.",
+            "framework": "systems_dynamics_v2",
+            "confidence": "medium",
+            "source": "inference"
+          }
+        ],
+        "assumptions_affecting_option": [
+          {
+            "statement": "Kayakers will engage with the new system",
+            "framework": "systems_dynamics_v2"
+          },
+          {
+            "statement": "The system must function effectively under limited cellular conditions",
+            "framework": "systems_dynamics_v2"
+          }
+        ],
+        "unknowns_affecting_option": [
+          {
+            "statement": "The extent of user training required for effective use of the new systems.",
+            "framework": "systems_dynamics_v2"
+          }
+        ]
+      },
+      "Silent SMS Pings": {
+        "framework_insights": [],
+        "claims_affecting_option": [
+          {
+            "statement": "Silent SMS Pings are more susceptible to cellular signal issues compared to Timed Check-In Codes.",
+            "framework": "systems_dynamics_v2",
+            "confidence": "medium",
+            "source": "inference"
+          }
+        ],
+        "assumptions_affecting_option": [
+          {
+            "statement": "Kayakers will engage with the new system",
+            "framework": "systems_dynamics_v2"
+          },
+          {
+            "statement": "The system must function effectively under limited cellular conditions",
+            "framework": "systems_dynamics_v2"
+          }
+        ],
+        "unknowns_affecting_option": [
+          {
+            "statement": "The extent of user training required for effective use of the new systems.",
+            "framework": "systems_dynamics_v2"
+          }
+        ]
+      },
+      "Audio Beacon Listeners": {
+        "framework_insights": [],
+        "claims_affecting_option": [],
+        "assumptions_affecting_option": [
+          {
+            "statement": "Kayakers will engage with the new system",
+            "framework": "systems_dynamics_v2"
+          },
+          {
+            "statement": "The system must function effectively under limited cellular conditions",
+            "framework": "systems_dynamics_v2"
+          }
+        ],
+        "unknowns_affecting_option": [
+          {
+            "statement": "The extent of user training required for effective use of the new systems.",
+            "framework": "systems_dynamics_v2"
+          }
+        ]
+      }
+    }
+  },
+  "generated_at": "2026-02-04T22:49:14.336294",
+  "content_hash": "19df38964de4cb90"
+}

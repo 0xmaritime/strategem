@@ -1,0 +1,30 @@
+{
+  "artefact_id": "3ba47d38-38e9-418c-961b-fe4b61b359a8",
+  "analysis_id": "b2ce1a1c-a045-46a7-a315-11238d06abe9",
+  "artefact_type": "claim_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "claims_by_framework": {
+      "porter_five_forces_v2": [],
+      "systems_dynamics_v2": [
+        {
+          "statement": "Silent SMS Pings are more susceptible to cellular signal issues compared to Timed Check-In Codes.",
+          "claim_id": "claim_1",
+          "confidence": "medium",
+          "source": "inference",
+          "affected_options": [
+            "Silent SMS Pings",
+            "Timed Check-In Codes"
+          ]
+        }
+      ]
+    },
+    "framework_claim_counts": {
+      "porter_five_forces_v2": 0,
+      "systems_dynamics_v2": 1
+    },
+    "total_claims": 1
+  },
+  "generated_at": "2026-02-04T22:49:14.336420",
+  "content_hash": "44c5ecf0279e57df"
+}

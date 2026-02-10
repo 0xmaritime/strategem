@@ -1,0 +1,37 @@
+{
+  "artefact_id": "9235ef2c-d678-47a6-846b-4b3de08649b5",
+  "analysis_id": "24173611-af67-4a22-9767-67b69e3e5a7a",
+  "artefact_type": "option_report",
+  "version": "2.0.0-dev",
+  "content": {
+    "decision_question": "What to choose?",
+    "decision_type": "compare",
+    "options_analyzed": [
+      "Timed Check-In Codes",
+      "Silent SMS Pings",
+      "Audio Beacon Listeners"
+    ],
+    "option_summaries": {
+      "Timed Check-In Codes": {
+        "framework_insights": [],
+        "claims_affecting_option": [],
+        "assumptions_affecting_option": [],
+        "unknowns_affecting_option": []
+      },
+      "Silent SMS Pings": {
+        "framework_insights": [],
+        "claims_affecting_option": [],
+        "assumptions_affecting_option": [],
+        "unknowns_affecting_option": []
+      },
+      "Audio Beacon Listeners": {
+        "framework_insights": [],
+        "claims_affecting_option": [],
+        "assumptions_affecting_option": [],
+        "unknowns_affecting_option": []
+      }
+    }
+  },
+  "generated_at": "2026-02-04T22:07:19.190771",
+  "content_hash": "94449ba86856b7ff"
+}

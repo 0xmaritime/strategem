@@ -1,0 +1,93 @@
+{
+  "artefact_id": "34e7d526-7eb5-45ec-a7af-c4f5a595e2d1",
+  "analysis_id": "2eca4dd6-e117-4352-a763-5eec52dc2a12",
+  "artefact_type": "option_report",
+  "version": "2.0.0-dev",
+  "content": {
+    "decision_question": "What to choose?",
+    "decision_type": "compare",
+    "options_analyzed": [
+      "Timed Check-In Codes",
+      "Silent SMS Pings",
+      "Audio Beacon Listeners"
+    ],
+    "option_summaries": {
+      "Timed Check-In Codes": {
+        "framework_insights": [],
+        "claims_affecting_option": [
+          {
+            "statement": "Timed Check-In Codes may lead to higher user engagement compared to Silent SMS Pings due to their simplicity.",
+            "framework": "systems_dynamics_v2",
+            "confidence": "medium",
+            "source": "inference"
+          }
+        ],
+        "assumptions_affecting_option": [
+          {
+            "statement": "Users will engage with a system that is easy to use.",
+            "framework": "systems_dynamics_v2"
+          },
+          {
+            "statement": "Higher engagement leads to better safety outcomes.",
+            "framework": "systems_dynamics_v2"
+          }
+        ],
+        "unknowns_affecting_option": [
+          {
+            "statement": "The extent of cellular coverage in the operational area.",
+            "framework": "systems_dynamics_v2"
+          }
+        ]
+      },
+      "Silent SMS Pings": {
+        "framework_insights": [],
+        "claims_affecting_option": [
+          {
+            "statement": "Timed Check-In Codes may lead to higher user engagement compared to Silent SMS Pings due to their simplicity.",
+            "framework": "systems_dynamics_v2",
+            "confidence": "medium",
+            "source": "inference"
+          }
+        ],
+        "assumptions_affecting_option": [
+          {
+            "statement": "Users will engage with a system that is easy to use.",
+            "framework": "systems_dynamics_v2"
+          },
+          {
+            "statement": "Higher engagement leads to better safety outcomes.",
+            "framework": "systems_dynamics_v2"
+          }
+        ],
+        "unknowns_affecting_option": [
+          {
+            "statement": "The extent of cellular coverage in the operational area.",
+            "framework": "systems_dynamics_v2"
+          }
+        ]
+      },
+      "Audio Beacon Listeners": {
+        "framework_insights": [],
+        "claims_affecting_option": [],
+        "assumptions_affecting_option": [
+          {
+            "statement": "Users will engage with a system that is easy to use.",
+            "framework": "systems_dynamics_v2"
+          },
+          {
+            "statement": "Higher engagement leads to better safety outcomes.",
+            "framework": "systems_dynamics_v2"
+          }
+        ],
+        "unknowns_affecting_option": [
+          {
+            "statement": "The extent of cellular coverage in the operational area.",
+            "framework": "systems_dynamics_v2"
+          }
+        ]
+      }
+    }
+  },
+  "generated_at": "2026-02-04T22:22:45.626385",
+  "content_hash": "e655b603fedea75f"
+}

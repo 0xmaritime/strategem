@@ -12,7 +12,7 @@ Allowed:
 Forbidden:
 - Decision, Option, Pressure, Risk (analytical types)
 - AnalyticalClaim, StructuralAsymmetry (framework types)
-- Any Porter-specific or Strategem-specific types
+- Any framework-specific or Strategem-specific types
 """
 
 from enum import Enum

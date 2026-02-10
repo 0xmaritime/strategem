@@ -1,0 +1,93 @@
+{
+  "artefact_id": "e40e10af-348f-45db-be74-fbe0a65ab84a",
+  "analysis_id": "c2b2e6e4-3320-4ba4-b29a-70267750fa2d",
+  "artefact_type": "option_report",
+  "version": "2.0.0-dev",
+  "content": {
+    "decision_question": "What to choose?",
+    "decision_type": "compare",
+    "options_analyzed": [
+      "Timed Check-In Codes",
+      "Silent SMS Pings",
+      "Audio Beacon Listeners"
+    ],
+    "option_summaries": {
+      "Timed Check-In Codes": {
+        "framework_insights": [],
+        "claims_affecting_option": [
+          {
+            "statement": "Silent SMS Pings are more susceptible to failure during low signal conditions compared to Timed Check-In Codes.",
+            "framework": "systems_dynamics_v2",
+            "confidence": "medium",
+            "source": "inference"
+          }
+        ],
+        "assumptions_affecting_option": [
+          {
+            "statement": "Users will engage with the new system if it is easy to use",
+            "framework": "systems_dynamics_v2"
+          },
+          {
+            "statement": "The current system's ineffectiveness is due to user disengagement",
+            "framework": "systems_dynamics_v2"
+          }
+        ],
+        "unknowns_affecting_option": [
+          {
+            "statement": "The level of user engagement with the new system options is uncertain.",
+            "framework": "systems_dynamics_v2"
+          }
+        ]
+      },
+      "Silent SMS Pings": {
+        "framework_insights": [],
+        "claims_affecting_option": [
+          {
+            "statement": "Silent SMS Pings are more susceptible to failure during low signal conditions compared to Timed Check-In Codes.",
+            "framework": "systems_dynamics_v2",
+            "confidence": "medium",
+            "source": "inference"
+          }
+        ],
+        "assumptions_affecting_option": [
+          {
+            "statement": "Users will engage with the new system if it is easy to use",
+            "framework": "systems_dynamics_v2"
+          },
+          {
+            "statement": "The current system's ineffectiveness is due to user disengagement",
+            "framework": "systems_dynamics_v2"
+          }
+        ],
+        "unknowns_affecting_option": [
+          {
+            "statement": "The level of user engagement with the new system options is uncertain.",
+            "framework": "systems_dynamics_v2"
+          }
+        ]
+      },
+      "Audio Beacon Listeners": {
+        "framework_insights": [],
+        "claims_affecting_option": [],
+        "assumptions_affecting_option": [
+          {
+            "statement": "Users will engage with the new system if it is easy to use",
+            "framework": "systems_dynamics_v2"
+          },
+          {
+            "statement": "The current system's ineffectiveness is due to user disengagement",
+            "framework": "systems_dynamics_v2"
+          }
+        ],
+        "unknowns_affecting_option": [
+          {
+            "statement": "The level of user engagement with the new system options is uncertain.",
+            "framework": "systems_dynamics_v2"
+          }
+        ]
+      }
+    }
+  },
+  "generated_at": "2026-02-04T22:28:27.607065",
+  "content_hash": "d7c06a8f2b506a4f"
+}

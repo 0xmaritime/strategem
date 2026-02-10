@@ -99,7 +99,7 @@
     <div class="container">
         <header>
             <h1>Strategem Core V2</h1>
-            <p class="subtitle">Decision-Bound Reasoning Scaffold</p>
+            <p class="subtitle">Reasoning Substrate</p>
             <nav>
                 <a href="/">New Analysis</a>
                 <a href="/analyses?version=v2">View V2 Analyses</a>
@@ -111,6 +111,7 @@
                 <h2>Reasoned Artifact (V2)</h2>
                 <div class="actions">
                     <a href="/" class="btn btn-outline">New Analysis</a>
+                    <a href="/report/v2/{{ result.analysis_id }}/download" class="btn btn-secondary">Download Report</a>
                 </div>
             </div>
 
@@ -119,10 +120,14 @@
             </div>
 
             <div class="decision-context">
-                <h3>Decision Context</h3>
+                <h3>Decision Context (Optional)</h3>
+                {% if result.decision %}
                 <p><strong>Question:</strong> {{ result.decision.decision_question }}</p>
-                <p><strong>Type:</strong> {{ result.decision.decision_type.value }}</p>
-                <p><strong>Options:</strong> {{ result.options_analyzed | join(', ') }}</p>
+                <p><strong>Type:</strong> {{ result.decision.decision_type.value if result.decision.decision_type else 'N/A' }}</p>
+                <p><strong>Options:</strong> {{ result.options_analyzed | join(', ') if result.options_analyzed else 'None' }}</p>
+                {% else %}
+                <p><em>No decision context provided. Analysis was run with problem context only.</em></p>
+                {% endif %}
             </div>
 
             <div class="meta-info">
@@ -133,9 +138,71 @@
             <div class="framework-summary">
                 <h3>Framework Execution Summary</h3>
                 {% for fw in result.framework_results %}
-                    <div class="status-indicator {{ 'status-success' if fw.success else 'status-error' }}">
-                        {% if fw.success %}✓{% else %}✗{% endif %}
-                        {{ fw.framework_name }} ({{ fw.claims | length }} claims)
+                    <div style="margin-bottom: 2rem; border: 2px solid #000; padding: 1.5rem; background: #fff;">
+                        <div class="status-indicator {{ 'status-success' if fw.success else 'status-error' }}" style="margin-bottom: 1rem;">
+                            {% if fw.success %}✓{% else %}✗{% endif %}
+                            {{ fw.framework_name }}
+                        </div>
+
+                        {% if fw.execution_reason %}
+                        <p style="color: #c00; font-style: italic;"><strong>Reason:</strong> {{ fw.execution_reason }}</p>
+                        {% endif %}
+
+                        {% if fw.claims %}
+                        <div style="margin-top: 1rem;">
+                            <h4>Claims ({{ fw.claims | length }})</h4>
+                            {% for claim in fw.claims %}
+                            <div style="background: #f9f9f9; padding: 1rem; margin-bottom: 0.5rem; border-left: 4px solid #000;">
+                                <p><strong>Claim:</strong> {{ claim.statement }}</p>
+                                <p style="font-size: 0.9rem; color: #555;">
+                                    <strong>Framework:</strong> {{ claim.framework }}<br>
+                                    <strong>Confidence:</strong> {{ claim.confidence.value }}<br>
+                                    <strong>Source:</strong> {{ claim.source.value }}<br>
+                                    <strong>Options:</strong> {{ claim.affected_options | join(', ') }}
+                                </p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        {% if fw.assumptions %}
+                        <div style="margin-top: 1rem;">
+                            <h4>Assumptions ({{ fw.assumptions | length }})</h4>
+                            <ul>
+                                {% for assumption in fw.assumptions %}
+                                <li style="background: #fef9c7; padding: 0.5rem; margin-bottom: 0.25rem;">{{ assumption }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if fw.unknowns %}
+                        <div style="margin-top: 1rem;">
+                            <h4>Unknowns ({{ fw.unknowns | length }})</h4>
+                            <ul>
+                                {% for unknown in fw.unknowns %}
+                                <li style="background: #cfbaf0; padding: 0.5rem; margin-bottom: 0.25rem;">
+                                    {% if unknown is string %}{{ unknown }}{% else %}{{ unknown.statement or unknown }}{% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if fw.result %}
+                        <div style="margin-top: 1rem;">
+                            <details>
+                                <summary style="cursor: pointer; padding: 0.5rem; background: #e0e0e0; border: 1px solid #999;">
+                                    <strong>Raw Framework Output</strong>
+                                </summary>
+                                {% if fw.result is string %}
+                                <pre style="margin-top: 0.5rem; padding: 1rem; background: #f5f5f5; border: 1px solid #ccc; overflow-x: auto; font-size: 0.85rem;">{{ fw.result }}</pre>
+                                {% else %}
+                                <pre style="margin-top: 0.5rem; padding: 1rem; background: #f5f5f5; border: 1px solid #ccc; overflow-x: auto; font-size: 0.85rem;">{{ fw.result | tojson(indent=2) }}</pre>
+                                {% endif %}
+                            </details>
+                        </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
@@ -193,7 +260,7 @@
             </div>
             {% endif %}
 
-            {% if result.sensitivity_triggers %}
+            {% if result.sensitivity_triggers and result.sensitivity_triggers | length > 0 %}
             <div class="sensitivity-list">
                 <h3>Sensitivity Triggers</h3>
                 <p><strong>Triggers identified:</strong> {{ result.sensitivity_triggers | length }}</p>
@@ -209,17 +276,10 @@
             </div>
             {% endif %}
 
-            {% if artefacts %}
-            <h3>Generated Artefacts</h3>
-            <div class="artefact-grid">
-                {% for artefact in artefacts %}
-                <div class="artefact-card">
-                    <div class="artefact-type">{{ artefact.artefact_type.replace('_', ' ') }}</div>
-                    <p><strong>ID:</strong> {{ artefact.artefact_id }}</p>
-                    <p><strong>Version:</strong> {{ artefact.version }}</p>
-                    <p><strong>Hash:</strong> {{ artefact.content_hash }}</p>
-                </div>
-                {% endfor %}
+            {# Artefacts are now embedded in the framework results above - no need to show them separately #}
+            {% if artefacts and artefacts | length > 0 %}
+            <div style="margin-top: 2rem; padding: 1rem; border: 1px dashed #999; background: #f9f9f9;">
+                <p><strong>Note:</strong> Detailed artefacts are embedded in framework results above.</p>
             </div>
             {% endif %}
         </main>

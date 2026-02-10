@@ -16,7 +16,7 @@ class AnalysisFramework(BaseModel):
 
     name: str = Field(
         ...,
-        description="Framework identifier (e.g., 'porter_five_forces', 'systems_dynamics')",
+        description="Framework identifier (e.g., 'systems_dynamics')",
     )
     analytical_lens: str = Field(
         ...,

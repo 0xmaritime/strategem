@@ -1,0 +1,30 @@
+{
+  "artefact_id": "f8c76dec-c31d-4ca8-9c37-f57552dada91",
+  "analysis_id": "5ad58e06-0afc-4e2c-8637-79feb8ae0951",
+  "artefact_type": "claim_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "claims_by_framework": {
+      "porter_five_forces_v2": [],
+      "systems_dynamics_v2": [
+        {
+          "statement": "Silent SMS Pings may provide a more reliable passive distress signal compared to Audio Beacon Listeners in areas with spotty cellular coverage.",
+          "claim_id": "claim_1",
+          "confidence": "medium",
+          "source": "inference",
+          "affected_options": [
+            "Silent SMS Pings",
+            "Audio Beacon Listeners"
+          ]
+        }
+      ]
+    },
+    "framework_claim_counts": {
+      "porter_five_forces_v2": 0,
+      "systems_dynamics_v2": 1
+    },
+    "total_claims": 1
+  },
+  "generated_at": "2026-02-04T22:59:56.158171",
+  "content_hash": "313cc598f5db1476"
+}

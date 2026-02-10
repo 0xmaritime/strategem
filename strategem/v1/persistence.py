@@ -22,13 +22,9 @@ class PersistenceLayer:
         data = {
             "id": result.id,
             "problem_context": self._problem_context_to_dict(result.problem_context),
-            "porter_analysis": self._porter_to_dict(result.porter_analysis)
-            if result.porter_analysis
-            else None,
             "systems_analysis": self._systems_to_dict(result.systems_analysis)
             if result.systems_analysis
             else None,
-            "porter_error": result.porter_error,
             "systems_error": result.systems_error,
             "framework_results": self._framework_results_to_dict(
                 result.framework_results
@@ -85,75 +81,6 @@ class PersistenceLayer:
             for r in results
         ]
 
-    def _porter_to_dict(self, porter) -> dict:
-        """Convert Porter analysis to dict (V1 Decision-Bound structure)"""
-
-        def force_to_dict(force):
-            """Convert a single ForceAnalysis to dict"""
-            return {
-                "name": force.name,
-                "relevance_to_decision": force.relevance_to_decision,
-                "relevance_rationale": force.relevance_rationale,
-                "shared_assumptions": force.shared_assumptions,
-                "shared_unknowns": force.shared_unknowns,
-                "effect_by_option": [
-                    {
-                        "option_name": e.option_name,
-                        "description": e.description,
-                        "key_assumptions": e.key_assumptions,
-                        "key_unknowns": e.key_unknowns,
-                    }
-                    for e in force.effect_by_option
-                ],
-                "claims": [
-                    {
-                        "statement": c.statement,
-                        "source": c.source.value,
-                        "confidence": c.confidence.value,
-                        "framework": c.framework,
-                    }
-                    for c in force.claims
-                ]
-                if hasattr(force, "claims")
-                else [],
-            }
-
-        return {
-            "decision_question": porter.decision_question,
-            "options_analyzed": porter.options_analyzed,
-            "ThreatOfNewEntrants": force_to_dict(porter.threat_of_new_entrants),
-            "SupplierPower": force_to_dict(porter.supplier_power),
-            "BuyerPower": force_to_dict(porter.buyer_power),
-            "Substitutes": force_to_dict(porter.substitutes),
-            "Rivalry": force_to_dict(porter.rivalry),
-            "structural_asymmetries": [
-                {
-                    "force_name": sa.force_name,
-                    "description": sa.description,
-                    "stronger_impact_on": sa.stronger_impact_on,
-                    "rationale": sa.rationale,
-                    "key_assumption": sa.key_assumption,
-                }
-                for sa in porter.structural_asymmetries
-            ]
-            if porter.structural_asymmetries
-            else [],
-            "option_aware_claims": [
-                {
-                    "statement": c.statement,
-                    "source": c.source.value,
-                    "confidence": c.confidence.value,
-                    "framework": c.framework,
-                }
-                for c in porter.option_aware_claims
-            ]
-            if hasattr(porter, "option_aware_claims") and porter.option_aware_claims
-            else [],
-            "shared_observations": porter.shared_observations
-            if hasattr(porter, "shared_observations")
-            else None,
-        }
-
     def _systems_to_dict(self, systems) -> dict:
         """Convert Systems analysis to dict"""
         return {
@@ -182,9 +109,7 @@ class PersistenceLayer:
         # Reconstruct AnalysisResult
         from .models import (
             ProblemContext,
-            PorterAnalysis,
             SystemsDynamicsAnalysis,
-            ForceAnalysis,
         )
         from datetime import datetime
 
@@ -230,91 +155,6 @@ class PersistenceLayer:
             source_type=pc_data.get("source_type", "unknown"),
         )
 
-        porter_analysis = None
-        if data.get("porter_analysis"):
-            pa = data["porter_analysis"]
-            from .models import (
-                ForceEffect,
-                AnalyticalClaim,
-                ClaimSource,
-                ConfidenceLevel,
-                StructuralAsymmetry,
-            )
-
-            def dict_to_force(force_data):
-                """Convert dict to ForceAnalysis"""
-                effects = [
-                    ForceEffect(
-                        option_name=e["option_name"],
-                        description=e["description"],
-                        key_assumptions=e.get("key_assumptions", []),
-                        key_unknowns=e.get("key_unknowns", []),
-                    )
-                    for e in force_data.get("effect_by_option", [])
-                ]
-
-                claims = [
-                    AnalyticalClaim(
-                        statement=c["statement"],
-                        source=ClaimSource(c["source"]),
-                        confidence=ConfidenceLevel(c["confidence"]),
-                        framework=c.get("framework"),
-                    )
-                    for c in force_data.get("claims", [])
-                ]
-
-                return ForceAnalysis(
-                    name=force_data.get("name", "UnknownForce"),
-                    relevance_to_decision=force_data.get(
-                        "relevance_to_decision", "medium"
-                    ),
-                    relevance_rationale=force_data.get("relevance_rationale", ""),
-                    effect_by_option=effects,
-                    shared_assumptions=force_data.get("shared_assumptions", []),
-                    shared_unknowns=force_data.get("shared_unknowns", []),
-                    claims=claims,
-                )
-
-            # Handle structural asymmetries
-            structural_asymmetries = []
-            if pa.get("structural_asymmetries"):
-                structural_asymmetries = [
-                    StructuralAsymmetry(
-                        force_name=sa["force_name"],
-                        description=sa["description"],
-                        stronger_impact_on=sa["stronger_impact_on"],
-                        rationale=sa["rationale"],
-                        key_assumption=sa["key_assumption"],
-                    )
-                    for sa in pa["structural_asymmetries"]
-                ]
-
-            # Handle option-aware claims
-            option_aware_claims = []
-            if pa.get("option_aware_claims"):
-                option_aware_claims = [
-                    AnalyticalClaim(
-                        statement=c["statement"],
-                        source=ClaimSource(c["source"]),
-                        confidence=ConfidenceLevel(c["confidence"]),
-                        framework=c.get("framework"),
-                    )
-                    for c in pa["option_aware_claims"]
-                ]
-
-            porter_analysis = PorterAnalysis(
-                decision_question=pa.get("decision_question", ""),
-                options_analyzed=pa.get("options_analyzed", []),
-                ThreatOfNewEntrants=dict_to_force(pa.get("ThreatOfNewEntrants", {})),
-                SupplierPower=dict_to_force(pa.get("SupplierPower", {})),
-                BuyerPower=dict_to_force(pa.get("BuyerPower", {})),
-                Substitutes=dict_to_force(pa.get("Substitutes", {})),
-                Rivalry=dict_to_force(pa.get("Rivalry", {})),
-                structural_asymmetries=structural_asymmetries,
-                option_aware_claims=option_aware_claims,
-                shared_observations=pa.get("shared_observations"),
-            )
-
         systems_analysis = None
         if data.get("systems_analysis"):
             sa = data["systems_analysis"]
@@ -344,9 +184,7 @@ class PersistenceLayer:
         return AnalysisResult(
             id=data["id"],
             problem_context=problem_context,
-            porter_analysis=porter_analysis,
             systems_analysis=systems_analysis,
-            porter_error=data.get("porter_error"),
             systems_error=data.get("systems_error"),
             framework_results=framework_results,
             created_at=datetime.fromisoformat(data["created_at"]),

@@ -54,13 +54,9 @@ class V1LLMInferenceLayer:
         """
         Load and format V1 user prompt template.
 
-        V1: Frameworks adapt to context, not the other way around.
+        V1: Frameworks adapt to context, not other way around.
         If decision_focus is None, use exploratory prompts where available.
         """
-        # For decision-bound frameworks without decision focus, use exploratory version
-        if not decision_focus and prompt_name == "porter":
-            prompt_name = "porter_exploratory"
-
         prompt_path = self.prompts_dir / f"{prompt_name}.txt"
         template = prompt_path.read_text()
 
@@ -69,7 +65,7 @@ class V1LLMInferenceLayer:
 
         # Replace DecisionFocus placeholders if decision_focus is provided
         if decision_focus:
-            # These placeholders are expected in decision-bound prompts like porter.txt
+            # These placeholders are expected in decision-bound prompts
             formatted = formatted.replace(
                 "{decision_question}", decision_focus.decision_question
             )
@@ -101,7 +97,7 @@ class V1LLMInferenceLayer:
         Run V1 analysis using specified prompt template.
 
         Args:
-            prompt_name: Name of prompt template (porter, systems_dynamics)
+            prompt_name: Name of prompt template (systems_dynamics)
             context: The problem context to analyze
             response_model: Pydantic model for parsing response
             max_retries: Number of retries on failure

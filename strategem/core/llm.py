@@ -156,11 +156,17 @@ class LLMInferenceClient:
         Raises:
             LLMError: If parsing fails
         """
+        from pydantic import ValidationError
+
         # Try JSON extraction from markdown code blocks
         json_data = self._extract_json_from_markdown(response_text)
         if json_data:
             data = self._convert_keys_to_snake_case(json_data)
-            return response_model(**data)
+            try:
+                return response_model(**data)
+            except ValidationError as e:
+                self._log_validation_error(e, data, "JSON from markdown")
+                raise
 
         # Clean markdown formatting
         cleaned = self._extract_yaml_section(response_text)
@@ -170,7 +176,11 @@ class LLMInferenceClient:
             data = yaml.safe_load(cleaned)
             if isinstance(data, dict):
                 data = self._convert_keys_to_snake_case(data)
-                return response_model(**data)
+                try:
+                    return response_model(**data)
+                except ValidationError as e:
+                    self._log_validation_error(e, data, "YAML")
+                    raise
         except Exception:
             pass
 
@@ -178,9 +188,28 @@ class LLMInferenceClient:
         try:
             data = self._yaml_to_dict(cleaned)
             data = self._convert_keys_to_snake_case(data)
-            return response_model(**data)
+            try:
+                return response_model(**data)
+            except ValidationError as e:
+                self._log_validation_error(e, data, "Custom YAML parser")
+                raise
         except Exception as e:
             raise LLMError(f"Failed to parse response: {e}")
+
+    def _log_validation_error(self, error: ValidationError, data: dict, source: str):
+        """Log detailed Pydantic validation errors for debugging"""
+        import sys
+
+        print("=" * 80, file=sys.stderr)
+        print(f"Pydantic validation error (from {source}):", file=sys.stderr)
+        print("=" * 80, file=sys.stderr)
+        for err in error.errors():
+            loc = " -> ".join(str(x) for x in err["loc"])
+            print(f"  Field: {loc}", file=sys.stderr)
+            print(f"    Type: {err.get('type', 'unknown')}", file=sys.stderr)
+            print(f"    Message: {err['msg']}", file=sys.stderr)
+        print(f"\nReceived data keys: {list(data.keys())}", file=sys.stderr)
+        print("=" * 80, file=sys.stderr)
 
     def run_analysis(
         self,

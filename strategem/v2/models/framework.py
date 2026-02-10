@@ -8,13 +8,13 @@ class FrameworkContract(BaseModel):
     """
     Formal contract for V2 frameworks.
 
-    V2: All frameworks must adhere to this contract.
-    Frameworks MUST be option-aware and tension-capable.
+    V2 (Reasoning Substrate): Frameworks are primitive emitters only.
+    Decision and options are optional annotations.
     """
 
     name: str = Field(
         ...,
-        description="Framework identifier (e.g., 'porter_five_forces_v2', 'systems_dynamics_v2')",
+        description="Framework identifier (e.g., 'systems_dynamics_v2')",
     )
     analytical_lens: str = Field(
         ...,
@@ -22,12 +22,12 @@ class FrameworkContract(BaseModel):
     )
     description: Optional[str] = Field(None, description="Human-readable description")
 
-    # Input requirements (V2: Decision is REQUIRED)
-    requires_decision: bool = Field(
-        ..., description="Whether this framework requires explicit Decision context"
+    # Input requirements (V2: Decision and options are optional)
+    supports_decision: bool = Field(
+        default=True, description="Whether this framework can use Decision context"
     )
-    requires_options: bool = Field(
-        ..., description="Whether this framework requires explicit Option definitions"
+    supports_options: bool = Field(
+        default=True, description="Whether this framework can use Option definitions"
     )
     input_requirements: List[str] = Field(
         default_factory=list, description="Additional input requirements"

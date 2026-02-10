@@ -7,17 +7,17 @@ from .enums import ConfidenceLevel, ClaimSource, DecisionType
 
 class Decision(BaseModel):
     """
-    Decision context - REQUIRED in V2.
+    Decision context - Optional in V2.
 
-    V2: Decision Focus is required, not inferred.
-    Without Decision, analysis cannot proceed.
+    V2 (Reasoning Substrate): Decision is optional and may be implicit.
+    Analysis can proceed without explicit decision context.
     """
 
-    decision_question: str = Field(
-        ..., description="The specific decision question being asked"
+    decision_question: Optional[str] = Field(
+        None, description="The specific decision question being asked"
     )
-    decision_type: DecisionType = Field(
-        ..., description="Type of decision: explore, compare, or stress_test"
+    decision_type: Optional[DecisionType] = Field(
+        None, description="Type of decision: explore, compare, or stress_test"
     )
 
     class Config:
@@ -45,22 +45,26 @@ class AnalyticalClaim(BaseModel):
     """
     An explicit analytical claim produced by a framework.
 
-    V2: Claims MUST be explicitly option-aware.
-    Every claim must specify which option(s) it affects.
+    V2 (Reasoning Substrate): Claims may be option-aware or global.
+    Options are annotations, not required for claim validity.
     """
 
     statement: str = Field(..., alias="Statement", description="The claim statement")
     source: ClaimSource = Field(
-        ..., description="Source: input, assumption, inference, or derived"
+        ...,
+        alias="Source",
+        description="Source: input, assumption, inference, or derived",
     )
     confidence: ConfidenceLevel = Field(
-        ..., description="Confidence level: low, medium, or high"
+        ..., alias="Confidence", description="Confidence level: low, medium, or high"
     )
-    framework: str = Field(..., description="Which framework produced this claim")
+    framework: str = Field(
+        ..., alias="Framework", description="Which framework produced this claim"
+    )
     affected_options: List[str] = Field(
-        ...,
+        default_factory=list,
         alias="AffectedOptions",
-        description="Which decision option(s) this claim affects",
+        description="Which decision option(s) this claim affects (optional)",
     )
     claim_id: Optional[str] = Field(
         None,

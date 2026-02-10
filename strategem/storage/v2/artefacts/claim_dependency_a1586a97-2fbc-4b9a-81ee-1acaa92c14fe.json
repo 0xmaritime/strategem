@@ -1,0 +1,30 @@
+{
+  "artefact_id": "a1586a97-2fbc-4b9a-81ee-1acaa92c14fe",
+  "analysis_id": "c2b2e6e4-3320-4ba4-b29a-70267750fa2d",
+  "artefact_type": "claim_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "claims_by_framework": {
+      "porter_five_forces_v2": [],
+      "systems_dynamics_v2": [
+        {
+          "statement": "Silent SMS Pings are more susceptible to failure during low signal conditions compared to Timed Check-In Codes.",
+          "claim_id": "claim_1",
+          "confidence": "medium",
+          "source": "inference",
+          "affected_options": [
+            "Silent SMS Pings",
+            "Timed Check-In Codes"
+          ]
+        }
+      ]
+    },
+    "framework_claim_counts": {
+      "porter_five_forces_v2": 0,
+      "systems_dynamics_v2": 1
+    },
+    "total_claims": 1
+  },
+  "generated_at": "2026-02-04T22:28:27.607296",
+  "content_hash": "3cd86eb628f02785"
+}

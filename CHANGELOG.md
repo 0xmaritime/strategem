@@ -5,6 +5,54 @@ All notable changes to Strategem Core will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-02-04
+
+### Added - V2 Full Implementation & Debugging Fixes
+
+#### Core Layer
+- **Response Normalization**: Created `V2ResponseNormalizer` for handling LLM output variations
+- **Pydantic Error Logging**: Enhanced validation error reporting with detailed field-level context
+- **Enum Normalization**: Case-insensitive mapping for confidence, source, decision_type enums
+
+#### V2 Models
+- **Field Aliases**: Added `alias` parameters to `AnalyticalClaim` (Source, Confidence, Framework)
+- **Optional Fields**: Relaxed non-load-bearing fields to optional with defaults
+- **Union Types**: `Unknowns` fields now accept both `str` and `dict` types
+- **Fixed Duplicate Definitions**: Removed duplicate field definitions in `SystemsDynamicsAnalysisV2`
+
+#### V2 LLM Layer
+- **Raw LLM Output Logging**: Added comprehensive logging of all LLM responses before parsing
+- **Normalization Integration**: All V2 responses now pass through normalization layer
+- **Error Recovery**: Improved error handling with detailed traceback logging
+
+#### V2 Orchestrator
+- **Partial Success Tolerance**: Framework failures no longer abort entire analysis
+- **Enhanced Extraction**: Improved claims/assumptions/unknowns extraction from force objects and systems dynamics models
+- **Better Logging**: Added detailed status messages for framework execution
+
+#### V2 Web Interface
+- **V2 Entry Point**: Added `/v2` route with required decision question & options
+- **V2 Results Page**: Enhanced with full claims, assumptions, unknowns display
+- **V2 Report Download**: Added `/report/v2/{id}/download` endpoint for markdown reports
+- **Raw Output Details**: Added expandable framework output sections for debugging
+
+#### V2 Artefact Generator
+- **V2 Report Generation**: Added markdown report generation with full V2 structure
+- **Enhanced Output**: Includes claims, tensions, sensitivity triggers, and structural artefacts
+
+#### Bug Fixes
+- **Fixed Web App Decorators**: Removed incorrect `@app.get("/v1")` decorator that broke V2 routes
+- **Template Fix**: Fixed `model_dump_json` usage - replaced with `tojson` filter for dict compatibility
+- **Framework Extraction**: Fixed assumption/unknown extraction from nested force objects and systems dynamics models
+
+#### Documentation
+- **README Updates**: Updated V2 status to "Fully Functional"
+- **Architecture Updates**: Updated V2 section to reflect current stable state
+- **Route Documentation**: Added V2-specific routes and endpoints
+- **Troubleshooting**: Added V2-specific issues and workarounds
+
+---
+
 ## [1.0.0] - 2026-02-01
 
 ### Added - V1 Compliance Implementation
@@ -16,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **DecisionSurface section**: Assessment change conditions, dominant unknowns, judgment required areas
 - **FrameworkResult model**: Generic container for framework results
 - **ProvidedMaterial model**: Structured problem context materials
-- **Predefined frameworks**: PORTER_FRAMEWORK and SYSTEMS_DYNAMICS_FRAMEWORK constants
+- **Predefined frameworks**: SYSTEMS_DYNAMICS_FRAMEWORK constant
 
 #### Domain-Neutral Terminology
 - Replaced "company" → "target system"
@@ -28,8 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Report Structure (V1)
 - **Context Summary**: What was analyzed
 - **Key Analytical Claims**: Explicit claims with sources and confidence
-- **Structural Pressures**: Operating environment analysis (replaces Porter section)
-- **Systemic Risks**: Target system analysis (replaces Systems section)
+- **Systemic Risks**: Target system analysis
 - **Unknowns & Sensitivities**: Explicit uncertainty inventory
 - **Framework Agreement & Tension**: Points of convergence and conflict
 - **Decision Surface**: Where judgment is required
@@ -51,7 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Material structuring**: Combines provided_materials into structured_content
 
 #### Prompts
-- **Domain-neutral language**: Target System, Operating Environment, Problem Context Materials
+- **Domain-neutral language**: Target System, Problem Context Materials
 - **Explicit boundaries**: "This system does NOT output decisions, rank options, optimize objectives, or provide recommendations"
 - **Framework disagreement**: Explicitly acknowledged as valid and expected outcome
 - **Hard rules**: Listed in system prompt
@@ -140,7 +187,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Development Phase
 - Initial prototype implementation
-- Basic Porter's Five Forces analysis
 - Basic Systems Dynamics analysis
 - CLI interface
 - Web interface

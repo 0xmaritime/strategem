@@ -27,23 +27,28 @@ class V2ArtefactGenerator:
     def generate_all_artefacts(
         self,
         analysis_id: str,
-        decision: Decision,
-        options: List[Option],
-        framework_results: List[FrameworkResult],
+        decision: Optional[Decision] = None,
+        options: Optional[List[Option]] = None,
+        framework_results: List[FrameworkResult] = None,
         tension_map: Optional[TensionMapResult] = None,
     ) -> List[AnalysisArtefact]:
         """
         Generate all artefact types for an analysis.
 
-        V2: Produce multiple structured artefacts.
+        V2 (Reasoning Substrate): Decision and options are optional.
+        Artefacts adapt to available context.
         """
+        if framework_results is None:
+            framework_results = []
+
         artefacts = []
 
-        artefact = self.generate_option_report(
-            analysis_id, decision, options, framework_results
-        )
-        if artefact:
-            artefacts.append(artefact)
+        if decision and options:
+            artefact = self.generate_option_report(
+                analysis_id, decision, options, framework_results
+            )
+            if artefact:
+                artefacts.append(artefact)
 
         if tension_map:
             artefact = self.generate_tension_map_artefact(analysis_id, tension_map)
@@ -73,16 +78,21 @@ class V2ArtefactGenerator:
     def generate_option_report(
         self,
         analysis_id: str,
-        decision: Decision,
-        options: List[Option],
+        decision: Optional[Decision],
+        options: Optional[List[Option]],
         framework_results: List[FrameworkResult],
     ) -> Optional[AnalysisArtefact]:
         """Generate option-aware report artefact"""
+        if not decision or not options:
+            return None
+
         option_names = [opt.name for opt in options]
 
         content = {
             "decision_question": decision.decision_question,
-            "decision_type": decision.decision_type.value,
+            "decision_type": decision.decision_type.value
+            if decision.decision_type
+            else None,
             "options_analyzed": option_names,
             "option_summaries": {},
         }
@@ -247,8 +257,8 @@ class V2ArtefactGenerator:
     def generate_analysis_sufficiency_artefact(
         self,
         analysis_id: str,
-        decision: Decision,
-        options: List[Option],
+        decision: Optional[Decision],
+        options: Optional[List[Option]],
         framework_results: List[FrameworkResult],
     ) -> Optional[AnalysisArtefact]:
         """Generate analysis sufficiency statement artefact"""
@@ -260,19 +270,24 @@ class V2ArtefactGenerator:
         total_unknowns = sum(len(fw.unknowns) for fw in framework_results)
 
         option_coverage = {}
-        for opt in options:
-            opt_claims = 0
-            for fw in framework_results:
-                if fw.success:
-                    for claim in fw.claims:
-                        if opt.name in claim.affected_options:
-                            opt_claims += 1
-            option_coverage[opt.name] = opt_claims
+        options_count = len(options) if options else 0
+
+        if options:
+            for opt in options:
+                opt_claims = 0
+                for fw in framework_results:
+                    if fw.success:
+                        for claim in fw.claims:
+                            if opt.name in claim.affected_options:
+                                opt_claims += 1
+                option_coverage[opt.name] = opt_claims
 
         content = {
-            "decision_question": decision.decision_question,
-            "decision_type": decision.decision_type.value,
-            "options_count": len(options),
+            "decision_question": decision.decision_question if decision else None,
+            "decision_type": decision.decision_type.value
+            if decision and decision.decision_type
+            else None,
+            "options_count": options_count,
             "frameworks_executed": total_frameworks,
             "frameworks_successful": successful_frameworks,
             "framework_success_rate": (

@@ -1,0 +1,32 @@
+{
+  "artefact_id": "b84d8a45-cf31-4ec0-8f46-6f513b5fbffa",
+  "analysis_id": "f3fb441a-8edf-4605-9fd9-f5250ff5307f",
+  "artefact_type": "assumption_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "assumptions_by_framework": {
+      "porter_five_forces_v2": [],
+      "systems_dynamics_v2": [
+        "Resource allocation positively impacts market demand",
+        "Risk management is effective in controlling resource allocation"
+      ]
+    },
+    "shared_assumptions": [],
+    "single_point_failures": [
+      {
+        "assumption": "Resource allocation positively impacts market demand",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      },
+      {
+        "assumption": "Risk management is effective in controlling resource allocation",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-02-04T22:45:09.461636",
+  "content_hash": "12c247936bf667aa"
+}

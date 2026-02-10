@@ -1,4 +1,8 @@
-"""Strategem V1 - Public API (V1 Compliant)"""
+"""Strategem V1 - Public API (V1 Compliant)
+
+V1 IS FROZEN. NO ARCHITECTURAL CHANGES.
+This version is stable and will not be modified.
+"""
 
 from .models import (
     # Enums
@@ -16,10 +20,6 @@ from .models import (
     AnalyticalClaim,
     ProblemContext,
     # Framework models
-    ForceEffect,
-    ForceAnalysis,
-    StructuralAsymmetry,
-    PorterAnalysis,
     SystemsDynamicsAnalysis,
     # Output models
     FrameworkResult,
@@ -31,7 +31,6 @@ from .models import (
     # Framework
     AnalysisFramework,
     # Predefined frameworks
-    PORTER_FRAMEWORK,
     SYSTEMS_DYNAMICS_FRAMEWORK,
 )
 from .orchestrator import AnalysisOrchestrator
@@ -56,10 +55,6 @@ __all__ = [
     "AnalyticalClaim",
     "ProblemContext",
     # Framework models
-    "ForceEffect",
-    "ForceAnalysis",
-    "StructuralAsymmetry",
-    "PorterAnalysis",
     "SystemsDynamicsAnalysis",
     # Output models
     "FrameworkResult",
@@ -71,7 +66,6 @@ __all__ = [
     # Framework
     "AnalysisFramework",
     # Predefined frameworks
-    "PORTER_FRAMEWORK",
     "SYSTEMS_DYNAMICS_FRAMEWORK",
     # Main classes
     "AnalysisOrchestrator",

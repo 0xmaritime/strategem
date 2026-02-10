@@ -1,0 +1,31 @@
+{
+  "artefact_id": "9f634c31-c77a-4c8d-84bb-ae875f90d94e",
+  "analysis_id": "42109b51-41cf-4c0f-805d-66dd3961ff92",
+  "artefact_type": "assumption_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "assumptions_by_framework": {
+      "systems_dynamics_v2": [
+        "The market dynamics affecting PCD are largely irreversible without significant intervention",
+        "Employee morale and resistance to change will hinder rapid transformation efforts"
+      ]
+    },
+    "shared_assumptions": [],
+    "single_point_failures": [
+      {
+        "assumption": "The market dynamics affecting PCD are largely irreversible without significant intervention",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      },
+      {
+        "assumption": "Employee morale and resistance to change will hinder rapid transformation efforts",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-02-10T11:49:11.572541",
+  "content_hash": "51adf821b943919a"
+}

@@ -6,11 +6,9 @@ from pydantic import BaseModel
 from .models import (
     ProblemContext,
     AnalysisResult,
-    PorterAnalysis,
     SystemsDynamicsAnalysis,
     AnalysisFramework,
     FrameworkResult,
-    PORTER_FRAMEWORK,
     SYSTEMS_DYNAMICS_FRAMEWORK,
     DecisionFocus,
     AnalyticalClaim,
@@ -39,12 +37,10 @@ class AnalysisOrchestrator:
         self.decision_focus_extractor = DecisionFocusExtractor()
         # Register default frameworks
         self._frameworks = {
-            "porter": PORTER_FRAMEWORK,
             "systems_dynamics": SYSTEMS_DYNAMICS_FRAMEWORK,
         }
         # Map framework names to their response models
         self._framework_models = {
-            "porter": PorterAnalysis,
             "systems_dynamics": SystemsDynamicsAnalysis,
         }
 
@@ -390,9 +386,7 @@ class AnalysisOrchestrator:
         # V1: Run all specified frameworks independently
         # Do NOT block analysis due to missing forms or informal phrasing
         framework_results = []
-        porter_result = None
         systems_result = None
-        porter_error = None
         systems_error = None
 
         for framework_name in frameworks:
@@ -403,12 +397,7 @@ class AnalysisOrchestrator:
             framework_results.append(result)
 
             # Maintain backward compatibility
-            if framework_name == "porter":
-                if result.success:
-                    porter_result = result.result
-                else:
-                    porter_error = result.error_message
-            elif framework_name == "systems_dynamics":
+            if framework_name == "systems_dynamics":
                 if result.success:
                     systems_result = result.result
                 else:
@@ -417,9 +406,7 @@ class AnalysisOrchestrator:
         analysis_result = AnalysisResult(
             id=analysis_id,
             problem_context=context,
-            porter_analysis=porter_result,
             systems_analysis=systems_result,
-            porter_error=porter_error,
             systems_error=systems_error,
             framework_results=framework_results,
         )
@@ -429,22 +416,6 @@ class AnalysisOrchestrator:
         analysis_result.analysis_sufficiency = analysis_sufficiency
 
         return analysis_result
-
-    def run_porter_analysis(self, context: ProblemContext) -> tuple:
-        """
-        Run Porter's Five Forces analysis.
-
-        LEGACY METHOD: Maintained for backward compatibility.
-        New code should use run_framework() or run_analysis_with_frameworks().
-
-        Returns:
-            Tuple of (analysis_result, error_message)
-        """
-        result = self.run_framework("porter", context)
-        if result.success:
-            return result.result, None
-        else:
-            return None, result.error_message
 
     def run_systems_analysis(self, context: ProblemContext) -> tuple:
         """
@@ -470,13 +441,13 @@ class AnalysisOrchestrator:
 
         Args:
             context: The problem context to analyze
-            frameworks: List of framework names to apply (default: ["porter", "systems_dynamics"])
+            frameworks: List of framework names to apply (default: ["systems_dynamics"])
 
         Returns:
             Complete analysis result
         """
         if frameworks is None:
-            frameworks = ["porter", "systems_dynamics"]
+            frameworks = ["systems_dynamics"]
 
         return self.run_analysis_with_frameworks(context, frameworks)
 

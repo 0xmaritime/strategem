@@ -1,0 +1,24 @@
+{
+  "artefact_id": "f4ecbff7-e6fb-495c-bdf2-1b47312365df",
+  "analysis_id": "f3fb441a-8edf-4605-9fd9-f5250ff5307f",
+  "artefact_type": "tension_map",
+  "version": "2.0.0-dev",
+  "content": {
+    "framework_tensions": [
+      {
+        "framework_1": "porter_five_forces_v2",
+        "framework_2": "systems_dynamics_v2",
+        "tension_type": "divergent",
+        "summary": "porter_five_forces_v2 and systems_dynamics_v2 address different aspects of the problem",
+        "resolution_areas": [],
+        "claim_tensions": []
+      }
+    ],
+    "agreement_areas": [],
+    "tension_areas": [],
+    "contradiction_areas": [],
+    "summary": "Framework tensions identified"
+  },
+  "generated_at": "2026-02-04T22:45:09.461618",
+  "content_hash": "0add3ca827e19f98"
+}

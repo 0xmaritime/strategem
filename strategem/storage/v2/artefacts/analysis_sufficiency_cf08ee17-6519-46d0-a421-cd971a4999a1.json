@@ -1,0 +1,21 @@
+{
+  "artefact_id": "cf08ee17-6519-46d0-a421-cd971a4999a1",
+  "analysis_id": "42109b51-41cf-4c0f-805d-66dd3961ff92",
+  "artefact_type": "analysis_sufficiency",
+  "version": "2.0.0-dev",
+  "content": {
+    "decision_question": null,
+    "decision_type": null,
+    "options_count": 0,
+    "frameworks_executed": 1,
+    "frameworks_successful": 1,
+    "framework_success_rate": 1.0,
+    "total_claims": 0,
+    "total_assumptions": 2,
+    "total_unknowns": 1,
+    "option_claim_coverage": {},
+    "sufficiency_assessment": "INSUFFICIENT: No analytical claims produced"
+  },
+  "generated_at": "2026-02-10T11:49:11.572653",
+  "content_hash": "e73b9bb2abdaad1d"
+}

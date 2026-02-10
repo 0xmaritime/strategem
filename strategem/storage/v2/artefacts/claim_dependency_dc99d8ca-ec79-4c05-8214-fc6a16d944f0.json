@@ -1,0 +1,30 @@
+{
+  "artefact_id": "dc99d8ca-ec79-4c05-8214-fc6a16d944f0",
+  "analysis_id": "f3fb441a-8edf-4605-9fd9-f5250ff5307f",
+  "artefact_type": "claim_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "claims_by_framework": {
+      "porter_five_forces_v2": [],
+      "systems_dynamics_v2": [
+        {
+          "statement": "Option A's fragility to supply chain disruption is higher than Option B.",
+          "claim_id": "claim_1",
+          "confidence": "medium",
+          "source": "inference",
+          "affected_options": [
+            "Option A",
+            "Option B"
+          ]
+        }
+      ]
+    },
+    "framework_claim_counts": {
+      "porter_five_forces_v2": 0,
+      "systems_dynamics_v2": 1
+    },
+    "total_claims": 1
+  },
+  "generated_at": "2026-02-04T22:45:09.461652",
+  "content_hash": "71fc3f9633d5251e"
+}

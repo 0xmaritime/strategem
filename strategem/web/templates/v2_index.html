@@ -34,15 +34,6 @@
         .v2-features li {
             margin-bottom: 0.5rem;
         }
-        .required-field {
-            position: relative;
-        }
-        .required-field::after {
-            content: '*';
-            color: red;
-            font-weight: 700;
-            margin-left: 0.2rem;
-        }
         .back-link {
             display: inline-block;
             margin-bottom: 1.5rem;
@@ -53,8 +44,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>Strategem V2 <span style="background: #000000; color: #ffffff; padding: 0.2rem 0.5rem; font-size: 0.7rem; margin-left: 0.5rem;">DECISION-BOUND</span></h1>
-            <p class="subtitle">Option-Aware Analysis | Cross-Framework Tension Mapping | Sensitivity Triggers</p>
+            <h1>Strategem V2 <span style="background: #000000; color: #ffffff; padding: 0.2rem 0.5rem; font-size: 0.7rem; margin-left: 0.5rem;">REASONING SUBSTRATE</span></h1>
+            <p class="subtitle">Optional Decision Context | Cross-Framework Tension Mapping | Externalized Judgment</p>
             <nav>
                 <a href="/" class="back-link">← Version Selection</a>
                 <a href="/analyses?version=v2">V2 Analyses</a>
@@ -63,60 +54,59 @@
 
         <main>
             <div class="disclaimer-banner">
-                <h3>⚠️ V2 Requirements</h3>
-                <p><strong>V2 requires explicit decision context and options.</strong> These are <strong>not optional</strong>. All frameworks will analyze each option explicitly.</p>
+                <h3>⚠️ V2 Features</h3>
+                <p><strong>V2 provides optional decision context.</strong> Decision and options are <strong>optional annotations</strong>, not required inputs. Analysis can run with problem context only.</p>
             </div>
 
             <div class="v2-features">
                 <h3>V2 Key Features</h3>
                 <ul>
-                    <li><strong>Decision-Bound:</strong> Decision question and options are required inputs</li>
-                    <li><strong>Option-Aware:</strong> All frameworks must analyze each option explicitly (no system-level claims)</li>
+                    <li><strong>Optional Decision:</strong> Decision context is optional. Can analyze with problem context only.</li>
+                    <li><strong>Optional Options:</strong> Options are optional annotations. Frameworks can analyze globally or per-option.</li>
                     <li><strong>Tension Mapping:</strong> Explicit cross-framework tension identification (no aggregation, no reconciliation)</li>
-                    <li><strong>Sensitivity Triggers:</strong> Identification of unknowns that would change assessments with inquiry prompts</li>
+                    <li><strong>Externalized Judgment:</strong> Judgment nodes derived from conflicts, not emitted by frameworks</li>
                     <li><strong>Structured Artefacts:</strong> JSON-native, versioned outputs with content hashes</li>
                 </ul>
             </div>
 
             <section class="intro">
                 <h2>Analyze a Target System (V2)</h2>
-                <p>Provide Problem Context Materials and explicit decision context. The system produces <strong>option-aware reasoned artifacts</strong> highlighting structural differences, cross-framework tensions, and sensitivity triggers.</p>
+                <p>Provide Problem Context Materials. Decision and options are optional. The system produces <strong>reasoned artifacts</strong> with externalized judgment nodes and structured JSON outputs.</p>
             </section>
 
             <div class="upload-options">
                 <div class="upload-section">
                      <h3>Option 1: Paste Text</h3>
                      <form action="/analyze/text" method="post" id="text-form">
-                          <textarea
-                              name="text"
-                              placeholder="Paste Problem Context Material here: target system description, operating environment information, objectives, constraints, or any relevant context..."
-                              rows="15"
-                              required
-                          ></textarea>
+                           <textarea
+                                name="text"
+                                placeholder="Paste Problem Context Material here: target system description, operating environment information, objectives, constraints, or any relevant context..."
+                                rows="15"
+                           ></textarea>
 
-                          <div class="decision-focus-section" style="margin: 1.5rem 0; padding: 1rem; border: 2px solid #000000; background: #f5f5f5;">
-                              <h4 style="margin-bottom: 1rem;">🎯 Decision Context <span style="color: red; font-weight: 700;">(REQUIRED)</span></h4>
-                              <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #000000; font-weight: 700;">V2 requires explicit decision question and options (minimum 2)</p>
+                           <div class="decision-focus-section" style="margin: 1.5rem 0; padding: 1rem; border: 2px solid #000000; background: #f5f5f5;">
+                               <h4 style="margin-bottom: 1rem;">🎯 Decision Context (OPTIONAL)</h4>
+                               <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #666;">Decision question and options are optional. Analysis can run with problem context only.</p>
 
-                              <div style="margin-bottom: 1rem;">
-                                  <label class="required-field" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Question</label>
-                                  <input type="text" name="decision_question" placeholder="e.g., Should we enter the European market?" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;" required>
-                              </div>
+                               <div style="margin-bottom: 1rem;">
+                                   <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Question (Optional)</label>
+                                   <input type="text" name="decision_question" placeholder="e.g., Should we enter the European market?" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                               </div>
 
-                              <div style="margin-bottom: 1rem;">
-                                  <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Type</label>
-                                  <select name="decision_type" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
-                                      <option value="explore">Explore</option>
-                                      <option value="compare" selected>Compare</option>
-                                      <option value="stress_test">Stress Test</option>
-                                  </select>
-                              </div>
+                               <div style="margin-bottom: 1rem;">
+                                   <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Type (Optional)</label>
+                                   <select name="decision_type" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                                       <option value="explore">Explore</option>
+                                       <option value="compare">Compare</option>
+                                       <option value="stress_test">Stress Test</option>
+                                   </select>
+                               </div>
 
-                              <div style="margin-bottom: 1rem;">
-                                  <label class="required-field" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Options (comma-separated, minimum 2)</label>
-                                  <input type="text" name="options" placeholder="e.g., Enter European market, Focus on domestic growth, Partner with local firm" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;" required>
-                              </div>
-                          </div>
+                               <div style="margin-bottom: 1rem;">
+                                   <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Options (Optional, comma-separated)</label>
+                                   <input type="text" name="options" placeholder="e.g., Enter European market, Focus on domestic growth, Partner with local firm" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                               </div>
+                           </div>
 
                           <input type="hidden" name="version" value="v2">
 
@@ -126,61 +116,76 @@
 
                 <div class="divider">OR</div>
 
-                <div class="upload-section">
-                     <h3>Option 2: Upload File</h3>
-                     <form action="/analyze/file" method="post" enctype="multipart/form-data" id="upload-form">
-                          <div class="file-input-wrapper">
-                              <input
-                                  type="file"
-                                  name="file"
-                                  id="upload-file"
-                                  accept=".txt,.md"
-                                  required
-                              >
-                              <label for="upload-file" class="file-label">
-                                  <span class="file-icon">📄</span>
-                                  <span class="file-text">Choose a file...</span>
-                              </label>
-                          </div>
-                          <p class="file-types">Accepted: .txt, .md (Problem Context Materials)</p>
+                 <div class="upload-section">
+                      <h3>Option 2: Upload File</h3>
+                      <form action="/analyze/file" method="post" enctype="multipart/form-data" id="upload-form">
+                           <div class="file-input-wrapper">
+                               <input
+                                   type="file"
+                                   name="file"
+                                   id="upload-file"
+                                   accept=".txt,.md"
+                               >
+                               <label for="upload-file" class="file-label">
+                                   <span class="file-icon">📄</span>
+                                   <span class="file-text">Choose a file...</span>
+                               </label>
+                           </div>
+                           <div class="decision-focus-section" style="margin: 1.5rem 0; padding: 1rem; border: 2px solid #000000; background: #f5f5f5;">
+                               <h4 style="margin-bottom: 1rem;">🎯 Decision Context (OPTIONAL)</h4>
+                               <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #666;">Decision question and options are optional. Analysis can run with problem context only.</p>
 
-                          <div class="decision-focus-section" style="margin: 1.5rem 0; padding: 1rem; border: 2px solid #000000; background: #f5f5f5;">
-                              <h4 style="margin-bottom: 1rem;">🎯 Decision Context <span style="color: red; font-weight: 700;">(REQUIRED)</span></h4>
-                              <p style="font-size: 0.9rem; margin-bottom: 1rem; color: #000000; font-weight: 700;">V2 requires explicit decision question and options (minimum 2)</p>
+                               <div style="margin-bottom: 1rem;">
+                                   <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Question (Optional)</label>
+                                   <input type="text" name="decision_question" placeholder="e.g., Should we enter the European market?" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                               </div>
 
-                              <div style="margin-bottom: 1rem;">
-                                  <label class="required-field" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Question</label>
-                                  <input type="text" name="decision_question" placeholder="e.g., Should we enter the European market?" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;" required>
-                              </div>
+                               <div style="margin-bottom: 1rem;">
+                                   <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Type (Optional)</label>
+                                   <select name="decision_type" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                                       <option value="explore">Explore</option>
+                                       <option value="compare">Compare</option>
+                                       <option value="stress_test">Stress Test</option>
+                                   </select>
+                               </div>
 
-                              <div style="margin-bottom: 1rem;">
-                                  <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Decision Type</label>
-                                  <select name="decision_type" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
-                                      <option value="explore">Explore</option>
-                                      <option value="compare" selected>Compare</option>
-                                      <option value="stress_test">Stress Test</option>
-                                  </select>
-                              </div>
+                               <div style="margin-bottom: 1rem;">
+                                   <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Options (Optional, comma-separated)</label>
+                                   <input type="text" name="options" placeholder="e.g., Enter European market, Focus on domestic growth, Partner with local firm" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;">
+                               </div>
+                           </div>
 
-                              <div style="margin-bottom: 1rem;">
-                                  <label class="required-field" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Options (comma-separated, minimum 2)</label>
-                                  <input type="text" name="options" placeholder="e.g., Enter European market, Focus on domestic growth, Partner with local firm" style="width: 100%; padding: 0.5rem; border: 2px solid #000000;" required>
-                              </div>
-                          </div>
+                           <input type="hidden" name="version" value="v2">
 
-                          <input type="hidden" name="version" value="v2">
-
-                          <button type="submit" class="btn btn-primary">Run V2 Analysis</button>
-                     </form>
+                           <button type="submit" class="btn btn-primary">Run V2 Analysis</button>
+                       </form>
+                   </div>
+                            <p class="file-types">Accepted: .txt, .md (Problem Context Materials)</p>
                 </div>
             </div>
-
+ 
             <section class="info">
                 <h3>What to Expect (V2)</h3>
                 <div class="features">
+                     <div class="feature">
+                        <h4>🎯 Optional Decision Context</h4>
+                        <p>Decision question and options are optional. Analysis can run with problem context only. Frameworks can analyze globally or per-option.</p>
+                    </div>
                     <div class="feature">
-                        <h4>🎯 Option-Aware Analysis</h4>
-                        <p>Every structural force, system dynamic, and analytical claim must explicitly state which options it affects. No system-level or "all options" claims are allowed.</p>
+                        <h4>🗺 Cross-Framework Tension Mapping</h4>
+                        <p>Explicit identification of agreement, tension, and contradiction between frameworks. The system does NOT aggregate or reconcile - tensions are surfaced for human resolution.</p>
+                    </div>
+                    <div class="feature">
+                        <h4>🧠 Externalized Judgment</h4>
+                        <p>Judgment nodes derived from framework conflicts, not emitted by frameworks. Multiple plausible stances presented without preferences.</p>
+                    </div>
+                    <div class="feature">
+                        <h4>📊 Sensitivity Triggers</h4>
+                        <p>First-class identification of unknowns and assumptions that would materially change assessments. Includes inquiry prompts for evidence gathering.</p>
+                    </div>
+                    <div class="feature">
+                        <h4>📋 Structured JSON Artefacts</h4>
+                        <p>Versioned outputs: reasoning_primitives.json, judgment_surface.json, option_annotations.json (optional)</p>
                     </div>
                     <div class="feature">
                         <h4>🗺 Cross-Framework Tension Mapping</h4>
@@ -197,8 +202,8 @@
                 </div>
             </section>
 
-            <section class="info">
-                <h3>System Boundaries (V2)</h3>
+                <section class="info">
+                <h3>System Boundaries (V2 - Reasoning Substrate)</h3>
                 <div style="background: #f5f5f5; padding: 1rem; border: 2px solid #000000; margin-top: 1rem;">
                     <p><strong>V2 does NOT:</strong></p>
                     <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
@@ -209,17 +214,24 @@
                         <li>Provide investment or action advice</li>
                         <li>Validate against external reality</li>
                         <li>Learn from past cases</li>
+                        <li>Require decision context to run</li>
                     </ul>
-                    <p style="margin-top: 1rem; font-size: 0.9rem;">
-                        <strong>Known Limitations:</strong> Analysis quality depends on Problem Context Materials quality. No ground truth. No domain authority. Framework disagreement is valid.
-                    </p>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;"><strong>Known Limitations:</strong> Analysis quality depends on Problem Context Materials quality. No ground truth. No domain authority. Framework disagreement is valid.</p>
+                    <p style="margin-top: 1rem;"><strong>Key V2 Features:</strong></p>
+                    <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+                        <li>Optional decision and options (minimal input support)</li>
+                        <li>Externalized judgment nodes derived from conflicts</li>
+                        <li>Frameworks as primitive emitters only</li>
+                        <li>Structured JSON artefacts (reasoning_primitives.json, judgment_surface.json)</li>
+                        <li>Framework toggleability without system breakage</li>
+                    </ul>
                 </div>
             </section>
         </main>
 
-        <footer>
-            <p>Strategem V2.0.0-dev - Decision-Bound Reasoning Scaffold | Not an oracle</p>
-        </footer>
+            <footer>
+                <p>Strategem V2.0.0-dev - Reasoning Substrate | Externalized Judgment | Not an oracle</p>
+            </footer>
     </div>
 
     <style>
@@ -367,7 +379,7 @@
         <div class="loading-content">
             <div class="loading-spinner"></div>
             <div class="loading-title">Running V2 Analysis</div>
-            <div class="loading-message">Decision-bound analysis with option-aware frameworks...</div>
+                <div class="loading-message">Analysis in progress (optional decision & options supported)...</div>
             <div class="loading-steps">
                 <div class="loading-step">Validating decision context</div>
                 <div class="loading-step">Running V2 frameworks (option-aware)</div>

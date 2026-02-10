@@ -108,7 +108,7 @@ class ProblemContext(BaseModel):
         description="Assumptions explicitly declared by the decision owner",
     )
 
-    # Decision Focus (required for decision-bound frameworks like Porter)
+    # Decision Focus (required for decision-bound frameworks)
     decision_focus: Optional[DecisionFocus] = Field(
         default=None,
         description="Decision context - required for decision-bound frameworks. Without this, frameworks must refuse execution or return low-confidence artifacts.",

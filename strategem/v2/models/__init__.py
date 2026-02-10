@@ -1,13 +1,14 @@
-"""Strategem V2 - Analytical Models
+"""Strategem V2 - Analytical Models (Reasoning Substrate)
 
-V2 models represent the enhanced analytical depth required by V2.
+V2 models represent judgment externalization.
 These are separate from V1 models and may have different structure and semantics.
 
 V2 Key Changes from V1:
-- Decision Focus is REQUIRED (no inference)
-- All frameworks MUST be option-aware
+- Decision context is optional (implicit decisions supported)
+- Frameworks are primitive emitters only
+- Reasoning primitives: Claims, Assumptions, Uncertainties, Mechanisms, StakeholderPower
+- Judgment nodes derived from framework conflicts
 - Cross-framework tension mapping
-- Assumption fragility detection
 - Structured artefacts as first-class outputs
 """
 
@@ -55,13 +56,6 @@ from .framework import (
     FrameworkContract,
 )
 
-from .porter import (
-    PorterAnalysisV2,
-    StructuralAsymmetry,
-    PorterForce,
-    ForceEffect,
-)
-
 from .systems import (
     SystemsDynamicsAnalysisV2,
     FeedbackLoop,
@@ -101,10 +95,6 @@ __all__ = [
     # Framework
     "FrameworkContract",
     # Framework models
-    "PorterAnalysisV2",
-    "StructuralAsymmetry",
-    "PorterForce",
-    "ForceEffect",
     "SystemsDynamicsAnalysisV2",
     "FeedbackLoop",
     "Bottleneck",

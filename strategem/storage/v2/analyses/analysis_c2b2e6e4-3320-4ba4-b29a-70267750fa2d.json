@@ -1,0 +1,205 @@
+{
+  "analysis_id": "c2b2e6e4-3320-4ba4-b29a-70267750fa2d",
+  "decision": {
+    "decision_question": "What to choose?",
+    "decision_type": "compare"
+  },
+  "options_analyzed": [
+    "Timed Check-In Codes",
+    "Silent SMS Pings",
+    "Audio Beacon Listeners"
+  ],
+  "framework_results": [
+    {
+      "framework_name": "porter_five_forces_v2",
+      "success": true,
+      "execution_status": "successful",
+      "result": {
+        "decision_question": "What to choose?",
+        "options_analyzed": [
+          "Timed Check-In Codes",
+          "Silent SMS Pings",
+          "Audio Beacon Listeners"
+        ],
+        "threat_of_new_entrants": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "supplier_power": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "buyer_power": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "substitutes": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "rivalry": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "structural_asymmetries": [],
+        "option_aware_claims": [],
+        "shared_observations": "All options must address the specific needs of the kayak patrol while navigating the constraints of technology and user preferences."
+      },
+      "claims": [],
+      "assumptions": [],
+      "unknowns": []
+    },
+    {
+      "framework_name": "systems_dynamics_v2",
+      "success": true,
+      "execution_status": "successful",
+      "result": {
+        "decision_question": "What to choose?",
+        "options_analyzed": [
+          "Timed Check-In Codes",
+          "Silent SMS Pings",
+          "Audio Beacon Listeners"
+        ],
+        "system_overview": "The target system operates within a coastal town where a volunteer kayak patrol requires a distress signaling mechanism for kayakers who are out for 2-3 hours. The current system relies on a group text that is often ignored, indicating a need for a more reliable and passive distress signal. The system must function with limited cellular signal and respect user privacy by avoiding constant GPS tracking. The options under consideration aim to provide a lightweight check-in/check-out system that can signal distress without active engagement from the user.",
+        "key_components": [
+          "Kayaker's communication device (waterproof phone)",
+          "Distress signaling method",
+          "Cellular network reliability"
+        ],
+        "feedback_loops": {
+          "Reinforcing": [
+            {
+              "Description": "Increased usage of the distress signaling method leads to higher awareness and responsiveness among patrol members.",
+              "AffectedOptions": [
+                "Timed Check-In Codes",
+                "Silent SMS Pings"
+              ],
+              "EffectType": "growth_driver",
+              "Assumptions": [
+                "Users will adopt the new system if it is perceived as reliable",
+                "Increased awareness will lead to quicker responses to distress signals"
+              ]
+            }
+          ],
+          "Balancing": [
+            {
+              "Description": "The need for privacy may limit the effectiveness of distress signaling methods that require constant tracking.",
+              "AffectedOptions": [
+                "Audio Beacon Listeners"
+              ],
+              "EffectType": "constraint",
+              "Assumptions": [
+                "Users prioritize privacy over constant monitoring",
+                "Privacy concerns will limit the adoption of certain technologies"
+              ]
+            }
+          ]
+        },
+        "bottlenecks": [
+          {
+            "description": "Limited cellular signal may hinder the effectiveness of all proposed options.",
+            "affected_options": [
+              "Timed Check-In Codes",
+              "Silent SMS Pings",
+              "Audio Beacon Listeners"
+            ],
+            "severity": "high",
+            "unknowns": []
+          }
+        ],
+        "fragilities": [],
+        "option_aware_claims": [
+          {
+            "statement": "Silent SMS Pings are more susceptible to failure during low signal conditions compared to Timed Check-In Codes.",
+            "source": "inference",
+            "confidence": "medium",
+            "framework": "systems_dynamics_v2",
+            "affected_options": [
+              "Silent SMS Pings",
+              "Timed Check-In Codes"
+            ],
+            "claim_id": "claim_1"
+          }
+        ],
+        "assumptions": [
+          "Users will engage with the new system if it is easy to use",
+          "The current system's ineffectiveness is due to user disengagement"
+        ],
+        "unknowns": [
+          {
+            "Statement": "The level of user engagement with the new system options is uncertain.",
+            "AffectedOptions": [
+              "Timed Check-In Codes",
+              "Silent SMS Pings",
+              "Audio Beacon Listeners"
+            ],
+            "Sensitivity": "high",
+            "EvidenceNeeded": "User feedback on the perceived ease of use and reliability of each option"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "statement": "Silent SMS Pings are more susceptible to failure during low signal conditions compared to Timed Check-In Codes.",
+          "source": "inference",
+          "confidence": "medium",
+          "framework": "systems_dynamics_v2",
+          "affected_options": [
+            "Silent SMS Pings",
+            "Timed Check-In Codes"
+          ],
+          "claim_id": "claim_1"
+        }
+      ],
+      "assumptions": [
+        "Users will engage with the new system if it is easy to use",
+        "The current system's ineffectiveness is due to user disengagement"
+      ],
+      "unknowns": [
+        "The level of user engagement with the new system options is uncertain."
+      ]
+    }
+  ],
+  "tension_map": {
+    "framework_tensions": [
+      {
+        "framework_1": "porter_five_forces_v2",
+        "framework_2": "systems_dynamics_v2",
+        "tension_type": "divergent",
+        "claim_tensions": [],
+        "summary": "porter_five_forces_v2 and systems_dynamics_v2 address different aspects of the problem",
+        "resolution_areas": []
+      }
+    ],
+    "agreement_areas": [],
+    "tension_areas": [],
+    "contradiction_areas": [],
+    "summary": "Framework tensions identified"
+  },
+  "sensitivity_triggers": [
+    {
+      "trigger_description": "Unknown: The level of user engagement with the new system options is uncertain.",
+      "affected_claims": [],
+      "affected_options": [],
+      "sensitivity_level": "medium",
+      "evidence_needed": "Evidence to address: The level of user engagement with the new system options is uncertain.",
+      "question_generated": "What evidence would materially reduce uncertainty about: The level of user engagement with the new system options is uncertain.?"
+    }
+  ],
+  "created_at": "2026-02-04T22:28:27.604410"
+}

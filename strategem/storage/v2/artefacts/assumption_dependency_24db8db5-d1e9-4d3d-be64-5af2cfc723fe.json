@@ -1,0 +1,32 @@
+{
+  "artefact_id": "24db8db5-d1e9-4d3d-be64-5af2cfc723fe",
+  "analysis_id": "2eca4dd6-e117-4352-a763-5eec52dc2a12",
+  "artefact_type": "assumption_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "assumptions_by_framework": {
+      "porter_five_forces_v2": [],
+      "systems_dynamics_v2": [
+        "Users will engage with a system that is easy to use.",
+        "Higher engagement leads to better safety outcomes."
+      ]
+    },
+    "shared_assumptions": [],
+    "single_point_failures": [
+      {
+        "assumption": "Users will engage with a system that is easy to use.",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      },
+      {
+        "assumption": "Higher engagement leads to better safety outcomes.",
+        "frameworks": [
+          "systems_dynamics_v2"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-02-04T22:22:45.626538",
+  "content_hash": "af6094d083264cd5"
+}

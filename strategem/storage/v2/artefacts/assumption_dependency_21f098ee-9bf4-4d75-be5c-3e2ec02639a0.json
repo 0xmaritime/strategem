@@ -1,0 +1,15 @@
+{
+  "artefact_id": "21f098ee-9bf4-4d75-be5c-3e2ec02639a0",
+  "analysis_id": "24173611-af67-4a22-9767-67b69e3e5a7a",
+  "artefact_type": "assumption_dependency",
+  "version": "2.0.0-dev",
+  "content": {
+    "assumptions_by_framework": {
+      "porter_five_forces_v2": []
+    },
+    "shared_assumptions": [],
+    "single_point_failures": []
+  },
+  "generated_at": "2026-02-04T22:07:19.190992",
+  "content_hash": "123172180ee32260"
+}

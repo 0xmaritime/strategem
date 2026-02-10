@@ -1,0 +1,200 @@
+{
+  "analysis_id": "f3fb441a-8edf-4605-9fd9-f5250ff5307f",
+  "decision": {
+    "decision_question": "What to choose?",
+    "decision_type": "compare"
+  },
+  "options_analyzed": [
+    "Option A",
+    "Option B"
+  ],
+  "framework_results": [
+    {
+      "framework_name": "porter_five_forces_v2",
+      "success": true,
+      "execution_status": "successful",
+      "result": {
+        "decision_question": "What to choose?",
+        "options_analyzed": [
+          "Option A",
+          "Option B"
+        ],
+        "threat_of_new_entrants": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "supplier_power": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "buyer_power": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "substitutes": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "rivalry": {
+          "relevance_to_decision": "low",
+          "relevance_rationale": "",
+          "effect_by_option": [],
+          "shared_assumptions": [],
+          "shared_unknowns": []
+        },
+        "structural_asymmetries": [],
+        "option_aware_claims": [],
+        "shared_observations": ""
+      },
+      "claims": [],
+      "assumptions": [],
+      "unknowns": []
+    },
+    {
+      "framework_name": "systems_dynamics_v2",
+      "success": true,
+      "execution_status": "successful",
+      "result": {
+        "decision_question": "What to choose?",
+        "options_analyzed": [
+          "Option A",
+          "Option B"
+        ],
+        "system_overview": "The target system operates by evaluating the dynamics between different components that influence the outcomes of Option A and Option B. Each component interacts with others, creating feedback loops that can either reinforce or balance the effects of each option. The overall structure is designed to assess the implications of each choice based on these interactions.",
+        "key_components": [
+          "Component 1: Resource Allocation",
+          "Component 2: Market Demand",
+          "Component 3: Risk Management"
+        ],
+        "feedback_loops": {
+          "Reinforcing": [
+            {
+              "Description": "Increased resource allocation leads to higher market demand, which further increases resource allocation.",
+              "AffectedOptions": [
+                "Option A",
+                "Option B"
+              ],
+              "EffectType": "growth_driver",
+              "Assumptions": [
+                "Resource allocation positively impacts market demand",
+                "Market demand influences resource allocation decisions"
+              ]
+            }
+          ],
+          "Balancing": [
+            {
+              "Description": "Risk management strategies limit resource allocation to prevent overextension.",
+              "AffectedOptions": [
+                "Option A"
+              ],
+              "EffectType": "constraint",
+              "Assumptions": [
+                "Risk management is effective in controlling resource allocation",
+                "Overextension negatively impacts Option A's outcomes"
+              ]
+            }
+          ]
+        },
+        "bottlenecks": [
+          {
+            "description": "Limited availability of resources creates a bottleneck in achieving desired outcomes.",
+            "affected_options": [
+              "Option A",
+              "Option B"
+            ],
+            "severity": "high",
+            "unknowns": []
+          }
+        ],
+        "fragilities": [],
+        "option_aware_claims": [
+          {
+            "statement": "Option A's fragility to supply chain disruption is higher than Option B.",
+            "source": "inference",
+            "confidence": "medium",
+            "framework": "systems_dynamics_v2",
+            "affected_options": [
+              "Option A",
+              "Option B"
+            ],
+            "claim_id": "claim_1"
+          }
+        ],
+        "assumptions": [
+          "Resource allocation positively impacts market demand",
+          "Risk management is effective in controlling resource allocation"
+        ],
+        "unknowns": [
+          {
+            "Statement": "Future resource availability",
+            "AffectedOptions": [
+              "Option A",
+              "Option B"
+            ],
+            "Sensitivity": "critical",
+            "EvidenceNeeded": "Data on future resource supply trends"
+          }
+        ]
+      },
+      "claims": [
+        {
+          "statement": "Option A's fragility to supply chain disruption is higher than Option B.",
+          "source": "inference",
+          "confidence": "medium",
+          "framework": "systems_dynamics_v2",
+          "affected_options": [
+            "Option A",
+            "Option B"
+          ],
+          "claim_id": "claim_1"
+        }
+      ],
+      "assumptions": [
+        "Resource allocation positively impacts market demand",
+        "Risk management is effective in controlling resource allocation"
+      ],
+      "unknowns": [
+        "Future resource availability"
+      ]
+    }
+  ],
+  "tension_map": {
+    "framework_tensions": [
+      {
+        "framework_1": "porter_five_forces_v2",
+        "framework_2": "systems_dynamics_v2",
+        "tension_type": "divergent",
+        "claim_tensions": [],
+        "summary": "porter_five_forces_v2 and systems_dynamics_v2 address different aspects of the problem",
+        "resolution_areas": []
+      }
+    ],
+    "agreement_areas": [],
+    "tension_areas": [],
+    "contradiction_areas": [],
+    "summary": "Framework tensions identified"
+  },
+  "sensitivity_triggers": [
+    {
+      "trigger_description": "Unknown: Future resource availability",
+      "affected_claims": [],
+      "affected_options": [],
+      "sensitivity_level": "medium",
+      "evidence_needed": "Evidence to address: Future resource availability",
+      "question_generated": "What evidence would materially reduce uncertainty about: Future resource availability?"
+    }
+  ],
+  "created_at": "2026-02-04T22:45:09.458867"
+}

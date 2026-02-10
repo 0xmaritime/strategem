@@ -196,33 +196,24 @@ class TestFrameworkSufficiency:
         )
 
         # Create a framework result with no claims
-        from strategem.models import FrameworkResult, PorterAnalysis, ForceAnalysis
+        from strategem.models import FrameworkResult, SystemsDynamicsAnalysis
         from datetime import datetime
 
-        force = ForceAnalysis(
-            name="Test Force",
-            relevance_to_decision="low",
-            relevance_rationale="Not relevant",
-            effect_by_option=[],
-            claims=[],  # No claims
-        )
-
-        porter = PorterAnalysis(
-            decision_question="Test",
-            options_analyzed=["Option A", "Option B"],
-            threat_of_new_entrants=force,
-            supplier_power=force,
-            buyer_power=force,
-            substitutes=force,
-            rivalry=force,
-            structural_asymmetries=[],
-            option_aware_claims=[],  # No claims
+        systems = SystemsDynamicsAnalysis(
+            SystemOverview="Test overview",
+            KeyComponents=[],
+            FeedbackLoops_Reinforcing=[],
+            FeedbackLoops_Balancing=[],
+            Bottlenecks=[],
+            Fragilities=[],
+            Assumptions=[],
+            Unknowns=[],
         )
 
         framework_result = FrameworkResult(
-            framework_name="porter",
+            framework_name="systems_dynamics",
             success=True,
-            result=porter,
+            result=systems,
             claims=[],
         )
 

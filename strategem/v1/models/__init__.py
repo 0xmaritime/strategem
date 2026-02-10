@@ -3,11 +3,11 @@
 This module contains V1-specific analytical types.
 These are NOT shared with V2 - V2 may have different models.
 
-V1 Models:
-- Enums: ConfidenceLevel, ClaimSource, DecisionType, etc.
-- Core: ProblemContext, DecisionFocus, AnalyticalClaim
-- Frameworks: PorterAnalysis, SystemsDynamicsAnalysis, etc.
-- Output: AnalysisResult, AnalysisReport, DecisionSurface
+ V1 Models:
+ - Enums: ConfidenceLevel, ClaimSource, DecisionType, etc.
+ - Core: ProblemContext, DecisionFocus, AnalyticalClaim
+ - Frameworks: SystemsDynamicsAnalysis, etc.
+ - Output: AnalysisResult, AnalysisReport, DecisionSurface
 """
 
 from .enums import (
@@ -26,12 +26,6 @@ from .core import (
     AnalyticalClaim,
     ProblemContext,
 )
-from .porter import (
-    ForceEffect,
-    ForceAnalysis,
-    StructuralAsymmetry,
-    PorterAnalysis,
-)
 from .systems import (
     SystemsDynamicsAnalysis,
 )
@@ -48,32 +42,6 @@ from .framework import (
 )
 
 # Predefined framework configurations (V1)
-PORTER_FRAMEWORK = AnalysisFramework(
-    name="porter_five_forces",
-    analytical_lens="structural_attractiveness",
-    input_requirements=[
-        "problem_context",
-        "target_system_description",
-        "operating_environment_description",
-    ],
-    prompt_template="porter.txt",
-    output_schema={
-        "type": "object",
-        "properties": {
-            "ThreatOfNewEntrants": {"type": "object"},
-            "SupplierPower": {"type": "object"},
-            "BuyerPower": {"type": "object"},
-            "Substitutes": {"type": "object"},
-            "Rivalry": {"type": "object"},
-            "OverallObservations": {"type": "string"},
-            "KeyRisks": {"type": "array"},
-            "KeyStrengths": {"type": "array"},
-        },
-    },
-    description="Assesses structural attractiveness of the target system's operating environment",
-    requires_decision_focus=True,
-)
-
 SYSTEMS_DYNAMICS_FRAMEWORK = AnalysisFramework(
     name="systems_dynamics",
     analytical_lens="systemic_fragility",
@@ -113,11 +81,6 @@ __all__ = [
     "ProvidedMaterial",
     "AnalyticalClaim",
     "ProblemContext",
-    # Porter
-    "ForceEffect",
-    "ForceAnalysis",
-    "StructuralAsymmetry",
-    "PorterAnalysis",
     # Systems
     "SystemsDynamicsAnalysis",
     # Output
@@ -130,6 +93,5 @@ __all__ = [
     # Framework
     "AnalysisFramework",
     # Predefined frameworks
-    "PORTER_FRAMEWORK",
     "SYSTEMS_DYNAMICS_FRAMEWORK",
 ]
